@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { ApolloWrapper } from '../../apollo/ApolloWrapper'
-import Header from '../components/Header'
 
 export const metadata: Metadata = {
   title: 'PERN | Next | GraphQL',
@@ -14,10 +13,7 @@ const RootLayout: React.FC<Props> = async ({ children }) => {
   return (
     <html lang="en">
       <body>
-        <ApolloWrapper>
-          <Header />
-          {children}
-        </ApolloWrapper>
+        <ApolloWrapper>{children}</ApolloWrapper>
       </body>
     </html>
   )
