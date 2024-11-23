@@ -11,6 +11,7 @@ import { getExistingUser } from '../../../prisma/functions/getExistingUser.js'
 import { getTransport } from '../../../nodemailer/transport.js'
 import { verifyAccount } from '../../../nodemailer/verifyAccount.js'
 import { createCachedSession } from '../../../redis/functions/createCachedSession.js'
+import { deleteCachedSession } from '../../../redis/functions/deleteCachedSession.js'
 
 const crypto = await import('node:crypto')
 
@@ -23,6 +24,7 @@ export const typeDefs = gql`
   extend type Mutation {
     signUp(name: String!, email: String!, password: String!, path: String): SignUpResponse
     signIn(email: String!, password: String!): SignInResponse
+    signOut: SignOutResponse
   }
 
   type User {
@@ -43,6 +45,10 @@ export const typeDefs = gql`
 
   type SignInResponse {
     existingUser: User
+  }
+
+  type SignOutResponse {
+    message: String!
   }
 `
 export const resolvers: Resolvers = {
@@ -127,6 +133,19 @@ export const resolvers: Resolvers = {
       })
 
       return { existingUser }
+    },
+    signOut: async (_, __, context) => {
+      const { currentUser, authToken } = context
+
+      if (!currentUser) {
+        return null
+      }
+
+      const { id } = currentUser
+
+      await deleteCachedSession(id, authToken)
+
+      return { message: 'Выход успешно произведен.' }
     },
   },
 }

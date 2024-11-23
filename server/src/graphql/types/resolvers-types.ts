@@ -27,6 +27,7 @@ export type ConfirmAccountResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   signIn?: Maybe<SignInResponse>;
+  signOut?: Maybe<SignOutResponse>;
   signUp?: Maybe<SignUpResponse>;
 };
 
@@ -58,6 +59,11 @@ export type QueryConfirmAccountArgs = {
 export type SignInResponse = {
   __typename?: 'SignInResponse';
   existingUser?: Maybe<User>;
+};
+
+export type SignOutResponse = {
+  __typename?: 'SignOutResponse';
+  message: Scalars['String']['output'];
 };
 
 export type SignUpResponse = {
@@ -150,6 +156,7 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   SignInResponse: ResolverTypeWrapper<SignInResponse>;
+  SignOutResponse: ResolverTypeWrapper<SignOutResponse>;
   SignUpResponse: ResolverTypeWrapper<SignUpResponse>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<User>;
@@ -163,6 +170,7 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Query: {};
   SignInResponse: SignInResponse;
+  SignOutResponse: SignOutResponse;
   SignUpResponse: SignUpResponse;
   String: Scalars['String']['output'];
   User: User;
@@ -177,6 +185,7 @@ export type ConfirmAccountResponseResolvers<ContextType = MyContext, ParentType 
 
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   signIn?: Resolver<Maybe<ResolversTypes['SignInResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'email' | 'password'>>;
+  signOut?: Resolver<Maybe<ResolversTypes['SignOutResponse']>, ParentType, ContextType>;
   signUp?: Resolver<Maybe<ResolversTypes['SignUpResponse']>, ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email' | 'name' | 'password'>>;
 }>;
 
@@ -187,6 +196,11 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
 
 export type SignInResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['SignInResponse'] = ResolversParentTypes['SignInResponse']> = ResolversObject<{
   existingUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SignOutResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['SignOutResponse'] = ResolversParentTypes['SignOutResponse']> = ResolversObject<{
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -207,6 +221,7 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   SignInResponse?: SignInResponseResolvers<ContextType>;
+  SignOutResponse?: SignOutResponseResolvers<ContextType>;
   SignUpResponse?: SignUpResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
