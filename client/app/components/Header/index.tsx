@@ -13,12 +13,15 @@ const Header: React.FC<Props> = async () => {
       <nav>
         <ul>
           <li>
-            <Link href="/">Home</Link>
+            <Link href="/">Главная</Link>
           </li>
           <li>
-            <Link href="/register">Sign Up</Link>
+            <Link href="/courses">Курсы</Link>
           </li>
-          <li>{!currentUser ? <Link href="/login">Sign In</Link> : <SignOutButton />}</li>
+          <li>
+            <Link href="/register">Регистрация</Link>
+          </li>
+          <li>{!currentUser ? <Link href="/login">Вход</Link> : <SignOutButton />}</li>
         </ul>
       </nav>
     </header>

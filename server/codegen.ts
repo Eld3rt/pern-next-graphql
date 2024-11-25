@@ -10,7 +10,11 @@ const config: CodegenConfig = {
         inputMaybeValue: 'undefined | T',
         emitLegacyCommonJSImports: false,
         contextType: '../../apollo/server#MyContext',
-        mappers: {},
+        mappers: {
+          User: '.prisma/client#User as UserModel',
+          Course: '.prisma/client#Course as CourseModel',
+          Lesson: '.prisma/client#Lesson as LessonModel',
+        },
       },
     },
   },

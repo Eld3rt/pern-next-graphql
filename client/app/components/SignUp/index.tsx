@@ -18,7 +18,7 @@ interface FormikValues {
 
 const SignUp: React.FC<Props> = () => {
   const searchParams = useSearchParams()
-  const path = searchParams.get('path')
+  const course_slug = searchParams.get('course_slug')
   const [signUp] = useSignUpMutation({
     notifyOnNetworkStatusChange: true,
   })
@@ -34,7 +34,7 @@ const SignUp: React.FC<Props> = () => {
           name: creds.name,
           email: creds.email,
           password: creds.password,
-          path: path,
+          path: course_slug,
         },
       })
       setStatusMsg(data?.signUp?.message)
@@ -63,7 +63,7 @@ const SignUp: React.FC<Props> = () => {
             Зарегистрироваться
           </button>
           <p className="status-text">{errMsg}</p>
-          <Link href={path ? `/login?path=${path}` : '/login'}>Войти</Link>
+          <Link href={course_slug ? `/login?course_slug=${course_slug}` : '/login'}>Войти</Link>
         </Form>
       </div>
     </Formik>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ApolloWrapper } from '../../apollo/ApolloWrapper'
+import SessionProvider from '../providers/SessionProvider'
 import Header from '../components/Header'
 
 export const metadata: Metadata = {
@@ -15,8 +16,10 @@ const RootLayout: React.FC<Props> = async ({ children }) => {
     <html lang="en">
       <body>
         <ApolloWrapper>
-          <Header />
-          {children}
+          <SessionProvider>
+            <Header />
+            {children}
+          </SessionProvider>
         </ApolloWrapper>
       </body>
     </html>

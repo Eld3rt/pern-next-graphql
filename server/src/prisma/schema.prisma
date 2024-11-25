@@ -12,8 +12,33 @@ model User {
   name             String?  @db.VarChar(200)
   email            String   @unique @db.VarChar(200)
   passhash         String   @db.VarChar(200)
+	purchasedCourses Course[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   @@map("users")
+}
+
+model Course {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(200)
+  slug      String?  @unique
+  lessons   Lesson[]
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("courses")
+}
+
+model Lesson {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(200)
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  Int
+  videoURL  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("lessons")
 }
