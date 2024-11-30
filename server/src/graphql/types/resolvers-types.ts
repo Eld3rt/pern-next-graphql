@@ -77,6 +77,7 @@ export type Query = {
   confirmAccount?: Maybe<ConfirmAccountResponse>;
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
+  getPurchasedCourses?: Maybe<Array<Course>>;
   me?: Maybe<User>;
 };
 
@@ -253,6 +254,7 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   confirmAccount?: Resolver<Maybe<ResolversTypes['ConfirmAccountResponse']>, ParentType, ContextType, RequireFields<QueryConfirmAccountArgs, 'key'>>;
   getCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetCourseDataArgs, 'slug'>>;
   getCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
+  getPurchasedCourses?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
 

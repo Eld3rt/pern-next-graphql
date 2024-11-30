@@ -21,6 +21,9 @@ const Header: React.FC<Props> = async () => {
           <li>
             <Link href="/register">Регистрация</Link>
           </li>
+          <li>
+            <Link href="/user/dashboard">Личный кабинет</Link>
+          </li>
           <li>{!currentUser ? <Link href="/login">Вход</Link> : <SignOutButton />}</li>
         </ul>
       </nav>

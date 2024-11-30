@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ApolloWrapper } from '../../apollo/ApolloWrapper'
+import '../globals.css'
 import SessionProvider from '../providers/SessionProvider'
 import Header from '../components/Header'
 
