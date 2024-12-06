@@ -6,11 +6,10 @@ import { usePurchaseCourseMutation } from '@/graphql/generated'
 import { useRouter } from 'next/navigation'
 
 interface Props {
-  courseId: number
   slug: string
 }
 
-const PurchaseCourseButton: React.FC<Props> = ({ courseId, slug }) => {
+const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
   const { currentUser } = useContext(SessionContext)
   const router = useRouter()
 
@@ -29,7 +28,7 @@ const PurchaseCourseButton: React.FC<Props> = ({ courseId, slug }) => {
     }
 
     try {
-      const { data } = await purchaseCourse({ variables: { courseId } })
+      const { data } = await purchaseCourse({ variables: { slug } })
       if (data?.purchaseCourse?.message) {
         setIsPurchased(true)
         setMessage(data.purchaseCourse.message)

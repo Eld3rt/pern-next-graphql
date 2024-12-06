@@ -38,6 +38,7 @@ export type Lesson = {
   __typename?: 'Lesson';
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  videoURL: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -50,7 +51,7 @@ export type Mutation = {
 
 
 export type MutationPurchaseCourseArgs = {
-  courseId: Scalars['Int']['input'];
+  slug: Scalars['String']['input'];
 };
 
 
@@ -77,7 +78,9 @@ export type Query = {
   confirmAccount?: Maybe<ConfirmAccountResponse>;
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
+  getPurchasedCourseData?: Maybe<Course>;
   getPurchasedCourses?: Maybe<Array<Course>>;
+  hasCourseAccess?: Maybe<Scalars['Boolean']['output']>;
   me?: Maybe<User>;
 };
 
@@ -88,6 +91,16 @@ export type QueryConfirmAccountArgs = {
 
 
 export type QueryGetCourseDataArgs = {
+  slug: Scalars['String']['input'];
+};
+
+
+export type QueryGetPurchasedCourseDataArgs = {
+  slug: Scalars['String']['input'];
+};
+
+
+export type QueryHasCourseAccessArgs = {
   slug: Scalars['String']['input'];
 };
 
@@ -235,11 +248,12 @@ export type CourseResolvers<ContextType = MyContext, ParentType extends Resolver
 export type LessonResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Lesson'] = ResolversParentTypes['Lesson']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  videoURL?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  purchaseCourse?: Resolver<Maybe<ResolversTypes['PurchaseCourseResponse']>, ParentType, ContextType, RequireFields<MutationPurchaseCourseArgs, 'courseId'>>;
+  purchaseCourse?: Resolver<Maybe<ResolversTypes['PurchaseCourseResponse']>, ParentType, ContextType, RequireFields<MutationPurchaseCourseArgs, 'slug'>>;
   signIn?: Resolver<Maybe<ResolversTypes['SignInResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'email' | 'password'>>;
   signOut?: Resolver<Maybe<ResolversTypes['SignOutResponse']>, ParentType, ContextType>;
   signUp?: Resolver<Maybe<ResolversTypes['SignUpResponse']>, ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email' | 'name' | 'password'>>;
@@ -254,7 +268,9 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   confirmAccount?: Resolver<Maybe<ResolversTypes['ConfirmAccountResponse']>, ParentType, ContextType, RequireFields<QueryConfirmAccountArgs, 'key'>>;
   getCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetCourseDataArgs, 'slug'>>;
   getCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
+  getPurchasedCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetPurchasedCourseDataArgs, 'slug'>>;
   getPurchasedCourses?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType>;
+  hasCourseAccess?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<QueryHasCourseAccessArgs, 'slug'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
 

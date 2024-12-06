@@ -15,7 +15,9 @@ const Page: React.FC<Props> = async () => {
         Приобретенные курсы:
         {purchasedCourses?.map(course => (
           <li key={course.id}>
-            <h3>{course.name}</h3>
+            <Link href={`/user/courses/${course.slug}`}>
+              <h3>{course.name}</h3>
+            </Link>
           </li>
         ))}
       </ul>

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  mutation PurchaseCourse($courseId: Int!) {
-    purchaseCourse(courseId: $courseId) {
+  mutation PurchaseCourse($slug: String!) {
+    purchaseCourse(slug: $slug) {
       message
     }
   }

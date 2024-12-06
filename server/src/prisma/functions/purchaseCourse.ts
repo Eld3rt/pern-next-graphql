@@ -3,14 +3,14 @@ import { MutationPurchaseCourseArgs, RequireFields } from '../../graphql/types/r
 import { prisma } from '../prisma'
 
 export const purchaseCourse = async (
-  args: RequireFields<MutationPurchaseCourseArgs, 'courseId'>,
+  args: RequireFields<MutationPurchaseCourseArgs, 'slug'>,
   currentUser: User
 ): Promise<Course> => {
-  const { courseId } = args
+  const { slug } = args
   const userId = currentUser.id
   const purchasedCourse = await prisma.course.update({
     where: {
-      id: courseId,
+      slug: slug,
     },
     data: {
       users: {

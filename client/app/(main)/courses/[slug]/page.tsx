@@ -21,7 +21,7 @@ const Page: React.FC<Props> = async ({ params }) => {
   return (
     <>
       <h1>{data.getCourseData.name}</h1>
-      <PurchaseCourseButton courseId={data.getCourseData.id} slug={slug} />
+      <PurchaseCourseButton slug={slug} />
     </>
   )
 }
