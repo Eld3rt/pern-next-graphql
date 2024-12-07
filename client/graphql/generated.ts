@@ -24,6 +24,12 @@ export type ConfirmAccountResponse = {
   user?: Maybe<User>;
 };
 
+export type ConfirmEmailResponse = {
+  __typename?: 'ConfirmEmailResponse';
+  message: Scalars['String']['output'];
+  user?: Maybe<User>;
+};
+
 export type Course = {
   __typename?: 'Course';
   id: Scalars['Int']['output'];
@@ -45,6 +51,8 @@ export type Mutation = {
   signIn?: Maybe<SignInResponse>;
   signOut?: Maybe<SignOutResponse>;
   signUp?: Maybe<SignUpResponse>;
+  updateEmail?: Maybe<UpdateEmailResponse>;
+  updateUserName?: Maybe<UpdateUserNameResponse>;
 };
 
 
@@ -66,6 +74,16 @@ export type MutationSignUpArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
+export type MutationUpdateEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateUserNameArgs = {
+  newName: Scalars['String']['input'];
+};
+
 export type PurchaseCourseResponse = {
   __typename?: 'PurchaseCourseResponse';
   message: Scalars['String']['output'];
@@ -74,6 +92,7 @@ export type PurchaseCourseResponse = {
 export type Query = {
   __typename?: 'Query';
   confirmAccount?: Maybe<ConfirmAccountResponse>;
+  confirmEmail?: Maybe<ConfirmEmailResponse>;
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
   getPurchasedCourseData?: Maybe<Course>;
@@ -84,6 +103,11 @@ export type Query = {
 
 
 export type QueryConfirmAccountArgs = {
+  key: Scalars['String']['input'];
+};
+
+
+export type QueryConfirmEmailArgs = {
   key: Scalars['String']['input'];
 };
 
@@ -114,6 +138,16 @@ export type SignOutResponse = {
 
 export type SignUpResponse = {
   __typename?: 'SignUpResponse';
+  message: Scalars['String']['output'];
+};
+
+export type UpdateEmailResponse = {
+  __typename?: 'UpdateEmailResponse';
+  message: Scalars['String']['output'];
+};
+
+export type UpdateUserNameResponse = {
+  __typename?: 'UpdateUserNameResponse';
   message: Scalars['String']['output'];
 };
 
@@ -164,12 +198,33 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpResponse', message: string } | null };
 
+export type UpdateEmailMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+}>;
+
+
+export type UpdateEmailMutation = { __typename?: 'Mutation', updateEmail?: { __typename?: 'UpdateEmailResponse', message: string } | null };
+
+export type UpdateUserNameMutationVariables = Exact<{
+  newName: Scalars['String']['input'];
+}>;
+
+
+export type UpdateUserNameMutation = { __typename?: 'Mutation', updateUserName?: { __typename?: 'UpdateUserNameResponse', message: string } | null };
+
 export type ConfirmAccountQueryVariables = Exact<{
   key: Scalars['String']['input'];
 }>;
 
 
 export type ConfirmAccountQuery = { __typename?: 'Query', confirmAccount?: { __typename?: 'ConfirmAccountResponse', path?: string | null, sessionToken?: string | null, user?: { __typename?: 'User', email: string } | null } | null };
+
+export type ConfirmEmailQueryVariables = Exact<{
+  key: Scalars['String']['input'];
+}>;
+
+
+export type ConfirmEmailQuery = { __typename?: 'Query', confirmEmail?: { __typename?: 'ConfirmEmailResponse', message: string, user?: { __typename?: 'User', email: string } | null } | null };
 
 export type GetCourseDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -393,6 +448,72 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const UpdateEmailDocument = gql`
+    mutation UpdateEmail($email: String!) {
+  updateEmail(email: $email) {
+    message
+  }
+}
+    `;
+export type UpdateEmailMutationFn = Apollo.MutationFunction<UpdateEmailMutation, UpdateEmailMutationVariables>;
+
+/**
+ * __useUpdateEmailMutation__
+ *
+ * To run a mutation, you first call `useUpdateEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEmailMutation, { data, loading, error }] = useUpdateEmailMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useUpdateEmailMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEmailMutation, UpdateEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateEmailMutation, UpdateEmailMutationVariables>(UpdateEmailDocument, options);
+      }
+export type UpdateEmailMutationHookResult = ReturnType<typeof useUpdateEmailMutation>;
+export type UpdateEmailMutationResult = Apollo.MutationResult<UpdateEmailMutation>;
+export type UpdateEmailMutationOptions = Apollo.BaseMutationOptions<UpdateEmailMutation, UpdateEmailMutationVariables>;
+export const UpdateUserNameDocument = gql`
+    mutation UpdateUserName($newName: String!) {
+  updateUserName(newName: $newName) {
+    message
+  }
+}
+    `;
+export type UpdateUserNameMutationFn = Apollo.MutationFunction<UpdateUserNameMutation, UpdateUserNameMutationVariables>;
+
+/**
+ * __useUpdateUserNameMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserNameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserNameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserNameMutation, { data, loading, error }] = useUpdateUserNameMutation({
+ *   variables: {
+ *      newName: // value for 'newName'
+ *   },
+ * });
+ */
+export function useUpdateUserNameMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserNameMutation, UpdateUserNameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserNameMutation, UpdateUserNameMutationVariables>(UpdateUserNameDocument, options);
+      }
+export type UpdateUserNameMutationHookResult = ReturnType<typeof useUpdateUserNameMutation>;
+export type UpdateUserNameMutationResult = Apollo.MutationResult<UpdateUserNameMutation>;
+export type UpdateUserNameMutationOptions = Apollo.BaseMutationOptions<UpdateUserNameMutation, UpdateUserNameMutationVariables>;
 export const ConfirmAccountDocument = gql`
     query ConfirmAccount($key: String!) {
   confirmAccount(key: $key) {
@@ -437,6 +558,49 @@ export type ConfirmAccountQueryHookResult = ReturnType<typeof useConfirmAccountQ
 export type ConfirmAccountLazyQueryHookResult = ReturnType<typeof useConfirmAccountLazyQuery>;
 export type ConfirmAccountSuspenseQueryHookResult = ReturnType<typeof useConfirmAccountSuspenseQuery>;
 export type ConfirmAccountQueryResult = Apollo.QueryResult<ConfirmAccountQuery, ConfirmAccountQueryVariables>;
+export const ConfirmEmailDocument = gql`
+    query ConfirmEmail($key: String!) {
+  confirmEmail(key: $key) {
+    user {
+      email
+    }
+    message
+  }
+}
+    `;
+
+/**
+ * __useConfirmEmailQuery__
+ *
+ * To run a query within a React component, call `useConfirmEmailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConfirmEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConfirmEmailQuery({
+ *   variables: {
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useConfirmEmailQuery(baseOptions: Apollo.QueryHookOptions<ConfirmEmailQuery, ConfirmEmailQueryVariables> & ({ variables: ConfirmEmailQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ConfirmEmailQuery, ConfirmEmailQueryVariables>(ConfirmEmailDocument, options);
+      }
+export function useConfirmEmailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConfirmEmailQuery, ConfirmEmailQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ConfirmEmailQuery, ConfirmEmailQueryVariables>(ConfirmEmailDocument, options);
+        }
+export function useConfirmEmailSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ConfirmEmailQuery, ConfirmEmailQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ConfirmEmailQuery, ConfirmEmailQueryVariables>(ConfirmEmailDocument, options);
+        }
+export type ConfirmEmailQueryHookResult = ReturnType<typeof useConfirmEmailQuery>;
+export type ConfirmEmailLazyQueryHookResult = ReturnType<typeof useConfirmEmailLazyQuery>;
+export type ConfirmEmailSuspenseQueryHookResult = ReturnType<typeof useConfirmEmailSuspenseQuery>;
+export type ConfirmEmailQueryResult = Apollo.QueryResult<ConfirmEmailQuery, ConfirmEmailQueryVariables>;
 export const GetCourseDataDocument = gql`
     query GetCourseData($slug: String!) {
   getCourseData(slug: $slug) {

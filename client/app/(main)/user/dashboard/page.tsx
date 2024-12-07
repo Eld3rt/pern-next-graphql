@@ -20,6 +20,9 @@ const Page: React.FC<Props> = async () => {
             </Link>
           </li>
         ))}
+        <li>
+          <Link href="/user/settings">Настройки</Link>
+        </li>
       </ul>
     </>
   )

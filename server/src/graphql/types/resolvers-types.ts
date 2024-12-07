@@ -26,6 +26,12 @@ export type ConfirmAccountResponse = {
   user?: Maybe<User>;
 };
 
+export type ConfirmEmailResponse = {
+  __typename?: 'ConfirmEmailResponse';
+  message: Scalars['String']['output'];
+  user?: Maybe<User>;
+};
+
 export type Course = {
   __typename?: 'Course';
   id: Scalars['Int']['output'];
@@ -47,6 +53,8 @@ export type Mutation = {
   signIn?: Maybe<SignInResponse>;
   signOut?: Maybe<SignOutResponse>;
   signUp?: Maybe<SignUpResponse>;
+  updateEmail?: Maybe<UpdateEmailResponse>;
+  updateUserName?: Maybe<UpdateUserNameResponse>;
 };
 
 
@@ -68,6 +76,16 @@ export type MutationSignUpArgs = {
   path?: InputMaybe<Scalars['String']['input']>;
 };
 
+
+export type MutationUpdateEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateUserNameArgs = {
+  newName: Scalars['String']['input'];
+};
+
 export type PurchaseCourseResponse = {
   __typename?: 'PurchaseCourseResponse';
   message: Scalars['String']['output'];
@@ -76,6 +94,7 @@ export type PurchaseCourseResponse = {
 export type Query = {
   __typename?: 'Query';
   confirmAccount?: Maybe<ConfirmAccountResponse>;
+  confirmEmail?: Maybe<ConfirmEmailResponse>;
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
   getPurchasedCourseData?: Maybe<Course>;
@@ -86,6 +105,11 @@ export type Query = {
 
 
 export type QueryConfirmAccountArgs = {
+  key: Scalars['String']['input'];
+};
+
+
+export type QueryConfirmEmailArgs = {
   key: Scalars['String']['input'];
 };
 
@@ -116,6 +140,16 @@ export type SignOutResponse = {
 
 export type SignUpResponse = {
   __typename?: 'SignUpResponse';
+  message: Scalars['String']['output'];
+};
+
+export type UpdateEmailResponse = {
+  __typename?: 'UpdateEmailResponse';
+  message: Scalars['String']['output'];
+};
+
+export type UpdateUserNameResponse = {
+  __typename?: 'UpdateUserNameResponse';
   message: Scalars['String']['output'];
 };
 
@@ -200,6 +234,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ConfirmAccountResponse: ResolverTypeWrapper<Omit<ConfirmAccountResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }>;
+  ConfirmEmailResponse: ResolverTypeWrapper<Omit<ConfirmEmailResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }>;
   Course: ResolverTypeWrapper<CourseModel>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Lesson: ResolverTypeWrapper<LessonModel>;
@@ -210,6 +245,8 @@ export type ResolversTypes = ResolversObject<{
   SignOutResponse: ResolverTypeWrapper<SignOutResponse>;
   SignUpResponse: ResolverTypeWrapper<SignUpResponse>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  UpdateEmailResponse: ResolverTypeWrapper<UpdateEmailResponse>;
+  UpdateUserNameResponse: ResolverTypeWrapper<UpdateUserNameResponse>;
   User: ResolverTypeWrapper<UserModel>;
 }>;
 
@@ -217,6 +254,7 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']['output'];
   ConfirmAccountResponse: Omit<ConfirmAccountResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> };
+  ConfirmEmailResponse: Omit<ConfirmEmailResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> };
   Course: CourseModel;
   Int: Scalars['Int']['output'];
   Lesson: LessonModel;
@@ -227,12 +265,20 @@ export type ResolversParentTypes = ResolversObject<{
   SignOutResponse: SignOutResponse;
   SignUpResponse: SignUpResponse;
   String: Scalars['String']['output'];
+  UpdateEmailResponse: UpdateEmailResponse;
+  UpdateUserNameResponse: UpdateUserNameResponse;
   User: UserModel;
 }>;
 
 export type ConfirmAccountResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['ConfirmAccountResponse'] = ResolversParentTypes['ConfirmAccountResponse']> = ResolversObject<{
   path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   sessionToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ConfirmEmailResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['ConfirmEmailResponse'] = ResolversParentTypes['ConfirmEmailResponse']> = ResolversObject<{
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -257,6 +303,8 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   signIn?: Resolver<Maybe<ResolversTypes['SignInResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'email' | 'password'>>;
   signOut?: Resolver<Maybe<ResolversTypes['SignOutResponse']>, ParentType, ContextType>;
   signUp?: Resolver<Maybe<ResolversTypes['SignUpResponse']>, ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email' | 'name' | 'password'>>;
+  updateEmail?: Resolver<Maybe<ResolversTypes['UpdateEmailResponse']>, ParentType, ContextType, RequireFields<MutationUpdateEmailArgs, 'email'>>;
+  updateUserName?: Resolver<Maybe<ResolversTypes['UpdateUserNameResponse']>, ParentType, ContextType, RequireFields<MutationUpdateUserNameArgs, 'newName'>>;
 }>;
 
 export type PurchaseCourseResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['PurchaseCourseResponse'] = ResolversParentTypes['PurchaseCourseResponse']> = ResolversObject<{
@@ -266,6 +314,7 @@ export type PurchaseCourseResponseResolvers<ContextType = MyContext, ParentType 
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   confirmAccount?: Resolver<Maybe<ResolversTypes['ConfirmAccountResponse']>, ParentType, ContextType, RequireFields<QueryConfirmAccountArgs, 'key'>>;
+  confirmEmail?: Resolver<Maybe<ResolversTypes['ConfirmEmailResponse']>, ParentType, ContextType, RequireFields<QueryConfirmEmailArgs, 'key'>>;
   getCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetCourseDataArgs, 'slug'>>;
   getCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   getPurchasedCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetPurchasedCourseDataArgs, 'slug'>>;
@@ -289,6 +338,16 @@ export type SignUpResponseResolvers<ContextType = MyContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UpdateEmailResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['UpdateEmailResponse'] = ResolversParentTypes['UpdateEmailResponse']> = ResolversObject<{
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UpdateUserNameResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['UpdateUserNameResponse'] = ResolversParentTypes['UpdateUserNameResponse']> = ResolversObject<{
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type UserResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -298,6 +357,7 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
 
 export type Resolvers<ContextType = MyContext> = ResolversObject<{
   ConfirmAccountResponse?: ConfirmAccountResponseResolvers<ContextType>;
+  ConfirmEmailResponse?: ConfirmEmailResponseResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
   Lesson?: LessonResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -306,6 +366,8 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   SignInResponse?: SignInResponseResolvers<ContextType>;
   SignOutResponse?: SignOutResponseResolvers<ContextType>;
   SignUpResponse?: SignUpResponseResolvers<ContextType>;
+  UpdateEmailResponse?: UpdateEmailResponseResolvers<ContextType>;
+  UpdateUserNameResponse?: UpdateUserNameResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
 

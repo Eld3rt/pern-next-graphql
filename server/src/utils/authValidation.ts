@@ -1,7 +1,10 @@
 import * as Yup from 'yup'
 
 export const authValidation = Yup.object({
-  name: Yup.string().max(200, 'Name too long'),
-  email: Yup.string().required('Email is required').email('Invalid email').max(200, 'Email too long'),
-  password: Yup.string().required('Password is required').min(6, 'Password too short').max(200, 'Password too long'),
+  name: Yup.string().max(200, 'Имя слишком длинное'),
+  email: Yup.string().required('Требуется указать email').email('Некорректный email').max(200, 'Email слишком длинный'),
+  password: Yup.string()
+    .required('Требуется указать пароль')
+    .min(6, 'Требуется указать пароль от 6 символов')
+    .max(200, 'Пароль слишком длинный'),
 })

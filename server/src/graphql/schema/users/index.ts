@@ -2,6 +2,7 @@ import gql from 'graphql-tag'
 import { v4 as uuidv4 } from 'uuid'
 import nodemailer from 'nodemailer'
 import { compare } from 'bcrypt'
+import * as Yup from 'yup'
 import { Resolvers } from '../../types/resolvers-types.js'
 import { authValidation } from '../../../utils/authValidation.js'
 import { createCachedUser } from '../../../redis/functions/createCachedUser.js'
@@ -12,6 +13,11 @@ import { getTransport } from '../../../nodemailer/transport.js'
 import { verifyAccount } from '../../../nodemailer/verifyAccount.js'
 import { createCachedSession } from '../../../redis/functions/createCachedSession.js'
 import { deleteCachedSession } from '../../../redis/functions/deleteCachedSession.js'
+import { updateUserName } from '../../../prisma/functions/updateUserName.js'
+import { verifyEmail } from '../../../nodemailer/verifyEmail.js'
+import { createCachedEmail } from '../../../redis/functions/createCachedEmail.js'
+import { getCachedEmail } from '../../../redis/functions/getCachedEmail.js'
+import { updateEmail } from '../../../prisma/functions/updateEmail.js'
 
 const crypto = await import('node:crypto')
 
@@ -19,12 +25,15 @@ export const typeDefs = gql`
   extend type Query {
     me: User
     confirmAccount(key: String!): ConfirmAccountResponse
+    confirmEmail(key: String!): ConfirmEmailResponse
   }
 
   extend type Mutation {
     signUp(name: String!, email: String!, password: String!, path: String): SignUpResponse
     signIn(email: String!, password: String!): SignInResponse
     signOut: SignOutResponse
+    updateUserName(newName: String!): UpdateUserNameResponse
+    updateEmail(email: String!): UpdateEmailResponse
   }
 
   type User {
@@ -48,6 +57,19 @@ export const typeDefs = gql`
   }
 
   type SignOutResponse {
+    message: String!
+  }
+
+  type UpdateUserNameResponse {
+    message: String!
+  }
+
+  type UpdateEmailResponse {
+    message: String!
+  }
+
+  type ConfirmEmailResponse {
+    user: User
     message: String!
   }
 `
@@ -75,6 +97,17 @@ export const resolvers: Resolvers = {
       const path = cachedUser.path
 
       return { user, path, sessionToken }
+    },
+    confirmEmail: async (_, args, __) => {
+      const updateObj = await getCachedEmail(args)
+
+      if (!updateObj) {
+        throw new Error('Error getting cached user')
+      }
+
+      const user = await updateEmail(updateObj)
+
+      return { user, message: 'Email successfully updated!' }
     },
   },
   Mutation: {
@@ -146,6 +179,56 @@ export const resolvers: Resolvers = {
       await deleteCachedSession(id, authToken)
 
       return { message: 'Выход успешно произведен.' }
+    },
+    updateUserName: async (_, args, context) => {
+      const { currentUser } = context
+
+      if (!currentUser) return null
+
+      await Yup.object({
+        newName: Yup.string().max(200, 'Имя слишком длинное'),
+      }).validate(args)
+
+      await updateUserName(args, currentUser)
+
+      return { message: 'Имя успешно изменено!' }
+    },
+    updateEmail: async (_, args, context) => {
+      const { email } = args
+      const { currentUser } = context
+
+      if (!currentUser) return null
+
+      await Yup.object({
+        email: Yup.string().email('Некорректный email').max(200, 'Email слишком длинный'),
+      }).validate(args)
+
+      const existingUser = await getExistingUser(args)
+
+      if (existingUser !== null) {
+        throw new Error('Email уже занят другим пользователем')
+      }
+
+      const key = uuidv4()
+
+      const userId = currentUser.id
+
+      await createCachedEmail(args, key, userId)
+
+      const transport = await getTransport()
+      const mailOptions = verifyEmail({
+        name: currentUser.name,
+        email: email,
+        uuid: key,
+      })
+      transport.sendMail(mailOptions).then(info => {
+        console.log(`Message id: ${info.messageId}`)
+        console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
+      })
+
+      return {
+        message: `Мы отправили на Ваш email ${email} письмо для подтверждения изменения данных Вашего профиля.`,
+      }
     },
   },
 }
