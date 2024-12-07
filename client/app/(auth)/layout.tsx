@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ApolloWrapper } from '../../apollo/ApolloWrapper'
+import '../globals.css'
 
 export const metadata: Metadata = {
   title: 'PERN | Next | GraphQL',

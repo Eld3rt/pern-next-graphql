@@ -18,6 +18,10 @@ import { verifyEmail } from '../../../nodemailer/verifyEmail.js'
 import { createCachedEmail } from '../../../redis/functions/createCachedEmail.js'
 import { getCachedEmail } from '../../../redis/functions/getCachedEmail.js'
 import { updateEmail } from '../../../prisma/functions/updateEmail.js'
+import { updatePassword } from '../../../prisma/functions/updatePassword.js'
+import { createCachedReset } from '../../../redis/functions/createCachedReset.js'
+import { verifyPassword } from '../../../nodemailer/verifyPassword.js'
+import { getCachedReset } from '../../../redis/functions/getCachedReset.js'
 
 const crypto = await import('node:crypto')
 
@@ -34,6 +38,9 @@ export const typeDefs = gql`
     signOut: SignOutResponse
     updateUserName(newName: String!): UpdateUserNameResponse
     updateEmail(email: String!): UpdateEmailResponse
+    updatePassword(oldPassword: String!, newPassword: String!): UpdatePasswordResponse
+    resetPassword(email: String!): ResetPasswordResponse
+    confirmPassword(key: String!, password: String!): ConfirmPasswordResponse
   }
 
   type User {
@@ -70,6 +77,18 @@ export const typeDefs = gql`
 
   type ConfirmEmailResponse {
     user: User
+    message: String!
+  }
+
+  type UpdatePasswordResponse {
+    message: String!
+  }
+
+  type ResetPasswordResponse {
+    message: String!
+  }
+
+  type ConfirmPasswordResponse {
     message: String!
   }
 `
@@ -228,6 +247,75 @@ export const resolvers: Resolvers = {
 
       return {
         message: `Мы отправили на Ваш email ${email} письмо для подтверждения изменения данных Вашего профиля.`,
+      }
+    },
+    updatePassword: async (_, args, context) => {
+      const { oldPassword, newPassword } = args
+      const { currentUser } = context
+
+      if (!currentUser) return null
+
+      await Yup.object({
+        newPassword: Yup.string().min(6, 'Требуется указать пароль от 6 символов').max(200, 'Пароль слишком длинный'),
+      }).validate(args)
+
+      const passwordMatch = await compare(oldPassword, (currentUser.passhash as string) || '')
+
+      if (!passwordMatch) {
+        throw new Error('Неверно указан старый пароль')
+      }
+      const userId = currentUser.id
+      await updatePassword(newPassword, userId)
+
+      return {
+        message: 'Пароль успешно изменен!',
+      }
+    },
+    resetPassword: async (_, args, __) => {
+      await Yup.object({
+        email: Yup.string().email('Некорректный email'),
+      }).validate(args)
+
+      const existingUser = await getExistingUser(args)
+
+      if (!existingUser) {
+        throw new Error('Пользователя с таким email не существует')
+      }
+
+      const userId = existingUser.id
+
+      const key = uuidv4()
+
+      await createCachedReset(key, userId)
+
+      const transport = await getTransport()
+      const mailOptions = verifyPassword({
+        name: existingUser.name,
+        email: existingUser.email,
+        uuid: key,
+      })
+      transport.sendMail(mailOptions).then(info => {
+        console.log(`Message id: ${info.messageId}`)
+        console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
+      })
+      return {
+        message: `Мы отправили на указанный email письмо для сброса пароля.`,
+      }
+    },
+    confirmPassword: async (_, args, __) => {
+      const { key, password } = args
+      await Yup.object({
+        password: Yup.string().min(6, 'Требуется указать пароль от 6 символов').max(200, 'Пароль слишком длинный'),
+      }).validate(args)
+
+      const userId = await getCachedReset(key)
+
+      if (!userId) return null
+
+      await updatePassword(password, userId)
+
+      return {
+        message: 'Новый пароль успешно сохранен!',
       }
     },
   },

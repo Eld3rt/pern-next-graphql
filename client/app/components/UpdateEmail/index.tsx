@@ -42,10 +42,7 @@ const UpdateEmail: React.FC<Props> = ({ currentEmail }) => {
     <Formik
       initialValues={{ email: currentEmail }}
       validationSchema={Yup.object({
-        email: Yup.string()
-          .required('Требуется указать email')
-          .email('Некорректный email')
-          .max(200, 'Email слишком длинный'),
+        email: Yup.string().email('Некорректный email').max(200, 'Email слишком длинный'),
       })}
       onSubmit={handleSubmit}
     >

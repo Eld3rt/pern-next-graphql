@@ -55,6 +55,7 @@ const SignIn: React.FC<Props> = () => {
           </button>
           <p className="status-text">{errMsg}</p>
           <Link href="/register">Создать аккаунт</Link>
+          <Link href="/reset">Забыли пароль?</Link>
         </Form>
       </div>
     </Formik>

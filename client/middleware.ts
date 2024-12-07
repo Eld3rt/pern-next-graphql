@@ -6,8 +6,14 @@ export const middleware = async (request: NextRequest) => {
   const cookieStore = await cookies()
   const authToken = cookieStore.get('sid')?.value
   const pathname = request.nextUrl.pathname
+  const isOnUserPath = pathname.endsWith('/user')
+  const isOnLoginPath = pathname.endsWith('/login')
+  const isOnCoursePath = (pathname: string) => {
+    const coursePagePattern = /^\/user\/courses\/[a-z0-9]+(?:-[a-z0-9]+)*$/
+    return coursePagePattern.test(pathname)
+  }
 
-  if (!authToken) {
+  if (!authToken && !isOnLoginPath) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -29,13 +35,7 @@ export const middleware = async (request: NextRequest) => {
   const isLoggedIn = !!me
 
   if (isLoggedIn) {
-    const isOnUserPath = pathname.endsWith('/user')
-    const isOnCoursePath = (pathname: string) => {
-      const coursePagePattern = /^\/user\/courses\/[a-z0-9]+(?:-[a-z0-9]+)*$/
-      return coursePagePattern.test(pathname)
-    }
-
-    if (isOnUserPath) {
+    if (isOnUserPath || isOnLoginPath) {
       return NextResponse.redirect(new URL('/user/dashboard', request.url))
     }
 
@@ -66,10 +66,13 @@ export const middleware = async (request: NextRequest) => {
     }
     return NextResponse.next()
   }
+  if (isOnLoginPath) {
+    return NextResponse.next()
+  }
 
   return NextResponse.redirect(new URL('/login', request.url))
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|login|register|favicon.ico|robots.txt|courses|user/confirm|$).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|register|reset|favicon.ico|robots.txt|courses|user/confirm|$).*)'],
 }
