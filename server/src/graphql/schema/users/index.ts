@@ -4,7 +4,6 @@ import nodemailer from 'nodemailer'
 import { compare } from 'bcrypt'
 import * as Yup from 'yup'
 import { Resolvers } from '../../types/resolvers-types.js'
-import { authValidation } from '../../../utils/authValidation.js'
 import { createCachedUser } from '../../../redis/functions/createCachedUser.js'
 import { createUser } from '../../../prisma/functions/createUser.js'
 import { getCachedUser } from '../../../redis/functions/getCachedUser.js'
@@ -28,18 +27,18 @@ const crypto = await import('node:crypto')
 export const typeDefs = gql`
   extend type Query {
     me: User
-    confirmAccount(key: String!): ConfirmAccountResponse
-    confirmEmail(key: String!): ConfirmEmailResponse
+    confirmAccount(key: String!): ConfirmAccountResponse!
+    confirmEmail(key: String!): ConfirmEmailResponse!
   }
 
   extend type Mutation {
-    signUp(name: String!, email: String!, password: String!, path: String): SignUpResponse
-    signIn(email: String!, password: String!): SignInResponse
-    signOut: SignOutResponse
-    updateUserName(newName: String!): UpdateUserNameResponse
-    updateEmail(email: String!): UpdateEmailResponse
-    updatePassword(oldPassword: String!, newPassword: String!): UpdatePasswordResponse
-    resetPassword(email: String!): ResetPasswordResponse
+    signUp(name: String, email: String!, password: String!, path: String): SignUpResponse!
+    signIn(email: String!, password: String!): SignInResponse!
+    signOut: SignOutResponse!
+    updateUserName(newName: String!): UpdateUserNameResponse!
+    updateEmail(email: String!): UpdateEmailResponse!
+    updatePassword(oldPassword: String!, newPassword: String!): UpdatePasswordResponse!
+    resetPassword(email: String!): ResetPasswordResponse!
     confirmPassword(key: String!, password: String!): ConfirmPasswordResponse
   }
 
@@ -50,46 +49,69 @@ export const typeDefs = gql`
   }
 
   type SignUpResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
   }
 
   type ConfirmAccountResponse {
+    success: Boolean!
+    message: String!
+    developerMessage: String
     user: User
     path: String
     sessionToken: String
   }
 
   type SignInResponse {
+    success: Boolean!
+    message: String!
+    developerMessage: String
     existingUser: User
   }
 
   type SignOutResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
   }
 
   type UpdateUserNameResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
+    user: User
   }
 
   type UpdateEmailResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
   }
 
   type ConfirmEmailResponse {
-    user: User
+    success: Boolean!
     message: String!
+    developerMessage: String
+    user: User
   }
 
   type UpdatePasswordResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
   }
 
   type ResetPasswordResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
   }
 
   type ConfirmPasswordResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
   }
 `
 export const resolvers: Resolvers = {
@@ -99,223 +121,392 @@ export const resolvers: Resolvers = {
       return currentUser || null
     },
     confirmAccount: async (_, args, __) => {
-      const cachedUser = await getCachedUser(args)
+      try {
+        const cachedUser = await getCachedUser(args)
 
-      if (!cachedUser) {
-        throw new Error('Ошибка в подтверждении email')
+        if (!cachedUser) {
+          return {
+            success: false,
+            message: 'Ошибка в подтверждении email',
+            developerMessage: 'Error getting cached user',
+          }
+        }
+
+        const user = await createUser(cachedUser)
+
+        const sessionToken = crypto.randomBytes(32).toString('base64')
+
+        const userId = user.id
+
+        await createCachedSession(userId, sessionToken)
+
+        const path = cachedUser.path
+
+        return {
+          success: true,
+          message: 'Аккаунт подтвержден',
+          user,
+          path,
+          sessionToken,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Ошибка в подтверждении email',
+          developerMessage: error.message,
+        }
       }
-
-      const user = await createUser(cachedUser)
-
-      const sessionToken = crypto.randomBytes(32).toString('base64')
-
-      const userId = user.id
-
-      await createCachedSession(userId, sessionToken)
-
-      const path = cachedUser.path
-
-      return { user, path, sessionToken }
     },
     confirmEmail: async (_, args, __) => {
-      const updateObj = await getCachedEmail(args)
+      try {
+        const updateObj = await getCachedEmail(args)
 
-      if (!updateObj) {
-        throw new Error('Error getting cached user')
+        if (!updateObj) {
+          return {
+            success: false,
+            message: 'Ошибка в изменении email',
+            developerMessage: 'Error getting cached email',
+          }
+        }
+
+        const user = await updateEmail(updateObj)
+
+        return {
+          success: true,
+          message: 'Email успешно изменен',
+          user,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Ошибка в изменении email',
+          developerMessage: error.message,
+        }
       }
-
-      const user = await updateEmail(updateObj)
-
-      return { user, message: 'Email successfully updated!' }
     },
   },
   Mutation: {
     signUp: async (_, args, __) => {
       const { name, email } = args
 
-      await authValidation.validate(args)
+      try {
+        await Yup.object({
+          name: Yup.string().max(200),
+          email: Yup.string().required().email().max(200),
+          password: Yup.string().required().min(6).max(200),
+        }).validate(args)
 
-      const existingUser = await getExistingUser(args)
-      if (existingUser !== null) {
-        throw new Error('Пользователь с таким email уже существует.')
-      }
+        const existingUser = await getExistingUser(args)
+        if (existingUser !== null) {
+          return {
+            success: false,
+            message: 'Пользователь с таким email уже существует.',
+            developerMessage: 'existingUser is not null',
+          }
+        }
 
-      const key = uuidv4()
+        const key = uuidv4()
 
-      await createCachedUser(args, key)
+        await createCachedUser(args, key)
 
-      const transport = await getTransport()
-      const mailOptions = verifyAccount({
-        name: name,
-        email: email,
-        uuid: key,
-      })
-      transport.sendMail(mailOptions).then(info => {
-        console.log(`Message id: ${info.messageId}`)
-        console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
-      })
+        const transport = await getTransport()
+        const mailOptions = verifyAccount({
+          name: name,
+          email: email,
+          uuid: key,
+        })
+        transport.sendMail(mailOptions).then(info => {
+          console.log(`Message id: ${info.messageId}`)
+          console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
+        })
 
-      return {
-        message:
-          'Спасибо за регистрацию! Для завершения процедуры, перейдите по ссылке в письме, отправленном на указанный email.',
+        return {
+          success: true,
+          message:
+            'Спасибо за регистрацию! Для завершения процедуры, перейдите по ссылке в письме, отправленном на указанный email.',
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при регистрации. Попробуйте снова через некоторое время.',
+          developerMessage: error.message,
+        }
       }
     },
     signIn: async (_, args, context) => {
       const { password } = args
       const { res } = context
 
-      await authValidation.validate(args)
+      try {
+        await Yup.object({
+          email: Yup.string().required().email().max(200),
+          password: Yup.string().required().min(6).max(200),
+        }).validate(args)
 
-      const existingUser = await getExistingUser(args)
+        const existingUser = await getExistingUser(args)
+        if (!existingUser) {
+          return {
+            success: false,
+            message: 'Неверный email или пароль',
+            developerMessage: 'existingUser is null',
+          }
+        }
 
-      const passwordMatch = await compare(password, (existingUser?.passhash as string) || '')
+        const passwordMatch = await compare(password, (existingUser?.passhash as string) || '')
+        if (!passwordMatch) {
+          return {
+            success: false,
+            message: 'Неверный email или пароль',
+            developerMessage: 'Password is not match',
+          }
+        }
 
-      if (!existingUser || !passwordMatch) {
-        throw new Error('Неверный email или пароль')
+        const sessionToken = crypto.randomBytes(32).toString('base64')
+
+        const userId = existingUser.id
+
+        await createCachedSession(userId, sessionToken)
+
+        res.cookie('sid', sessionToken, {
+          maxAge: 60 * 60 * 24 * 7 * 1000, // One week
+        })
+
+        return {
+          success: true,
+          message: 'Вход выполнен успешно',
+          existingUser,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при входе в аккаунт. Попробуйте снова через некоторое время.',
+          developerMessage: error.message,
+        }
       }
-
-      const sessionToken = crypto.randomBytes(32).toString('base64')
-
-      const userId = existingUser.id
-
-      await createCachedSession(userId, sessionToken)
-
-      res.cookie('sid', sessionToken, {
-        maxAge: 60 * 60 * 24 * 7 * 1000, // One week
-      })
-
-      return { existingUser }
     },
     signOut: async (_, __, context) => {
       const { currentUser, authToken } = context
 
-      if (!currentUser) {
-        return null
-      }
+      if (!currentUser)
+        return {
+          success: false,
+          message: 'Необходимо войти в аккаунт',
+          developerMessage: 'Authentication error',
+        }
 
       const { id } = currentUser
 
-      await deleteCachedSession(id, authToken)
+      try {
+        await deleteCachedSession(id, authToken)
 
-      return { message: 'Выход успешно произведен.' }
+        return {
+          success: true,
+          message: 'Выход успешно произведен.',
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при выходе из аккаунта. Пожалуйста, попробуйте снова.',
+          developerMessage: error.message,
+        }
+      }
     },
     updateUserName: async (_, args, context) => {
       const { currentUser } = context
 
-      if (!currentUser) return null
+      if (!currentUser)
+        return {
+          success: false,
+          message: 'Необходимо войти в аккаунт',
+          developerMessage: 'Authentication error',
+        }
 
-      await Yup.object({
-        newName: Yup.string().max(200, 'Имя слишком длинное'),
-      }).validate(args)
+      try {
+        await Yup.object({
+          newName: Yup.string().max(200),
+        }).validate(args)
 
-      await updateUserName(args, currentUser)
-
-      return { message: 'Имя успешно изменено!' }
+        const updatedUser = await updateUserName(args, currentUser)
+        return {
+          success: true,
+          message: 'Имя успешно изменено!',
+          user: updatedUser,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при изменении имени пользователя. Попробуйте снова',
+          developerMessage: error.message,
+        }
+      }
     },
     updateEmail: async (_, args, context) => {
       const { email } = args
       const { currentUser } = context
 
-      if (!currentUser) return null
+      if (!currentUser)
+        return {
+          success: false,
+          message: 'Необходимо войти в аккаунт',
+          developerMessage: 'Authentication error',
+        }
 
-      await Yup.object({
-        email: Yup.string().email('Некорректный email').max(200, 'Email слишком длинный'),
-      }).validate(args)
+      try {
+        await Yup.object({
+          email: Yup.string().required().email().max(200),
+        }).validate(args)
 
-      const existingUser = await getExistingUser(args)
+        const existingUser = await getExistingUser(args)
 
-      if (existingUser !== null) {
-        throw new Error('Email уже занят другим пользователем')
-      }
+        if (existingUser !== null)
+          return {
+            success: false,
+            message: 'Email уже занят другим пользователем',
+            developerMessage: 'existingUser is not null',
+          }
 
-      const key = uuidv4()
+        const key = uuidv4()
 
-      const userId = currentUser.id
+        const userId = currentUser.id
 
-      await createCachedEmail(args, key, userId)
+        await createCachedEmail(args, key, userId)
 
-      const transport = await getTransport()
-      const mailOptions = verifyEmail({
-        name: currentUser.name,
-        email: email,
-        uuid: key,
-      })
-      transport.sendMail(mailOptions).then(info => {
-        console.log(`Message id: ${info.messageId}`)
-        console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
-      })
+        const transport = await getTransport()
+        const mailOptions = verifyEmail({
+          name: currentUser.name,
+          email: email,
+          uuid: key,
+        })
+        transport.sendMail(mailOptions).then(info => {
+          console.log(`Message id: ${info.messageId}`)
+          console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
+        })
 
-      return {
-        message: `Мы отправили на Ваш email ${email} письмо для подтверждения изменения данных Вашего профиля.`,
+        return {
+          success: true,
+          message: `Мы отправили на Ваш email ${email} письмо для подтверждения изменения данных Вашего профиля.`,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при изменении email. Попробуйте снова',
+          developerMessage: error.message,
+        }
       }
     },
     updatePassword: async (_, args, context) => {
       const { oldPassword, newPassword } = args
       const { currentUser } = context
 
-      if (!currentUser) return null
+      if (!currentUser)
+        return {
+          success: false,
+          message: 'Необходимо войти в аккаунт',
+          developerMessage: 'Authentication error',
+        }
 
-      await Yup.object({
-        newPassword: Yup.string().min(6, 'Требуется указать пароль от 6 символов').max(200, 'Пароль слишком длинный'),
-      }).validate(args)
+      try {
+        await Yup.object({
+          oldPassword: Yup.string().required().min(6).max(200),
+          newPassword: Yup.string().required().min(6).max(200),
+        }).validate(args)
 
-      const passwordMatch = await compare(oldPassword, (currentUser.passhash as string) || '')
+        const passwordMatch = await compare(oldPassword, (currentUser.passhash as string) || '')
 
-      if (!passwordMatch) {
-        throw new Error('Неверно указан старый пароль')
-      }
-      const userId = currentUser.id
-      await updatePassword(newPassword, userId)
+        if (!passwordMatch) {
+          return {
+            success: false,
+            message: 'Неверно указан старый пароль',
+            developerMessage: 'Old password is not match',
+          }
+        }
+        const userId = currentUser.id
+        await updatePassword(newPassword, userId)
 
-      return {
-        message: 'Пароль успешно изменен!',
+        return {
+          success: true,
+          message: 'Пароль успешно изменен!',
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при изменении пароля. Попробуйте снова',
+          developerMessage: error.message,
+        }
       }
     },
     resetPassword: async (_, args, __) => {
-      await Yup.object({
-        email: Yup.string().email('Некорректный email'),
-      }).validate(args)
+      try {
+        await Yup.object({
+          email: Yup.string().required().email(),
+        }).validate(args)
 
-      const existingUser = await getExistingUser(args)
+        const existingUser = await getExistingUser(args)
 
-      if (!existingUser) {
-        throw new Error('Пользователя с таким email не существует')
-      }
+        if (!existingUser) {
+          return {
+            success: false,
+            message: 'Пользователя с таким email не существует',
+            developerMessage: 'existingUser is null',
+          }
+        }
 
-      const userId = existingUser.id
+        const userId = existingUser.id
 
-      const key = uuidv4()
+        const key = uuidv4()
 
-      await createCachedReset(key, userId)
+        await createCachedReset(key, userId)
 
-      const transport = await getTransport()
-      const mailOptions = verifyPassword({
-        name: existingUser.name,
-        email: existingUser.email,
-        uuid: key,
-      })
-      transport.sendMail(mailOptions).then(info => {
-        console.log(`Message id: ${info.messageId}`)
-        console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
-      })
-      return {
-        message: `Мы отправили на указанный email письмо для сброса пароля.`,
+        const transport = await getTransport()
+        const mailOptions = verifyPassword({
+          name: existingUser.name,
+          email: existingUser.email,
+          uuid: key,
+        })
+        transport.sendMail(mailOptions).then(info => {
+          console.log(`Message id: ${info.messageId}`)
+          console.log(`URL: ${nodemailer.getTestMessageUrl(info)}`)
+        })
+        return {
+          success: true,
+          message: `Мы отправили на указанный email письмо для сброса пароля.`,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при сбросе пароля. Попробуйте снова',
+          developerMessage: error.message,
+        }
       }
     },
     confirmPassword: async (_, args, __) => {
       const { key, password } = args
-      await Yup.object({
-        password: Yup.string().min(6, 'Требуется указать пароль от 6 символов').max(200, 'Пароль слишком длинный'),
-      }).validate(args)
+      try {
+        await Yup.object({
+          password: Yup.string().required().min(6).max(200),
+        }).validate(args)
 
-      const userId = await getCachedReset(key)
+        const userId = await getCachedReset(key)
 
-      if (!userId) return null
+        if (!userId)
+          return {
+            success: false,
+            message: 'Ошибка при восстановлении пароля',
+            developerMessage: 'Error getting cached user id',
+          }
 
-      await updatePassword(password, userId)
+        await updatePassword(password, userId)
 
-      return {
-        message: 'Новый пароль успешно сохранен!',
+        return {
+          success: true,
+          message: 'Новый пароль успешно сохранен!',
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Возникла ошибка при восстановлении пароля. Попробуйте снова',
+          developerMessage: error.message,
+        }
       }
     },
   },

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import Link from 'next/link'
@@ -16,25 +16,41 @@ const ResetPassword: React.FC<Props> = () => {
   const [resetPassword] = useResetPasswordMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [isUpdated, setIsUpdated] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+
+  const yupMessages = {
+    email: {
+      required: 'Требуется указать email',
+      email: 'Неверный email',
+      max: 'Неверный email',
+    },
+  }
+
+  const clearStates = () => {
+    setMessage('')
+    setError('')
+  }
 
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const { email } = { ...values }
     actions.resetForm()
+    clearStates()
     try {
-      if (isUpdated) {
-        setIsUpdated(false)
-      }
       const { data } = await resetPassword({
         variables: {
           email: email,
         },
       })
-      if (data?.resetPassword?.message) {
-        setIsUpdated(true)
-        setMessage(data?.resetPassword?.message)
+
+      if (!data?.resetPassword) {
+        throw new Error('Возникла ошибка при сбросе пароля. Попробуйте снова через некоторое время.')
+      }
+
+      if (data.resetPassword.success) {
+        setMessage(data.resetPassword.message)
+      } else {
+        setError(data.resetPassword.message)
       }
     } catch (err: any) {
       setError(err.message)
@@ -46,21 +62,48 @@ const ResetPassword: React.FC<Props> = () => {
         email: '',
       }}
       validationSchema={Yup.object({
-        email: Yup.string().email('Некорректный email'),
+        email: Yup.string()
+          .required(yupMessages.email.required)
+          .email(yupMessages.email.email)
+          .max(200, yupMessages.email.max),
       })}
       onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={false}
     >
-      <div className="resetPasswordForm">
-        <Form>
-          <FormInput name="email" type="email" label="Email" />
+      {({ errors, setFieldValue, setFieldError }) => {
+        useEffect(() => {
+          if (errors.email && !(errors.email == yupMessages.email.required)) {
+            setFieldValue('email', '')
+          }
+        }, [errors])
 
-          <button className="btn" type="submit">
-            Сбросить пароль
-          </button>
-          {isUpdated ? <p className="text-success">{message}</p> : <p className="text-error">{error}</p>}
-          <Link href={'/login'}>Вернуться на страницу входа</Link>
-        </Form>
-      </div>
+        return (
+          <div className="resetPasswordForm">
+            <Form noValidate={true}>
+              <FormInput
+                name="email"
+                type="email"
+                label="Email"
+                onInput={() => {
+                  if (errors.email) {
+                    setFieldError('email', '')
+                  }
+                }}
+              />
+              {errors.email == yupMessages.email.required && <p className="text-error text-red-500">{errors.email}</p>}
+              <button className="btn" type="submit" onClick={clearStates}>
+                Сбросить пароль
+              </button>
+              {message && <p className="text-success">{message}</p>}
+              {(error || errors.email) && !(errors.email == yupMessages.email.required) && (
+                <p className="text-error text-red-500">{error || errors.email}</p>
+              )}
+              <Link href={'/login'}>Вернуться на страницу входа</Link>
+            </Form>
+          </div>
+        )
+      }}
     </Formik>
   )
 }

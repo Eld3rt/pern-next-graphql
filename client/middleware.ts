@@ -8,12 +8,13 @@ export const middleware = async (request: NextRequest) => {
   const pathname = request.nextUrl.pathname
   const isOnUserPath = pathname.endsWith('/user')
   const isOnLoginPath = pathname.endsWith('/login')
+  const isOnRegisterPath = pathname.endsWith('/register')
   const isOnCoursePath = (pathname: string) => {
     const coursePagePattern = /^\/user\/courses\/[a-z0-9]+(?:-[a-z0-9]+)*$/
     return coursePagePattern.test(pathname)
   }
 
-  if (!authToken && !isOnLoginPath) {
+  if (!authToken && !isOnLoginPath && !isOnRegisterPath) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -35,7 +36,7 @@ export const middleware = async (request: NextRequest) => {
   const isLoggedIn = !!me
 
   if (isLoggedIn) {
-    if (isOnUserPath || isOnLoginPath) {
+    if (isOnUserPath || isOnLoginPath || isOnRegisterPath) {
       return NextResponse.redirect(new URL('/user/dashboard', request.url))
     }
 
@@ -66,7 +67,7 @@ export const middleware = async (request: NextRequest) => {
     }
     return NextResponse.next()
   }
-  if (isOnLoginPath) {
+  if (isOnLoginPath || isOnRegisterPath) {
     return NextResponse.next()
   }
 
@@ -74,5 +75,5 @@ export const middleware = async (request: NextRequest) => {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|register|reset|favicon.ico|robots.txt|courses|user/confirm|$).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|reset|favicon.ico|robots.txt|courses|user/confirm|$).*)'],
 }

@@ -2,9 +2,8 @@
 
 import { useState } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
-import { ApolloError } from '@apollo/client'
 import { useSignUpMutation } from '@/graphql/generated'
-import { authValidation } from '@/utils/authValidation'
+import * as Yup from 'yup'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import FormInput from '../forms/FormInput'
@@ -22,12 +21,34 @@ const SignUp: React.FC<Props> = () => {
   const [signUp] = useSignUpMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [errMsg, setErrMsg] = useState<string | undefined>()
-  const [statusMsg, setStatusMsg] = useState<string | undefined>()
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+
+  const yupMessages = {
+    name: {
+      max: 'Имя слишком длинное',
+    },
+    email: {
+      required: 'Требуется указать email',
+      email: 'Некорректный email',
+      max: 'Email слишком длинный',
+    },
+    password: {
+      required: 'Требуется указать пароль',
+      min: 'Требуется указать пароль от 6 символов',
+      max: 'Пароль слишком длинный',
+    },
+  }
+
+  const clearStates = () => {
+    setMessage('')
+    setError('')
+  }
 
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const creds = { ...values }
     actions.resetForm()
+    clearStates()
     try {
       const { data } = await signUp({
         variables: {
@@ -37,10 +58,16 @@ const SignUp: React.FC<Props> = () => {
           path: course_slug,
         },
       })
-      setStatusMsg(data?.signUp?.message)
-      console.log(statusMsg)
-    } catch (error) {
-      setErrMsg((error as ApolloError).message)
+      if (!data?.signUp) {
+        throw new Error('Возникла ошибка при регистрации. Попробуйте снова через некоторое время.')
+      }
+      if (data.signUp.success) {
+        setMessage(data.signUp.message)
+      } else {
+        setError(data.signUp.message)
+      }
+    } catch (err: any) {
+      setError(err.message)
     }
   }
   return (
@@ -50,22 +77,88 @@ const SignUp: React.FC<Props> = () => {
         email: '',
         password: '',
       }}
-      validationSchema={authValidation}
+      validationSchema={Yup.object({
+        name: Yup.string().max(200, yupMessages.name.max),
+        email: Yup.string()
+          .required(yupMessages.email.required)
+          .email(yupMessages.email.email)
+          .max(200, yupMessages.email.max),
+        password: Yup.string()
+          .required(yupMessages.password.required)
+          .min(6, yupMessages.password.min)
+          .max(200, yupMessages.password.max),
+      })}
       onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={false}
     >
-      <div className="loginForm">
-        <Form>
-          <FormInput name="name" type="text" label="Ваше имя" />
-          <FormInput name="email" type="email" label="Email" />
-          <FormInput name="password" type="password" label="Пароль" />
-
-          <button className="btn" type="submit">
-            Зарегистрироваться
-          </button>
-          <p className="status-text">{errMsg}</p>
-          <Link href={course_slug ? `/login?course_slug=${course_slug}` : '/login'}>Войти</Link>
-        </Form>
-      </div>
+      {({ errors, setFieldError }) => (
+        <div className="loginForm">
+          <Form noValidate={true}>
+            <FormInput
+              name="name"
+              type="text"
+              label="Ваше имя"
+              onInput={e => {
+                if (errors.name == yupMessages.name.max) {
+                  if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
+                    setFieldError('name', '')
+                  }
+                }
+              }}
+            />
+            {errors.name && <p className="text-error text-red-500">{errors.name}</p>}
+            <FormInput
+              name="email"
+              type="email"
+              label="Email"
+              onInput={e => {
+                if (errors.email == yupMessages.email.required) {
+                  setFieldError('email', '')
+                }
+                if (errors.email == yupMessages.email.email) {
+                  if (Yup.string().email().isValidSync(e.currentTarget.value) && e.currentTarget.value) {
+                    setFieldError('email', '')
+                  }
+                }
+                if (errors.email == yupMessages.email.max) {
+                  if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
+                    setFieldError('email', '')
+                  }
+                }
+              }}
+            />
+            {errors.email && <p className="text-error text-red-500">{errors.email}</p>}
+            <FormInput
+              name="password"
+              type="password"
+              label="Пароль"
+              onInput={e => {
+                if (errors.password == yupMessages.password.required) {
+                  setFieldError('password', '')
+                }
+                if (errors.password == yupMessages.password.min) {
+                  if (Yup.string().min(6).isValidSync(e.currentTarget.value) && e.currentTarget.value) {
+                    setFieldError('password', '')
+                  }
+                }
+                if (errors.password == yupMessages.password.max) {
+                  if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
+                    setFieldError('password', '')
+                  }
+                }
+              }}
+            />
+            {errors.password && <p className="text-error text-red-500">{errors.password}</p>}
+            <button className="btn" type="submit" onClick={clearStates}>
+              Зарегистрироваться
+            </button>
+            {message && <p className="text-success">{message}</p>}
+            {error && <p className="text-error text-red-500">{error}</p>}
+            <Link href={course_slug ? `/login?course_slug=${course_slug}` : '/login'}>Войти</Link>
+          </Form>
+        </div>
+      )}
     </Formik>
   )
 }

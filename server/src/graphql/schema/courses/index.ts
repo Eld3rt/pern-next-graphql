@@ -11,17 +11,20 @@ export const typeDefs = gql`
   extend type Query {
     getCourses: [Course!]!
     getCourseData(slug: String!): Course
-    getPurchasedCourses: [Course!]
+    getPurchasedCourses: [Course!]!
     getPurchasedCourseData(slug: String!): Course
-    hasCourseAccess(slug: String!): Boolean
+    hasCourseAccess(slug: String!): Boolean!
   }
 
   extend type Mutation {
-    purchaseCourse(slug: String!): PurchaseCourseResponse
+    purchaseCourse(slug: String!): PurchaseCourseResponse!
   }
 
   type PurchaseCourseResponse {
+    success: Boolean!
     message: String!
+    developerMessage: String
+    course: Course
   }
 
   type Course {
@@ -53,7 +56,7 @@ export const resolvers: Resolvers = {
     getPurchasedCourses: async (_, __, context) => {
       const { currentUser } = context
 
-      if (!currentUser) return null
+      if (!currentUser) return []
 
       const purchasedCourses = await getPurchasedCourses(currentUser)
 
@@ -71,7 +74,7 @@ export const resolvers: Resolvers = {
     hasCourseAccess: async (_, args, context) => {
       const { currentUser } = context
 
-      if (!currentUser) return null
+      if (!currentUser) return false
 
       const isPurchased = await hasCourse(args, currentUser)
 
@@ -82,15 +85,33 @@ export const resolvers: Resolvers = {
     purchaseCourse: async (_, args, context) => {
       const { currentUser } = context
 
-      if (!currentUser) return null
+      if (!currentUser)
+        return {
+          success: false,
+          message: 'Необходимо войти в аккаунт',
+          developerMessage: 'Authentication error',
+        }
+      try {
+        const isPurchased = await hasCourse(args, currentUser)
+        if (isPurchased)
+          return {
+            success: false,
+            message: 'Вы уже успешно приобрели этот курс',
+            developerMessage: 'The course has already been purchased.',
+          }
 
-      const isPurchased = await hasCourse(args, currentUser)
-      if (isPurchased) throw new Error('Вы уже успешно приобрели этот курс')
-
-      await purchaseCourse(args, currentUser)
-
-      return {
-        message: 'Курс успешно приобретен!',
+        const purchasedCourse = await purchaseCourse(args, currentUser)
+        return {
+          success: true,
+          message: 'Курс успешно приобретен',
+          course: purchasedCourse,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Ошибка при приобретении курса',
+          developerMessage: error.message,
+        }
       }
     },
   },

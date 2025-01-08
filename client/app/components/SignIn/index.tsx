@@ -1,12 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
-import { ApolloError } from '@apollo/client'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useSignInMutation } from '@/graphql/generated'
-import { authValidation } from '@/utils/authValidation'
+import * as Yup from 'yup'
 import FormInput from '../forms/FormInput'
 
 interface Props {}
@@ -18,22 +17,50 @@ interface FormikValues {
 const SignIn: React.FC<Props> = () => {
   const searchParams = useSearchParams()
   const course_slug = searchParams.get('course_slug')
-  const [signIn] = useSignInMutation({})
-  const [errMsg, setErrMsg] = useState<string | undefined>()
+  const [signIn] = useSignInMutation({
+    notifyOnNetworkStatusChange: true,
+  })
+
+  const [error, setError] = useState('')
+
+  const yupMessages = {
+    email: {
+      required: 'Требуется указать email',
+      email: 'Неверный email или пароль',
+      max: 'Неверный email или пароль',
+    },
+    password: {
+      required: 'Требуется указать пароль',
+      min: 'Неверный email или пароль',
+      max: 'Неверный email или пароль',
+    },
+  }
+
+  const clearStates = () => {
+    setError('')
+  }
 
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const creds = { ...values }
-    actions.resetForm()
+    actions.resetForm({})
+    clearStates()
     try {
-      await signIn({
+      const { data } = await signIn({
         variables: {
           email: creds.email,
           password: creds.password,
         },
       })
-      location.assign(`${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000'}`)
-    } catch (error) {
-      setErrMsg((error as ApolloError).message)
+      if (!data?.signIn) {
+        throw new Error('Возникла ошибка при входе в аккаунт. Попробуйте снова через некоторое время.')
+      }
+      if (data.signIn.success) {
+        location.assign(`${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000'}`)
+      } else {
+        setError(data.signIn.message)
+      }
+    } catch (err: any) {
+      setError(err.message)
     }
   }
   return (
@@ -42,22 +69,79 @@ const SignIn: React.FC<Props> = () => {
         email: '',
         password: '',
       }}
-      validationSchema={authValidation}
+      validationSchema={Yup.object({
+        email: Yup.string()
+          .required(yupMessages.email.required)
+          .email(yupMessages.email.email)
+          .max(200, yupMessages.email.max),
+        password: Yup.string()
+          .required(yupMessages.password.required)
+          .min(6, yupMessages.password.min)
+          .max(200, yupMessages.password.max),
+      })}
       onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={false}
     >
-      <div className="loginForm">
-        <Form>
-          <FormInput name="email" type="email" label="Email" />
-          <FormInput name="password" type="password" label="Пароль" />
+      {({ errors, setFieldValue, setFieldError }) => {
+        useEffect(() => {
+          if (
+            (errors.email || errors.password) &&
+            !(errors.email == yupMessages.email.required) &&
+            !(errors.password == yupMessages.password.required)
+          ) {
+            setFieldValue('email', '')
+            setFieldValue('password', '')
+          }
+        }, [errors])
 
-          <button className="btn" type="submit">
-            Войти
-          </button>
-          <p className="status-text">{errMsg}</p>
-          <Link href="/register">Создать аккаунт</Link>
-          <Link href="/reset">Забыли пароль?</Link>
-        </Form>
-      </div>
+        return (
+          <div className="loginForm">
+            <Form noValidate={true}>
+              <FormInput
+                name="email"
+                type="email"
+                label="Email"
+                onInput={() => {
+                  if (errors.email) {
+                    setFieldError('email', '')
+                    if (!(errors.password == yupMessages.password.required)) {
+                      setFieldError('password', '')
+                    }
+                  }
+                }}
+              />
+              {errors.email == yupMessages.email.required && <p className="text-error text-red-500">{errors.email}</p>}
+              <FormInput
+                name="password"
+                type="password"
+                label="Пароль"
+                onInput={() => {
+                  if (errors.password) {
+                    setFieldError('password', '')
+                    if (!(errors.email == yupMessages.email.required)) {
+                      setFieldError('email', '')
+                    }
+                  }
+                }}
+              />
+              {errors.password == yupMessages.password.required && (
+                <p className="text-error text-red-500">{errors.password}</p>
+              )}
+              <button className="btn" type="submit">
+                Войти
+              </button>
+              {(error || errors.email || errors.password) &&
+                !(errors.email == yupMessages.email.required) &&
+                !(errors.password == yupMessages.password.required) && (
+                  <p className="text-error text-red-500">{error || errors.email || errors.password}</p>
+                )}
+              <Link href="/register">Создать аккаунт</Link>
+              <Link href="/reset">Забыли пароль?</Link>
+            </Form>
+          </div>
+        )
+      }}
     </Formik>
   )
 }

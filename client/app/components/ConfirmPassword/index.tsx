@@ -18,24 +18,42 @@ const ConfirmPassword: React.FC<Props> = () => {
   const [confirmPassword] = useConfirmPasswordMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [isUpdated, setIsUpdated] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+
+  const yupMessages = {
+    password: {
+      required: 'Требуется указать новый пароль',
+      min: 'Требуется указать пароль от 6 символов',
+      max: 'Пароль слишком длинный',
+    },
+  }
+
+  const clearStates = () => {
+    setMessage('')
+    setError('')
+  }
 
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const { password } = { ...values }
     actions.resetForm()
+    clearStates()
     try {
-      if (!key) return null
+      if (!key) throw new Error('Возникла ошибка при восстановлении пароля. Попробуйте снова через некоторое время.')
       const { data } = await confirmPassword({
         variables: {
           key: key,
           password: password,
         },
       })
-      if (data?.confirmPassword?.message) {
-        setIsUpdated(true)
-        setMessage(data?.confirmPassword?.message)
+
+      if (!data?.confirmPassword) {
+        throw new Error('Возникла ошибка при восстановлении пароля. Попробуйте снова через некоторое время.')
+      }
+      if (data.confirmPassword.success) {
+        setMessage(data.confirmPassword.message)
+      } else {
+        setError(data.confirmPassword.message)
       }
     } catch (err: any) {
       setError(err.message)
@@ -48,20 +66,47 @@ const ConfirmPassword: React.FC<Props> = () => {
         password: '',
       }}
       validationSchema={Yup.object({
-        password: Yup.string().min(6, 'Требуется указать пароль от 6 символов').max(200, 'Пароль слишком длинный'),
+        password: Yup.string()
+          .required(yupMessages.password.required)
+          .min(6, yupMessages.password.min)
+          .max(8, yupMessages.password.max),
       })}
       onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={false}
     >
-      <div className="confirmPasswordForm">
-        <Form>
-          <FormInput name="password" type="password" label="Новый пароль" />
-
-          <button className="btn" type="submit">
-            Сохранить
-          </button>
-          {isUpdated ? <p className="text-success">{message}</p> : <p className="text-error">{error}</p>}
-        </Form>
-      </div>
+      {({ errors, setFieldError }) => (
+        <div className="confirmPasswordForm">
+          <Form>
+            <FormInput
+              name="password"
+              type="password"
+              label="Новый пароль"
+              onInput={e => {
+                if (errors.password == yupMessages.password.required) {
+                  setFieldError('password', '')
+                }
+                if (errors.password == yupMessages.password.min) {
+                  if (Yup.string().min(6).isValidSync(e.currentTarget.value) && e.currentTarget.value) {
+                    setFieldError('password', '')
+                  }
+                }
+                if (errors.password == yupMessages.password.max) {
+                  if (Yup.string().max(8).isValidSync(e.currentTarget.value)) {
+                    setFieldError('password', '')
+                  }
+                }
+              }}
+            />
+            {errors.password && <p className="text-error text-red-500">{errors.password}</p>}
+            <button className="btn" type="submit" onClick={clearStates}>
+              Сохранить
+            </button>
+            {message && <p className="text-success">{message}</p>}
+            {error && <p className="text-error text-red-500">{error}</p>}
+          </Form>
+        </div>
+      )}
     </Formik>
   )
 }

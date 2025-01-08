@@ -3,9 +3,8 @@ import { gql } from '@apollo/client'
 export default gql`
   query ConfirmAccount($key: String!) {
     confirmAccount(key: $key) {
-      user {
-        email
-      }
+      success
+      message
       path
       sessionToken
     }

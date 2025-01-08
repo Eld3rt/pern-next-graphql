@@ -9,7 +9,7 @@ const Page: React.FC<Props> = async () => {
   return (
     <ul>
       Приобретенные курсы
-      {purchasedCourses?.map(course => (
+      {purchasedCourses.map(course => (
         <li key={course.id}>
           <Link href={`/user/courses/${course.slug}`}>
             <h3>{course.name}</h3>

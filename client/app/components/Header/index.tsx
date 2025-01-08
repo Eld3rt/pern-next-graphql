@@ -1,32 +1,76 @@
-import React from 'react'
+'use client'
+
 import Link from 'next/link'
-import { getCurrentUser } from '@/utils/getCurrentUser'
+import React, { useState, useContext } from 'react'
+import { IoClose } from 'react-icons/io5'
+import { GiHamburgerMenu } from 'react-icons/gi'
+import { SessionContext } from '@/app/providers/SessionProvider'
 import SignOutButton from '../buttons/SignOutButton'
 
-interface Props {}
+type Props = {}
 
-const Header: React.FC<Props> = async () => {
-  const currentUser = await getCurrentUser()
+const Header: React.FC<Props> = () => {
+  const { currentUser } = useContext(SessionContext)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(prev => !prev)
+  }
 
   return (
-    <header className="header">
-      <nav>
-        <ul>
-          <li>
-            <Link href="/">Главная</Link>
-          </li>
-          <li>
-            <Link href="/courses">Курсы</Link>
-          </li>
-          <li>
-            <Link href="/register">Регистрация</Link>
-          </li>
-          <li>
-            <Link href="/user/dashboard">Личный кабинет</Link>
-          </li>
-          <li>{!currentUser ? <Link href="/login">Вход</Link> : <SignOutButton />}</li>
-        </ul>
-      </nav>
+    <header className="relative pt-6">
+      <div className="header__inner container container--wide flex justify-between items-center">
+        <div className="logo">
+          <Link href="/" className="text-xl">
+            Главная
+          </Link>
+        </div>
+        <nav className={` ${isMobileMenuOpen ? 'header__nav header__nav--active' : 'header__nav'}`}>
+          <div className="logo">
+            <Link href="/" className="text-xl">
+              Главная
+            </Link>
+          </div>
+          <div className="flex">
+            <ul className="header__list">
+              <li className="flex sm:text-lg">
+                <Link href="/courses" className="header__nav-link">
+                  Курсы
+                </Link>
+              </li>
+
+              {!currentUser ? (
+                <>
+                  <li className="flex sm:text-lg">
+                    <Link href="/register" className="header__nav-link">
+                      Регистрация
+                    </Link>
+                  </li>
+                  <li className="flex sm:text-lg">
+                    <Link href="/login" className="header__nav-link">
+                      Вход
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="flex sm:text-lg">
+                    <Link href="/user/dashboard" className="header__nav-link">
+                      Личный кабинет
+                    </Link>
+                  </li>
+                  <li className="flex sm:text-lg">
+                    <SignOutButton />
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
+        </nav>
+        <button className="header__mobile-menu" onClick={toggleMobileMenu}>
+          {isMobileMenuOpen ? <IoClose className="w-8 h-8" /> : <GiHamburgerMenu className="w-8 h-8" />}
+        </button>
+      </div>
     </header>
   )
 }

@@ -1,7 +1,7 @@
 import Mail from 'nodemailer/lib/mailer'
 
 interface EmailInput {
-  name: string | null
+  name: string | null | undefined
   email: string
   uuid: string
 }

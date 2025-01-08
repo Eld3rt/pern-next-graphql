@@ -19,20 +19,27 @@ export type Scalars = {
 
 export type ConfirmAccountResponse = {
   __typename?: 'ConfirmAccountResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
+  message: Scalars['String']['output'];
   path?: Maybe<Scalars['String']['output']>;
   sessionToken?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
   user?: Maybe<User>;
 };
 
 export type ConfirmEmailResponse = {
   __typename?: 'ConfirmEmailResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
   user?: Maybe<User>;
 };
 
 export type ConfirmPasswordResponse = {
   __typename?: 'ConfirmPasswordResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type Course = {
@@ -53,14 +60,14 @@ export type Lesson = {
 export type Mutation = {
   __typename?: 'Mutation';
   confirmPassword?: Maybe<ConfirmPasswordResponse>;
-  purchaseCourse?: Maybe<PurchaseCourseResponse>;
-  resetPassword?: Maybe<ResetPasswordResponse>;
-  signIn?: Maybe<SignInResponse>;
-  signOut?: Maybe<SignOutResponse>;
-  signUp?: Maybe<SignUpResponse>;
-  updateEmail?: Maybe<UpdateEmailResponse>;
-  updatePassword?: Maybe<UpdatePasswordResponse>;
-  updateUserName?: Maybe<UpdateUserNameResponse>;
+  purchaseCourse: PurchaseCourseResponse;
+  resetPassword: ResetPasswordResponse;
+  signIn: SignInResponse;
+  signOut: SignOutResponse;
+  signUp: SignUpResponse;
+  updateEmail: UpdateEmailResponse;
+  updatePassword: UpdatePasswordResponse;
+  updateUserName: UpdateUserNameResponse;
 };
 
 
@@ -88,7 +95,7 @@ export type MutationSignInArgs = {
 
 export type MutationSignUpArgs = {
   email: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   path?: InputMaybe<Scalars['String']['input']>;
 };
@@ -111,18 +118,21 @@ export type MutationUpdateUserNameArgs = {
 
 export type PurchaseCourseResponse = {
   __typename?: 'PurchaseCourseResponse';
+  course?: Maybe<Course>;
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  confirmAccount?: Maybe<ConfirmAccountResponse>;
-  confirmEmail?: Maybe<ConfirmEmailResponse>;
+  confirmAccount: ConfirmAccountResponse;
+  confirmEmail: ConfirmEmailResponse;
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
   getPurchasedCourseData?: Maybe<Course>;
-  getPurchasedCourses?: Maybe<Array<Course>>;
-  hasCourseAccess?: Maybe<Scalars['Boolean']['output']>;
+  getPurchasedCourses: Array<Course>;
+  hasCourseAccess: Scalars['Boolean']['output'];
   me?: Maybe<User>;
 };
 
@@ -153,37 +163,53 @@ export type QueryHasCourseAccessArgs = {
 
 export type ResetPasswordResponse = {
   __typename?: 'ResetPasswordResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type SignInResponse = {
   __typename?: 'SignInResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   existingUser?: Maybe<User>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type SignOutResponse = {
   __typename?: 'SignOutResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type SignUpResponse = {
   __typename?: 'SignUpResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type UpdateEmailResponse = {
   __typename?: 'UpdateEmailResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type UpdatePasswordResponse = {
   __typename?: 'UpdatePasswordResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type UpdateUserNameResponse = {
   __typename?: 'UpdateUserNameResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+  user?: Maybe<User>;
 };
 
 export type User = {
@@ -209,21 +235,21 @@ export type ConfirmPasswordMutationVariables = Exact<{
 }>;
 
 
-export type ConfirmPasswordMutation = { __typename?: 'Mutation', confirmPassword?: { __typename?: 'ConfirmPasswordResponse', message: string } | null };
+export type ConfirmPasswordMutation = { __typename?: 'Mutation', confirmPassword?: { __typename?: 'ConfirmPasswordResponse', success: boolean, message: string } | null };
 
 export type PurchaseCourseMutationVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type PurchaseCourseMutation = { __typename?: 'Mutation', purchaseCourse?: { __typename?: 'PurchaseCourseResponse', message: string } | null };
+export type PurchaseCourseMutation = { __typename?: 'Mutation', purchaseCourse: { __typename?: 'PurchaseCourseResponse', success: boolean, message: string } };
 
 export type ResetPasswordMutationVariables = Exact<{
   email: Scalars['String']['input'];
 }>;
 
 
-export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword?: { __typename?: 'ResetPasswordResponse', message: string } | null };
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'ResetPasswordResponse', success: boolean, message: string } };
 
 export type SignInMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -231,29 +257,29 @@ export type SignInMutationVariables = Exact<{
 }>;
 
 
-export type SignInMutation = { __typename?: 'Mutation', signIn?: { __typename?: 'SignInResponse', existingUser?: { __typename?: 'User', email: string } | null } | null };
+export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'SignInResponse', success: boolean, message: string } };
 
 export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SignOutMutation = { __typename?: 'Mutation', signOut?: { __typename?: 'SignOutResponse', message: string } | null };
+export type SignOutMutation = { __typename?: 'Mutation', signOut: { __typename?: 'SignOutResponse', success: boolean } };
 
 export type SignUpMutationVariables = Exact<{
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   path?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpResponse', message: string } | null };
+export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpResponse', success: boolean, message: string } };
 
 export type UpdateEmailMutationVariables = Exact<{
   email: Scalars['String']['input'];
 }>;
 
 
-export type UpdateEmailMutation = { __typename?: 'Mutation', updateEmail?: { __typename?: 'UpdateEmailResponse', message: string } | null };
+export type UpdateEmailMutation = { __typename?: 'Mutation', updateEmail: { __typename?: 'UpdateEmailResponse', success: boolean, message: string } };
 
 export type UpdatePasswordMutationVariables = Exact<{
   oldPassword: Scalars['String']['input'];
@@ -261,28 +287,28 @@ export type UpdatePasswordMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword?: { __typename?: 'UpdatePasswordResponse', message: string } | null };
+export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword: { __typename?: 'UpdatePasswordResponse', success: boolean, message: string } };
 
 export type UpdateUserNameMutationVariables = Exact<{
   newName: Scalars['String']['input'];
 }>;
 
 
-export type UpdateUserNameMutation = { __typename?: 'Mutation', updateUserName?: { __typename?: 'UpdateUserNameResponse', message: string } | null };
+export type UpdateUserNameMutation = { __typename?: 'Mutation', updateUserName: { __typename?: 'UpdateUserNameResponse', success: boolean, message: string } };
 
 export type ConfirmAccountQueryVariables = Exact<{
   key: Scalars['String']['input'];
 }>;
 
 
-export type ConfirmAccountQuery = { __typename?: 'Query', confirmAccount?: { __typename?: 'ConfirmAccountResponse', path?: string | null, sessionToken?: string | null, user?: { __typename?: 'User', email: string } | null } | null };
+export type ConfirmAccountQuery = { __typename?: 'Query', confirmAccount: { __typename?: 'ConfirmAccountResponse', success: boolean, message: string, path?: string | null, sessionToken?: string | null } };
 
 export type ConfirmEmailQueryVariables = Exact<{
   key: Scalars['String']['input'];
 }>;
 
 
-export type ConfirmEmailQuery = { __typename?: 'Query', confirmEmail?: { __typename?: 'ConfirmEmailResponse', message: string, user?: { __typename?: 'User', email: string } | null } | null };
+export type ConfirmEmailQuery = { __typename?: 'Query', confirmEmail: { __typename?: 'ConfirmEmailResponse', success: boolean, message: string } };
 
 export type GetCourseDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -306,7 +332,7 @@ export type GetCoursesQuery = { __typename?: 'Query', getCourses: Array<{ __type
 export type GetPurchasedCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses?: Array<{ __typename?: 'Course', id: number, name: string, slug?: string | null }> | null };
+export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses: Array<{ __typename?: 'Course', id: number, name: string, slug?: string | null }> };
 
 export type GetPurchasedCourseDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -372,6 +398,7 @@ export const UserFragmentDoc = gql`
 export const ConfirmPasswordDocument = gql`
     mutation ConfirmPassword($key: String!, $password: String!) {
   confirmPassword(key: $key, password: $password) {
+    success
     message
   }
 }
@@ -406,6 +433,7 @@ export type ConfirmPasswordMutationOptions = Apollo.BaseMutationOptions<ConfirmP
 export const PurchaseCourseDocument = gql`
     mutation PurchaseCourse($slug: String!) {
   purchaseCourse(slug: $slug) {
+    success
     message
   }
 }
@@ -439,6 +467,7 @@ export type PurchaseCourseMutationOptions = Apollo.BaseMutationOptions<PurchaseC
 export const ResetPasswordDocument = gql`
     mutation ResetPassword($email: String!) {
   resetPassword(email: $email) {
+    success
     message
   }
 }
@@ -472,9 +501,8 @@ export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPassw
 export const SignInDocument = gql`
     mutation SignIn($email: String!, $password: String!) {
   signIn(email: $email, password: $password) {
-    existingUser {
-      email
-    }
+    success
+    message
   }
 }
     `;
@@ -508,7 +536,7 @@ export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, S
 export const SignOutDocument = gql`
     mutation SignOut {
   signOut {
-    message
+    success
   }
 }
     `;
@@ -538,8 +566,9 @@ export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
 export type SignOutMutationResult = Apollo.MutationResult<SignOutMutation>;
 export type SignOutMutationOptions = Apollo.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
 export const SignUpDocument = gql`
-    mutation signUp($name: String!, $email: String!, $password: String!, $path: String) {
+    mutation signUp($name: String, $email: String!, $password: String!, $path: String) {
   signUp(name: $name, email: $email, password: $password, path: $path) {
+    success
     message
   }
 }
@@ -576,6 +605,7 @@ export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, S
 export const UpdateEmailDocument = gql`
     mutation UpdateEmail($email: String!) {
   updateEmail(email: $email) {
+    success
     message
   }
 }
@@ -609,6 +639,7 @@ export type UpdateEmailMutationOptions = Apollo.BaseMutationOptions<UpdateEmailM
 export const UpdatePasswordDocument = gql`
     mutation UpdatePassword($oldPassword: String!, $newPassword: String!) {
   updatePassword(oldPassword: $oldPassword, newPassword: $newPassword) {
+    success
     message
   }
 }
@@ -643,6 +674,7 @@ export type UpdatePasswordMutationOptions = Apollo.BaseMutationOptions<UpdatePas
 export const UpdateUserNameDocument = gql`
     mutation UpdateUserName($newName: String!) {
   updateUserName(newName: $newName) {
+    success
     message
   }
 }
@@ -676,9 +708,8 @@ export type UpdateUserNameMutationOptions = Apollo.BaseMutationOptions<UpdateUse
 export const ConfirmAccountDocument = gql`
     query ConfirmAccount($key: String!) {
   confirmAccount(key: $key) {
-    user {
-      email
-    }
+    success
+    message
     path
     sessionToken
   }
@@ -720,9 +751,7 @@ export type ConfirmAccountQueryResult = Apollo.QueryResult<ConfirmAccountQuery, 
 export const ConfirmEmailDocument = gql`
     query ConfirmEmail($key: String!) {
   confirmEmail(key: $key) {
-    user {
-      email
-    }
+    success
     message
   }
 }

@@ -21,7 +21,7 @@ const SignOutButton: React.FC<Props> = () => {
   }
   return (
     <>
-      <button className="btn" type="submit" onClick={handleClick}>
+      <button className="header__nav-link" type="submit" onClick={handleClick}>
         Выход
       </button>
     </>

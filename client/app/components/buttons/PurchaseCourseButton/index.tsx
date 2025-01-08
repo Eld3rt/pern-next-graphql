@@ -17,23 +17,34 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
     notifyOnNetworkStatusChange: true,
   })
 
-  const [isPurchased, setIsPurchased] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+
+  const clearStates = () => {
+    setMessage('')
+    setError('')
+  }
 
   const handleClick = async () => {
     if (!currentUser) {
       router.push(`/register?course_slug=${slug}`)
-      return
     }
+
+    clearStates()
+    setIsSubmitted(true)
 
     try {
       const { data } = await purchaseCourse({ variables: { slug } })
-      if (data?.purchaseCourse?.message) {
-        setIsPurchased(true)
+
+      if (!data?.purchaseCourse) {
+        throw new Error('Ошибка при приобретении курса')
+      }
+
+      if (data?.purchaseCourse.success) {
         setMessage(data.purchaseCourse.message)
       } else {
-        throw new Error('Ошибка при приобретении курса')
+        setError(data.purchaseCourse.message)
       }
     } catch (err: any) {
       setError(err.message)
@@ -42,15 +53,14 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
 
   return (
     <>
-      {isPurchased ? (
-        <p className="text-success">{message}</p>
-      ) : error ? (
-        <p className="text-error">{error}</p>
-      ) : (
+      {!isSubmitted && (
         <button className="btn" onClick={handleClick}>
           Приобрести курс
         </button>
       )}
+
+      {message && <p className="text-success">{message}</p>}
+      {error && <p className="text-error text-red-500">{error}</p>}
     </>
   )
 }

@@ -7,7 +7,7 @@ const Page: React.FC<Props> = async () => {
 
   return (
     <main>
-      <h1>Привет, {currentUser?.name ?? currentUser?.email ?? 'пользователь'}!</h1>
+      <h1>Привет, {currentUser?.name?.trim() || currentUser?.email || 'пользователь'}!</h1>
     </main>
   )
 }
