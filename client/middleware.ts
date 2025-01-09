@@ -13,9 +13,38 @@ export const middleware = async (request: NextRequest) => {
     const coursePagePattern = /^\/user\/courses\/[a-z0-9]+(?:-[a-z0-9]+)*$/
     return coursePagePattern.test(pathname)
   }
+  const isOnResetPath = pathname.startsWith('/user/confirm/reset')
 
-  if (!authToken && !isOnLoginPath && !isOnRegisterPath) {
+  if (!authToken && !isOnLoginPath && !isOnRegisterPath && !isOnResetPath) {
     return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  if (isOnResetPath) {
+    const key = request.nextUrl.searchParams.get('key')
+    console.log(key)
+    const res = await fetch('http://localhost:3000/graphql', {
+      method: 'POST',
+      headers: {
+        Cookie: `${`sid=${authToken}`}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: 'query HasCachedKey($key: String!) { hasCachedKey(key: $key) }',
+        variables: { key: key },
+      }),
+    })
+
+    const {
+      data: { hasCachedKey },
+    } = await res.json()
+
+    console.log(hasCachedKey)
+
+    if (hasCachedKey) {
+      return NextResponse.next()
+    }
+
+    return NextResponse.redirect(new URL('/404', request.url))
   }
 
   const res = await fetch('http://localhost:3000/graphql', {
@@ -75,5 +104,13 @@ export const middleware = async (request: NextRequest) => {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|reset|favicon.ico|robots.txt|courses|user/confirm|$).*)'],
+  matcher: [
+    '/user',
+    '/user/confirm/reset',
+    '/user/courses/:path*',
+    '/user/dashboard',
+    '/user/settings/:path*',
+    '/login',
+    '/register',
+  ],
 }

@@ -78,30 +78,34 @@ const ConfirmPassword: React.FC<Props> = () => {
       {({ errors, setFieldError }) => (
         <div className="confirmPasswordForm">
           <Form>
-            <FormInput
-              name="password"
-              type="password"
-              label="Новый пароль"
-              onInput={e => {
-                if (errors.password == yupMessages.password.required) {
-                  setFieldError('password', '')
-                }
-                if (errors.password == yupMessages.password.min) {
-                  if (Yup.string().min(6).isValidSync(e.currentTarget.value) && e.currentTarget.value) {
+            {!message && (
+              <FormInput
+                name="password"
+                type="password"
+                label="Новый пароль"
+                onInput={e => {
+                  if (errors.password == yupMessages.password.required) {
                     setFieldError('password', '')
                   }
-                }
-                if (errors.password == yupMessages.password.max) {
-                  if (Yup.string().max(8).isValidSync(e.currentTarget.value)) {
-                    setFieldError('password', '')
+                  if (errors.password == yupMessages.password.min) {
+                    if (Yup.string().min(6).isValidSync(e.currentTarget.value) && e.currentTarget.value) {
+                      setFieldError('password', '')
+                    }
                   }
-                }
-              }}
-            />
-            {errors.password && <p className="text-error text-red-500">{errors.password}</p>}
-            <button className="btn" type="submit" onClick={clearStates}>
-              Сохранить
-            </button>
+                  if (errors.password == yupMessages.password.max) {
+                    if (Yup.string().max(8).isValidSync(e.currentTarget.value)) {
+                      setFieldError('password', '')
+                    }
+                  }
+                }}
+              />
+            )}
+            {!message && errors.password && <p className="text-error text-red-500">{errors.password}</p>}
+            {!message && (
+              <button className="btn" type="submit" onClick={clearStates}>
+                Сохранить
+              </button>
+            )}
             {message && <p className="text-success">{message}</p>}
             {error && <p className="text-error text-red-500">{error}</p>}
           </Form>

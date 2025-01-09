@@ -21,6 +21,7 @@ import { updatePassword } from '../../../prisma/functions/updatePassword.js'
 import { createCachedReset } from '../../../redis/functions/createCachedReset.js'
 import { verifyPassword } from '../../../nodemailer/verifyPassword.js'
 import { getCachedReset } from '../../../redis/functions/getCachedReset.js'
+import { hasKey } from '../../../redis/functions/hasKey.js'
 
 const crypto = await import('node:crypto')
 
@@ -29,6 +30,7 @@ export const typeDefs = gql`
     me: User
     confirmAccount(key: String!): ConfirmAccountResponse!
     confirmEmail(key: String!): ConfirmEmailResponse!
+    hasCachedKey(key: String!): Boolean!
   }
 
   extend type Mutation {
@@ -183,6 +185,12 @@ export const resolvers: Resolvers = {
           developerMessage: error.message,
         }
       }
+    },
+    hasCachedKey: async (_, args, __) => {
+      const { key } = args
+      const isCached = await hasKey(key)
+
+      return !!isCached
     },
   },
   Mutation: {

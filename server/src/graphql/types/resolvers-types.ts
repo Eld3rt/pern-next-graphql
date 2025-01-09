@@ -134,6 +134,7 @@ export type Query = {
   getCourses: Array<Course>;
   getPurchasedCourseData?: Maybe<Course>;
   getPurchasedCourses: Array<Course>;
+  hasCachedKey: Scalars['Boolean']['output'];
   hasCourseAccess: Scalars['Boolean']['output'];
   me?: Maybe<User>;
 };
@@ -156,6 +157,11 @@ export type QueryGetCourseDataArgs = {
 
 export type QueryGetPurchasedCourseDataArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryHasCachedKeyArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -404,6 +410,7 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   getCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   getPurchasedCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetPurchasedCourseDataArgs, 'slug'>>;
   getPurchasedCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
+  hasCachedKey?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryHasCachedKeyArgs, 'key'>>;
   hasCourseAccess?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryHasCourseAccessArgs, 'slug'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;

@@ -17,7 +17,6 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
     notifyOnNetworkStatusChange: true,
   })
 
-  const [isSubmitted, setIsSubmitted] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -32,7 +31,6 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
     }
 
     clearStates()
-    setIsSubmitted(true)
 
     try {
       const { data } = await purchaseCourse({ variables: { slug } })
@@ -53,7 +51,7 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
 
   return (
     <>
-      {!isSubmitted && (
+      {!message && (
         <button className="btn" onClick={handleClick}>
           Приобрести курс
         </button>
