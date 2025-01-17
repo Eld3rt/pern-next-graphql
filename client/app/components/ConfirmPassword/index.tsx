@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useSearchParams } from 'next/navigation'
@@ -15,11 +14,9 @@ interface FormikValues {
 const ConfirmPassword: React.FC<Props> = () => {
   const searchParams = useSearchParams()
   const key = searchParams.get('key')
-  const [confirmPassword] = useConfirmPasswordMutation({
+  const [confirmPassword, { data, error }] = useConfirmPasswordMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
 
   const yupMessages = {
     password: {
@@ -29,35 +26,16 @@ const ConfirmPassword: React.FC<Props> = () => {
     },
   }
 
-  const clearStates = () => {
-    setMessage('')
-    setError('')
-  }
-
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const { password } = { ...values }
     actions.resetForm()
-    clearStates()
-    try {
-      if (!key) throw new Error('Возникла ошибка при восстановлении пароля. Попробуйте снова через некоторое время.')
-      const { data } = await confirmPassword({
-        variables: {
-          key: key,
-          password: password,
-        },
-      })
-
-      if (!data?.confirmPassword) {
-        throw new Error('Возникла ошибка при восстановлении пароля. Попробуйте снова через некоторое время.')
-      }
-      if (data.confirmPassword.success) {
-        setMessage(data.confirmPassword.message)
-      } else {
-        setError(data.confirmPassword.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+    if (!key) throw new Error('Возникла ошибка при восстановлении пароля. Попробуйте снова через некоторое время.')
+    await confirmPassword({
+      variables: {
+        key: key,
+        password: password,
+      },
+    })
   }
 
   return (
@@ -78,7 +56,7 @@ const ConfirmPassword: React.FC<Props> = () => {
       {({ errors, setFieldError }) => (
         <div className="confirmPasswordForm">
           <Form>
-            {!message && (
+            {!data?.confirmPassword && (
               <FormInput
                 name="password"
                 type="password"
@@ -93,21 +71,23 @@ const ConfirmPassword: React.FC<Props> = () => {
                     }
                   }
                   if (errors.password == yupMessages.password.max) {
-                    if (Yup.string().max(8).isValidSync(e.currentTarget.value)) {
+                    if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
                       setFieldError('password', '')
                     }
                   }
                 }}
               />
             )}
-            {!message && errors.password && <p className="text-error text-red-500">{errors.password}</p>}
-            {!message && (
-              <button className="btn" type="submit" onClick={clearStates}>
+            {errors.password && <p className="text-error text-red-500">{errors.password}</p>}
+            {!data?.confirmPassword && (
+              <button className="btn" type="submit">
                 Сохранить
               </button>
             )}
-            {message && <p className="text-success">{message}</p>}
-            {error && <p className="text-error text-red-500">{error}</p>}
+            {data?.confirmPassword.success && <p className="text-success">{data.confirmPassword.message}</p>}
+            {(error || (data?.confirmPassword && !data.confirmPassword.success)) && (
+              <p className="text-error text-red-500">{error?.message || data?.confirmPassword.message}</p>
+            )}
           </Form>
         </div>
       )}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -17,11 +17,9 @@ interface FormikValues {
 const SignIn: React.FC<Props> = () => {
   const searchParams = useSearchParams()
   const course_slug = searchParams.get('course_slug')
-  const [signIn] = useSignInMutation({
+  const [signIn, { data, error }] = useSignInMutation({
     notifyOnNetworkStatusChange: true,
   })
-
-  const [error, setError] = useState('')
 
   const yupMessages = {
     email: {
@@ -36,31 +34,17 @@ const SignIn: React.FC<Props> = () => {
     },
   }
 
-  const clearStates = () => {
-    setError('')
-  }
-
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const creds = { ...values }
     actions.resetForm({})
-    clearStates()
-    try {
-      const { data } = await signIn({
-        variables: {
-          email: creds.email,
-          password: creds.password,
-        },
-      })
-      if (!data?.signIn) {
-        throw new Error('Возникла ошибка при входе в аккаунт. Попробуйте снова через некоторое время.')
-      }
-      if (data.signIn.success) {
-        location.assign(`${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000'}`)
-      } else {
-        setError(data.signIn.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
+    const { data } = await signIn({
+      variables: {
+        email: creds.email,
+        password: creds.password,
+      },
+    })
+    if (data?.signIn.success) {
+      location.assign(`${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000'}`)
     }
   }
   return (
@@ -131,10 +115,12 @@ const SignIn: React.FC<Props> = () => {
               <button className="btn" type="submit">
                 Войти
               </button>
-              {(error || errors.email || errors.password) &&
+              {(error || errors.email || errors.password || (data?.signIn && !data.signIn.success)) &&
                 !(errors.email == yupMessages.email.required) &&
                 !(errors.password == yupMessages.password.required) && (
-                  <p className="text-error text-red-500">{error || errors.email || errors.password}</p>
+                  <p className="text-error text-red-500">
+                    {error?.message || errors.email || errors.password || data?.signIn.message}
+                  </p>
                 )}
               <Link href="/register">Создать аккаунт</Link>
               <Link href="/reset">Забыли пароль?</Link>

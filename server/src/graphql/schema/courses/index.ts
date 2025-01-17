@@ -6,6 +6,7 @@ import { getCourses } from '../../../prisma/functions/getCourses'
 import { getCourseData } from '../../../prisma/functions/getCourseData'
 import { getPurchasedCourses } from '../../../prisma/functions/getPurchasedCourses'
 import { hasCourse } from '../../../prisma/functions/hasCourse'
+import { getSearchedCourses } from '../../../prisma/functions/getSearchedCourses'
 
 export const typeDefs = gql`
   extend type Query {
@@ -14,6 +15,7 @@ export const typeDefs = gql`
     getPurchasedCourses: [Course!]!
     getPurchasedCourseData(slug: String!): Course
     hasCourseAccess(slug: String!): Boolean!
+    getCoursesByString(query: String!): [Course!]!
   }
 
   extend type Mutation {
@@ -79,6 +81,11 @@ export const resolvers: Resolvers = {
       const isPurchased = await hasCourse(args, currentUser)
 
       return isPurchased
+    },
+    getCoursesByString: async (_, args, __) => {
+      const courses = await getSearchedCourses(args)
+
+      return courses
     },
   },
   Mutation: {

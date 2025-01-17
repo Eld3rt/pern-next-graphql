@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useUpdatePasswordMutation } from '@/graphql/generated'
@@ -13,12 +13,9 @@ interface FormikValues {
 }
 
 const UpdatePassword: React.FC<Props> = () => {
-  const [updatePassword] = useUpdatePasswordMutation({
+  const [updatePassword, { data, error }] = useUpdatePasswordMutation({
     notifyOnNetworkStatusChange: true,
   })
-
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
 
   const yupMessages = {
     oldPassword: {
@@ -33,35 +30,15 @@ const UpdatePassword: React.FC<Props> = () => {
     },
   }
 
-  const clearStates = () => {
-    setMessage('')
-    setError('')
-  }
-
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const { oldPassword, newPassword } = { ...values }
     actions.resetForm()
-    clearStates()
-    try {
-      const { data } = await updatePassword({
-        variables: {
-          oldPassword: oldPassword,
-          newPassword: newPassword,
-        },
-      })
-
-      if (!data?.updatePassword) {
-        throw new Error('Возникла ошибка при изменении пароля. Попробуйте снова через некоторое время.')
-      }
-
-      if (data.updatePassword.success) {
-        setMessage(data.updatePassword.message)
-      } else {
-        setError(data.updatePassword.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+    await updatePassword({
+      variables: {
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      },
+    })
   }
 
   return (
@@ -146,16 +123,18 @@ const UpdatePassword: React.FC<Props> = () => {
                 }}
               />
               {errors.newPassword && <p className="text-error text-red-500">{errors.newPassword}</p>}
-              <button className="btn" type="submit" onClick={clearStates}>
+              <button className="btn" type="submit">
                 Сохранить
               </button>
-              {message && <p className="text-success">{message}</p>}
-              {(error || errors.oldPassword) &&
+              {data?.updatePassword.success && <p className="text-success">{data.updatePassword.message}</p>}
+              {(error || errors.oldPassword || (data?.updatePassword && !data.updatePassword.success)) &&
                 !(errors.oldPassword == yupMessages.oldPassword.required) &&
                 !(errors.newPassword == yupMessages.newPassword.required) &&
                 !(errors.newPassword == yupMessages.newPassword.min) &&
                 !(errors.newPassword == yupMessages.newPassword.max) && (
-                  <p className="text-error text-red-500">{error || errors.oldPassword}</p>
+                  <p className="text-error text-red-500">
+                    {error?.message || errors.oldPassword || data?.updatePassword.message}
+                  </p>
                 )}
             </Form>
           </div>

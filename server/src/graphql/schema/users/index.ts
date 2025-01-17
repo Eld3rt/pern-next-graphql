@@ -41,7 +41,7 @@ export const typeDefs = gql`
     updateEmail(email: String!): UpdateEmailResponse!
     updatePassword(oldPassword: String!, newPassword: String!): UpdatePasswordResponse!
     resetPassword(email: String!): ResetPasswordResponse!
-    confirmPassword(key: String!, password: String!): ConfirmPasswordResponse
+    confirmPassword(key: String!, password: String!): ConfirmPasswordResponse!
   }
 
   type User {

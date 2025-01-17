@@ -59,7 +59,7 @@ export type Lesson = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  confirmPassword?: Maybe<ConfirmPasswordResponse>;
+  confirmPassword: ConfirmPasswordResponse;
   purchaseCourse: PurchaseCourseResponse;
   resetPassword: ResetPasswordResponse;
   signIn: SignInResponse;
@@ -130,8 +130,10 @@ export type Query = {
   confirmEmail: ConfirmEmailResponse;
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
+  getCoursesByString: Array<Course>;
   getPurchasedCourseData?: Maybe<Course>;
   getPurchasedCourses: Array<Course>;
+  hasCachedKey: Scalars['Boolean']['output'];
   hasCourseAccess: Scalars['Boolean']['output'];
   me?: Maybe<User>;
 };
@@ -152,8 +154,18 @@ export type QueryGetCourseDataArgs = {
 };
 
 
+export type QueryGetCoursesByStringArgs = {
+  query: Scalars['String']['input'];
+};
+
+
 export type QueryGetPurchasedCourseDataArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryHasCachedKeyArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -235,7 +247,7 @@ export type ConfirmPasswordMutationVariables = Exact<{
 }>;
 
 
-export type ConfirmPasswordMutation = { __typename?: 'Mutation', confirmPassword?: { __typename?: 'ConfirmPasswordResponse', success: boolean, message: string } | null };
+export type ConfirmPasswordMutation = { __typename?: 'Mutation', confirmPassword: { __typename?: 'ConfirmPasswordResponse', success: boolean, message: string } };
 
 export type PurchaseCourseMutationVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -328,6 +340,13 @@ export type GetCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCoursesQuery = { __typename?: 'Query', getCourses: Array<{ __typename?: 'Course', id: number, name: string, slug?: string | null }> };
+
+export type GetCoursesByStringQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+}>;
+
+
+export type GetCoursesByStringQuery = { __typename?: 'Query', getCoursesByString: Array<{ __typename?: 'Course', id: number, name: string, slug?: string | null }> };
 
 export type GetPurchasedCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -908,6 +927,46 @@ export type GetCoursesQueryHookResult = ReturnType<typeof useGetCoursesQuery>;
 export type GetCoursesLazyQueryHookResult = ReturnType<typeof useGetCoursesLazyQuery>;
 export type GetCoursesSuspenseQueryHookResult = ReturnType<typeof useGetCoursesSuspenseQuery>;
 export type GetCoursesQueryResult = Apollo.QueryResult<GetCoursesQuery, GetCoursesQueryVariables>;
+export const GetCoursesByStringDocument = gql`
+    query GetCoursesByString($query: String!) {
+  getCoursesByString(query: $query) {
+    ...CourseInfo
+  }
+}
+    ${CourseInfoFragmentDoc}`;
+
+/**
+ * __useGetCoursesByStringQuery__
+ *
+ * To run a query within a React component, call `useGetCoursesByStringQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCoursesByStringQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCoursesByStringQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *   },
+ * });
+ */
+export function useGetCoursesByStringQuery(baseOptions: Apollo.QueryHookOptions<GetCoursesByStringQuery, GetCoursesByStringQueryVariables> & ({ variables: GetCoursesByStringQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>(GetCoursesByStringDocument, options);
+      }
+export function useGetCoursesByStringLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>(GetCoursesByStringDocument, options);
+        }
+export function useGetCoursesByStringSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>(GetCoursesByStringDocument, options);
+        }
+export type GetCoursesByStringQueryHookResult = ReturnType<typeof useGetCoursesByStringQuery>;
+export type GetCoursesByStringLazyQueryHookResult = ReturnType<typeof useGetCoursesByStringLazyQuery>;
+export type GetCoursesByStringSuspenseQueryHookResult = ReturnType<typeof useGetCoursesByStringSuspenseQuery>;
+export type GetCoursesByStringQueryResult = Apollo.QueryResult<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>;
 export const GetPurchasedCoursesDocument = gql`
     query GetPurchasedCourses {
   getPurchasedCourses {

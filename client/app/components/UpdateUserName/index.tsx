@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { useUpdateUserNameMutation } from '@/graphql/generated'
@@ -14,11 +13,9 @@ interface FormikValues {
 }
 
 const UpdateUserName: React.FC<Props> = ({ currentName }) => {
-  const [updateUserName] = useUpdateUserNameMutation({
+  const [updateUserName, { data, error }] = useUpdateUserNameMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
 
   const yupMessages = {
     name: {
@@ -26,33 +23,13 @@ const UpdateUserName: React.FC<Props> = ({ currentName }) => {
     },
   }
 
-  const clearStates = () => {
-    setMessage('')
-    setError('')
-  }
-
   const handleSubmit = async (values: FormikValues) => {
     const { name } = { ...values }
-    clearStates()
-    try {
-      const { data } = await updateUserName({
-        variables: {
-          newName: name,
-        },
-      })
-
-      if (!data?.updateUserName) {
-        throw new Error('Возникла ошибка при изменении данных. Попробуйте снова через некоторое время.')
-      }
-
-      if (data.updateUserName.success) {
-        setMessage(data.updateUserName.message)
-      } else {
-        setError(data.updateUserName.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+    await updateUserName({
+      variables: {
+        newName: name,
+      },
+    })
   }
 
   return (
@@ -62,7 +39,12 @@ const UpdateUserName: React.FC<Props> = ({ currentName }) => {
         name: Yup.string()
           .max(200, 'Имя слишком длинное')
           .test(() => {
-            clearStates()
+            if (data?.updateUserName) {
+              data.updateUserName.message = ''
+            }
+            if (error) {
+              error.message = ''
+            }
             return true
           }),
       })}
@@ -86,11 +68,13 @@ const UpdateUserName: React.FC<Props> = ({ currentName }) => {
               }}
             />
 
-            <button className="btn" type="submit" onClick={clearStates}>
+            <button className="btn" type="submit">
               Сохранить
             </button>
-            {message && <p className="text-success">{message}</p>}
-            {(error || errors.name) && <p className="text-error text-red-500">{error || errors.name}</p>}
+            {data?.updateUserName.success && <p className="text-success">{data.updateUserName.message}</p>}
+            {(error || errors.name || (data?.updateUserName && !data.updateUserName.success)) && (
+              <p className="text-error text-red-500">{error?.message || errors.name || data?.updateUserName.message}</p>
+            )}
           </Form>
         </div>
       )}

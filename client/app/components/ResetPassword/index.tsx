@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import Link from 'next/link'
@@ -13,11 +13,9 @@ interface FormikValues {
 }
 
 const ResetPassword: React.FC<Props> = () => {
-  const [resetPassword] = useResetPasswordMutation({
+  const [resetPassword, { data, error }] = useResetPasswordMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
 
   const yupMessages = {
     email: {
@@ -27,34 +25,14 @@ const ResetPassword: React.FC<Props> = () => {
     },
   }
 
-  const clearStates = () => {
-    setMessage('')
-    setError('')
-  }
-
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const { email } = { ...values }
     actions.resetForm()
-    clearStates()
-    try {
-      const { data } = await resetPassword({
-        variables: {
-          email: email,
-        },
-      })
-
-      if (!data?.resetPassword) {
-        throw new Error('Возникла ошибка при сбросе пароля. Попробуйте снова через некоторое время.')
-      }
-
-      if (data.resetPassword.success) {
-        setMessage(data.resetPassword.message)
-      } else {
-        setError(data.resetPassword.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+    await resetPassword({
+      variables: {
+        email: email,
+      },
+    })
   }
   return (
     <Formik
@@ -92,13 +70,16 @@ const ResetPassword: React.FC<Props> = () => {
                 }}
               />
               {errors.email == yupMessages.email.required && <p className="text-error text-red-500">{errors.email}</p>}
-              <button className="btn" type="submit" onClick={clearStates}>
+              <button className="btn" type="submit">
                 Сбросить пароль
               </button>
-              {message && <p className="text-success">{message}</p>}
-              {(error || errors.email) && !(errors.email == yupMessages.email.required) && (
-                <p className="text-error text-red-500">{error || errors.email}</p>
-              )}
+              {data?.resetPassword.success && <p className="text-success">{data.resetPassword.message}</p>}
+              {(error || errors.email || (data?.resetPassword && !data.resetPassword.success)) &&
+                !(errors.email == yupMessages.email.required) && (
+                  <p className="text-error text-red-500">
+                    {error?.message || errors.email || data?.resetPassword.message}
+                  </p>
+                )}
               <Link href={'/login'}>Вернуться на страницу входа</Link>
             </Form>
           </div>

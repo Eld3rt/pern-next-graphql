@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useSignUpMutation } from '@/graphql/generated'
 import * as Yup from 'yup'
@@ -18,11 +17,9 @@ interface FormikValues {
 const SignUp: React.FC<Props> = () => {
   const searchParams = useSearchParams()
   const course_slug = searchParams.get('course_slug')
-  const [signUp] = useSignUpMutation({
+  const [signUp, { data, error }] = useSignUpMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
 
   const yupMessages = {
     name: {
@@ -40,35 +37,17 @@ const SignUp: React.FC<Props> = () => {
     },
   }
 
-  const clearStates = () => {
-    setMessage('')
-    setError('')
-  }
-
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const creds = { ...values }
     actions.resetForm()
-    clearStates()
-    try {
-      const { data } = await signUp({
-        variables: {
-          name: creds.name,
-          email: creds.email,
-          password: creds.password,
-          path: course_slug,
-        },
-      })
-      if (!data?.signUp) {
-        throw new Error('Возникла ошибка при регистрации. Попробуйте снова через некоторое время.')
-      }
-      if (data.signUp.success) {
-        setMessage(data.signUp.message)
-      } else {
-        setError(data.signUp.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+    await signUp({
+      variables: {
+        name: creds.name,
+        email: creds.email,
+        password: creds.password,
+        path: course_slug,
+      },
+    })
   }
   return (
     <Formik
@@ -150,11 +129,13 @@ const SignUp: React.FC<Props> = () => {
               }}
             />
             {errors.password && <p className="text-error text-red-500">{errors.password}</p>}
-            <button className="btn" type="submit" onClick={clearStates}>
+            <button className="btn" type="submit">
               Зарегистрироваться
             </button>
-            {message && <p className="text-success">{message}</p>}
-            {error && <p className="text-error text-red-500">{error}</p>}
+            {data?.signUp.success && <p className="text-success">{data.signUp.message}</p>}
+            {(error || (data?.signUp && !data.signUp.success)) && (
+              <p className="text-error text-red-500">{error?.message || data?.signUp.message}</p>
+            )}
             <Link href={course_slug ? `/login?course_slug=${course_slug}` : '/login'}>Войти</Link>
           </Form>
         </div>

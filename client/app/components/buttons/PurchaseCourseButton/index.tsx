@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useContext } from 'react'
+import { useContext } from 'react'
 import { SessionContext } from '@/app/providers/SessionProvider'
 import { usePurchaseCourseMutation } from '@/graphql/generated'
 import { useRouter } from 'next/navigation'
@@ -13,52 +13,29 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
   const { currentUser } = useContext(SessionContext)
   const router = useRouter()
 
-  const [purchaseCourse] = usePurchaseCourseMutation({
+  const [purchaseCourse, { data, error }] = usePurchaseCourseMutation({
     notifyOnNetworkStatusChange: true,
   })
-
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
-
-  const clearStates = () => {
-    setMessage('')
-    setError('')
-  }
 
   const handleClick = async () => {
     if (!currentUser) {
       router.push(`/register?course_slug=${slug}`)
     }
-
-    clearStates()
-
-    try {
-      const { data } = await purchaseCourse({ variables: { slug } })
-
-      if (!data?.purchaseCourse) {
-        throw new Error('Ошибка при приобретении курса')
-      }
-
-      if (data?.purchaseCourse.success) {
-        setMessage(data.purchaseCourse.message)
-      } else {
-        setError(data.purchaseCourse.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+    await purchaseCourse({ variables: { slug } })
   }
 
   return (
     <>
-      {!message && (
+      {!data?.purchaseCourse && (
         <button className="btn" onClick={handleClick}>
           Приобрести курс
         </button>
       )}
 
-      {message && <p className="text-success">{message}</p>}
-      {error && <p className="text-error text-red-500">{error}</p>}
+      {data?.purchaseCourse.success && <p className="text-success">{data.purchaseCourse.message}</p>}
+      {(error || (data?.purchaseCourse && !data.purchaseCourse.success)) && (
+        <p className="text-error text-red-500">{error?.message || data?.purchaseCourse.message}</p>
+      )}
     </>
   )
 }

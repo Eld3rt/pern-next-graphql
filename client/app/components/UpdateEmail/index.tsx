@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { useUpdateEmailMutation } from '@/graphql/generated'
@@ -14,11 +13,9 @@ interface FormikValues {
 }
 
 const UpdateEmail: React.FC<Props> = ({ currentEmail }) => {
-  const [updateEmail] = useUpdateEmailMutation({
+  const [updateEmail, { data, error }] = useUpdateEmailMutation({
     notifyOnNetworkStatusChange: true,
   })
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
 
   const yupMessages = {
     email: {
@@ -28,33 +25,14 @@ const UpdateEmail: React.FC<Props> = ({ currentEmail }) => {
     },
   }
 
-  const clearStates = () => {
-    setMessage('')
-    setError('')
-  }
-
   const handleSubmit = async (values: FormikValues) => {
     const { email } = { ...values }
-    clearStates()
-    try {
-      const { data } = await updateEmail({
-        variables: {
-          email: email,
-        },
-      })
 
-      if (!data?.updateEmail) {
-        throw new Error('Возникла ошибка при изменении данных. Попробуйте снова через некоторое время.')
-      }
-
-      if (data.updateEmail.success) {
-        setMessage(data.updateEmail.message)
-      } else {
-        setError(data.updateEmail.message)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+    await updateEmail({
+      variables: {
+        email: email,
+      },
+    })
   }
 
   return (
@@ -93,11 +71,13 @@ const UpdateEmail: React.FC<Props> = ({ currentEmail }) => {
                 }
               }}
             />
-            <button className="btn" type="submit" onClick={clearStates}>
+            <button className="btn" type="submit">
               Сохранить
             </button>
-            {message && <p className="text-success">{message}</p>}
-            {(error || errors.email) && <p className="text-error text-red-500">{error || errors.email}</p>}
+            {data?.updateEmail.success && <p className="text-success">{data.updateEmail.message}</p>}
+            {(error || errors.email || (data?.updateEmail && !data.updateEmail.success)) && (
+              <p className="text-error text-red-500">{error?.message || errors.email || data?.updateEmail.message}</p>
+            )}
           </Form>
         </div>
       )}

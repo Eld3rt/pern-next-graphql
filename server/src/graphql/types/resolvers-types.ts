@@ -61,7 +61,7 @@ export type Lesson = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  confirmPassword?: Maybe<ConfirmPasswordResponse>;
+  confirmPassword: ConfirmPasswordResponse;
   purchaseCourse: PurchaseCourseResponse;
   resetPassword: ResetPasswordResponse;
   signIn: SignInResponse;
@@ -132,6 +132,7 @@ export type Query = {
   confirmEmail: ConfirmEmailResponse;
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
+  getCoursesByString: Array<Course>;
   getPurchasedCourseData?: Maybe<Course>;
   getPurchasedCourses: Array<Course>;
   hasCachedKey: Scalars['Boolean']['output'];
@@ -152,6 +153,11 @@ export type QueryConfirmEmailArgs = {
 
 export type QueryGetCourseDataArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryGetCoursesByStringArgs = {
+  query: Scalars['String']['input'];
 };
 
 
@@ -384,7 +390,7 @@ export type LessonResolvers<ContextType = MyContext, ParentType extends Resolver
 }>;
 
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  confirmPassword?: Resolver<Maybe<ResolversTypes['ConfirmPasswordResponse']>, ParentType, ContextType, RequireFields<MutationConfirmPasswordArgs, 'key' | 'password'>>;
+  confirmPassword?: Resolver<ResolversTypes['ConfirmPasswordResponse'], ParentType, ContextType, RequireFields<MutationConfirmPasswordArgs, 'key' | 'password'>>;
   purchaseCourse?: Resolver<ResolversTypes['PurchaseCourseResponse'], ParentType, ContextType, RequireFields<MutationPurchaseCourseArgs, 'slug'>>;
   resetPassword?: Resolver<ResolversTypes['ResetPasswordResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'email'>>;
   signIn?: Resolver<ResolversTypes['SignInResponse'], ParentType, ContextType, RequireFields<MutationSignInArgs, 'email' | 'password'>>;
@@ -408,6 +414,7 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   confirmEmail?: Resolver<ResolversTypes['ConfirmEmailResponse'], ParentType, ContextType, RequireFields<QueryConfirmEmailArgs, 'key'>>;
   getCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetCourseDataArgs, 'slug'>>;
   getCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
+  getCoursesByString?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetCoursesByStringArgs, 'query'>>;
   getPurchasedCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetPurchasedCourseDataArgs, 'slug'>>;
   getPurchasedCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   hasCachedKey?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryHasCachedKeyArgs, 'key'>>;
