@@ -19,21 +19,17 @@ const Header: React.FC<Props> = () => {
 
   return (
     <header className="relative pt-6">
-      <div className="header__inner container container--wide flex justify-between items-center">
+      <div className="header__inner custom-container custom-container--wide flex justify-between items-center">
         <div className="logo">
-          <Link href="/" className="text-xl">
-            Главная
-          </Link>
+          <Link href="/">Главная</Link>
         </div>
         <nav className={` ${isMobileMenuOpen ? 'header__nav header__nav--active' : 'header__nav'}`}>
           <div className="logo">
-            <Link href="/" className="text-xl">
-              Главная
-            </Link>
+            <Link href="/">Главная</Link>
           </div>
           <div className="flex">
             <ul className="header__list">
-              <li className="flex sm:text-lg">
+              <li className="flex">
                 <Link href="/courses" className="header__nav-link">
                   Курсы
                 </Link>
@@ -41,12 +37,12 @@ const Header: React.FC<Props> = () => {
 
               {!currentUser ? (
                 <>
-                  <li className="flex sm:text-lg">
+                  <li className="flex">
                     <Link href="/register" className="header__nav-link">
                       Регистрация
                     </Link>
                   </li>
-                  <li className="flex sm:text-lg">
+                  <li className="flex">
                     <Link href="/login" className="header__nav-link">
                       Вход
                     </Link>
@@ -54,12 +50,12 @@ const Header: React.FC<Props> = () => {
                 </>
               ) : (
                 <>
-                  <li className="flex sm:text-lg">
+                  <li className="flex">
                     <Link href="/user/dashboard" className="header__nav-link">
                       Личный кабинет
                     </Link>
                   </li>
-                  <li className="flex sm:text-lg">
+                  <li className="flex">
                     <SignOutButton />
                   </li>
                 </>

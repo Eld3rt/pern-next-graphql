@@ -7,8 +7,11 @@ export default {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    screens: { 'maxsm': {'max': '767px'}, },
     extend: {
+      fontFamily: {
+        heading: ['var(--font-lorenzo)'],
+        body: ['var(--font-inter)'],
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
