@@ -13,6 +13,9 @@ export const getSearchedCourses = async (
         mode: 'insensitive',
       },
     },
+    include: {
+      tags: true,
+    },
   })
 
   return searchedCourses

@@ -19,6 +19,24 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AddLessonResponse = {
+  __typename?: 'AddLessonResponse';
+  course?: Maybe<Course>;
+  developerMessage?: Maybe<Scalars['String']['output']>;
+  lesson?: Maybe<Lesson>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
+export type AddLessonsResponse = {
+  __typename?: 'AddLessonsResponse';
+  course?: Maybe<Course>;
+  developerMessage?: Maybe<Scalars['String']['output']>;
+  lessons?: Maybe<Array<Lesson>>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type ConfirmAccountResponse = {
   __typename?: 'ConfirmAccountResponse';
   developerMessage?: Maybe<Scalars['String']['output']>;
@@ -46,21 +64,42 @@ export type ConfirmPasswordResponse = {
 
 export type Course = {
   __typename?: 'Course';
+  description: Scalars['String']['output'];
+  discountValue?: Maybe<Scalars['Int']['output']>;
+  duration: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
-  lessons?: Maybe<Array<Lesson>>;
+  imageURL: Scalars['String']['output'];
+  lessons: Array<Lesson>;
   name: Scalars['String']['output'];
-  slug?: Maybe<Scalars['String']['output']>;
+  price: Scalars['Float']['output'];
+  reducedPrice?: Maybe<Scalars['Float']['output']>;
+  slug: Scalars['String']['output'];
+  tags: Array<Tag>;
+};
+
+export type KinescopeProject = {
+  __typename?: 'KinescopeProject';
+  id: Scalars['String']['output'];
+};
+
+export type KinescopeVideo = {
+  __typename?: 'KinescopeVideo';
+  id: Scalars['String']['output'];
 };
 
 export type Lesson = {
   __typename?: 'Lesson';
+  courseId: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
-  videoURL: Scalars['String']['output'];
+  videoDuration: Scalars['Int']['output'];
+  videoId: Scalars['String']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addLesson: AddLessonResponse;
+  addLessons: AddLessonsResponse;
   confirmPassword: ConfirmPasswordResponse;
   purchaseCourse: PurchaseCourseResponse;
   resetPassword: ResetPasswordResponse;
@@ -70,6 +109,19 @@ export type Mutation = {
   updateEmail: UpdateEmailResponse;
   updatePassword: UpdatePasswordResponse;
   updateUserName: UpdateUserNameResponse;
+};
+
+
+export type MutationAddLessonArgs = {
+  courseId: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  videoId: Scalars['String']['input'];
+};
+
+
+export type MutationAddLessonsArgs = {
+  courseId: Scalars['Int']['input'];
+  projectId: Scalars['String']['input'];
 };
 
 
@@ -133,6 +185,8 @@ export type Query = {
   getCourseData?: Maybe<Course>;
   getCourses: Array<Course>;
   getCoursesByString: Array<Course>;
+  getKinescopeProjects: Array<Maybe<KinescopeProject>>;
+  getKinescopeVideos: Array<Maybe<KinescopeVideo>>;
   getPurchasedCourseData?: Maybe<Course>;
   getPurchasedCourses: Array<Course>;
   hasCachedKey: Scalars['Boolean']['output'];
@@ -158,6 +212,11 @@ export type QueryGetCourseDataArgs = {
 
 export type QueryGetCoursesByStringArgs = {
   query: Scalars['String']['input'];
+};
+
+
+export type QueryGetKinescopeVideosArgs = {
+  projectId: Scalars['String']['input'];
 };
 
 
@@ -202,6 +261,12 @@ export type SignUpResponse = {
   developerMessage?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
+};
+
+export type Tag = {
+  __typename?: 'Tag';
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type UpdateEmailResponse = {
@@ -305,12 +370,17 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  AddLessonResponse: ResolverTypeWrapper<Omit<AddLessonResponse, 'course' | 'lesson'> & { course?: Maybe<ResolversTypes['Course']>, lesson?: Maybe<ResolversTypes['Lesson']> }>;
+  AddLessonsResponse: ResolverTypeWrapper<Omit<AddLessonsResponse, 'course' | 'lessons'> & { course?: Maybe<ResolversTypes['Course']>, lessons?: Maybe<Array<ResolversTypes['Lesson']>> }>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ConfirmAccountResponse: ResolverTypeWrapper<Omit<ConfirmAccountResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }>;
   ConfirmEmailResponse: ResolverTypeWrapper<Omit<ConfirmEmailResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }>;
   ConfirmPasswordResponse: ResolverTypeWrapper<ConfirmPasswordResponse>;
   Course: ResolverTypeWrapper<CourseModel>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  KinescopeProject: ResolverTypeWrapper<KinescopeProject>;
+  KinescopeVideo: ResolverTypeWrapper<KinescopeVideo>;
   Lesson: ResolverTypeWrapper<LessonModel>;
   Mutation: ResolverTypeWrapper<{}>;
   PurchaseCourseResponse: ResolverTypeWrapper<Omit<PurchaseCourseResponse, 'course'> & { course?: Maybe<ResolversTypes['Course']> }>;
@@ -320,6 +390,7 @@ export type ResolversTypes = ResolversObject<{
   SignOutResponse: ResolverTypeWrapper<SignOutResponse>;
   SignUpResponse: ResolverTypeWrapper<SignUpResponse>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Tag: ResolverTypeWrapper<Tag>;
   UpdateEmailResponse: ResolverTypeWrapper<UpdateEmailResponse>;
   UpdatePasswordResponse: ResolverTypeWrapper<UpdatePasswordResponse>;
   UpdateUserNameResponse: ResolverTypeWrapper<Omit<UpdateUserNameResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }>;
@@ -328,12 +399,17 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  AddLessonResponse: Omit<AddLessonResponse, 'course' | 'lesson'> & { course?: Maybe<ResolversParentTypes['Course']>, lesson?: Maybe<ResolversParentTypes['Lesson']> };
+  AddLessonsResponse: Omit<AddLessonsResponse, 'course' | 'lessons'> & { course?: Maybe<ResolversParentTypes['Course']>, lessons?: Maybe<Array<ResolversParentTypes['Lesson']>> };
   Boolean: Scalars['Boolean']['output'];
   ConfirmAccountResponse: Omit<ConfirmAccountResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> };
   ConfirmEmailResponse: Omit<ConfirmEmailResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> };
   ConfirmPasswordResponse: ConfirmPasswordResponse;
   Course: CourseModel;
+  Float: Scalars['Float']['output'];
   Int: Scalars['Int']['output'];
+  KinescopeProject: KinescopeProject;
+  KinescopeVideo: KinescopeVideo;
   Lesson: LessonModel;
   Mutation: {};
   PurchaseCourseResponse: Omit<PurchaseCourseResponse, 'course'> & { course?: Maybe<ResolversParentTypes['Course']> };
@@ -343,10 +419,29 @@ export type ResolversParentTypes = ResolversObject<{
   SignOutResponse: SignOutResponse;
   SignUpResponse: SignUpResponse;
   String: Scalars['String']['output'];
+  Tag: Tag;
   UpdateEmailResponse: UpdateEmailResponse;
   UpdatePasswordResponse: UpdatePasswordResponse;
   UpdateUserNameResponse: Omit<UpdateUserNameResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> };
   User: UserModel;
+}>;
+
+export type AddLessonResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['AddLessonResponse'] = ResolversParentTypes['AddLessonResponse']> = ResolversObject<{
+  course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType>;
+  developerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lesson?: Resolver<Maybe<ResolversTypes['Lesson']>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type AddLessonsResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['AddLessonsResponse'] = ResolversParentTypes['AddLessonsResponse']> = ResolversObject<{
+  course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType>;
+  developerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lessons?: Resolver<Maybe<Array<ResolversTypes['Lesson']>>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type ConfirmAccountResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['ConfirmAccountResponse'] = ResolversParentTypes['ConfirmAccountResponse']> = ResolversObject<{
@@ -375,21 +470,42 @@ export type ConfirmPasswordResponseResolvers<ContextType = MyContext, ParentType
 }>;
 
 export type CourseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Course'] = ResolversParentTypes['Course']> = ResolversObject<{
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discountValue?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  lessons?: Resolver<Maybe<Array<ResolversTypes['Lesson']>>, ParentType, ContextType>;
+  imageURL?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lessons?: Resolver<Array<ResolversTypes['Lesson']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  reducedPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type KinescopeProjectResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['KinescopeProject'] = ResolversParentTypes['KinescopeProject']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type KinescopeVideoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['KinescopeVideo'] = ResolversParentTypes['KinescopeVideo']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type LessonResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Lesson'] = ResolversParentTypes['Lesson']> = ResolversObject<{
+  courseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  videoURL?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  videoDuration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  videoId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  addLesson?: Resolver<ResolversTypes['AddLessonResponse'], ParentType, ContextType, RequireFields<MutationAddLessonArgs, 'courseId' | 'name' | 'videoId'>>;
+  addLessons?: Resolver<ResolversTypes['AddLessonsResponse'], ParentType, ContextType, RequireFields<MutationAddLessonsArgs, 'courseId' | 'projectId'>>;
   confirmPassword?: Resolver<ResolversTypes['ConfirmPasswordResponse'], ParentType, ContextType, RequireFields<MutationConfirmPasswordArgs, 'key' | 'password'>>;
   purchaseCourse?: Resolver<ResolversTypes['PurchaseCourseResponse'], ParentType, ContextType, RequireFields<MutationPurchaseCourseArgs, 'slug'>>;
   resetPassword?: Resolver<ResolversTypes['ResetPasswordResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'email'>>;
@@ -415,6 +531,8 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   getCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetCourseDataArgs, 'slug'>>;
   getCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   getCoursesByString?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetCoursesByStringArgs, 'query'>>;
+  getKinescopeProjects?: Resolver<Array<Maybe<ResolversTypes['KinescopeProject']>>, ParentType, ContextType>;
+  getKinescopeVideos?: Resolver<Array<Maybe<ResolversTypes['KinescopeVideo']>>, ParentType, ContextType, RequireFields<QueryGetKinescopeVideosArgs, 'projectId'>>;
   getPurchasedCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetPurchasedCourseDataArgs, 'slug'>>;
   getPurchasedCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   hasCachedKey?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryHasCachedKeyArgs, 'key'>>;
@@ -451,6 +569,12 @@ export type SignUpResponseResolvers<ContextType = MyContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type TagResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type UpdateEmailResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['UpdateEmailResponse'] = ResolversParentTypes['UpdateEmailResponse']> = ResolversObject<{
   developerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -481,10 +605,14 @@ export type UserResolvers<ContextType = MyContext, ParentType extends ResolversP
 }>;
 
 export type Resolvers<ContextType = MyContext> = ResolversObject<{
+  AddLessonResponse?: AddLessonResponseResolvers<ContextType>;
+  AddLessonsResponse?: AddLessonsResponseResolvers<ContextType>;
   ConfirmAccountResponse?: ConfirmAccountResponseResolvers<ContextType>;
   ConfirmEmailResponse?: ConfirmEmailResponseResolvers<ContextType>;
   ConfirmPasswordResponse?: ConfirmPasswordResponseResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
+  KinescopeProject?: KinescopeProjectResolvers<ContextType>;
+  KinescopeVideo?: KinescopeVideoResolvers<ContextType>;
   Lesson?: LessonResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PurchaseCourseResponse?: PurchaseCourseResponseResolvers<ContextType>;
@@ -493,6 +621,7 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   SignInResponse?: SignInResponseResolvers<ContextType>;
   SignOutResponse?: SignOutResponseResolvers<ContextType>;
   SignUpResponse?: SignUpResponseResolvers<ContextType>;
+  Tag?: TagResolvers<ContextType>;
   UpdateEmailResponse?: UpdateEmailResponseResolvers<ContextType>;
   UpdatePasswordResponse?: UpdatePasswordResponseResolvers<ContextType>;
   UpdateUserNameResponse?: UpdateUserNameResponseResolvers<ContextType>;

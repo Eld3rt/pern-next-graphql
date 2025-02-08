@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { debounce } from 'lodash'
 import { CircularProgress } from '@mui/material'
 import { useGetCoursesByStringLazyQuery } from '@/graphql/generated'
@@ -34,17 +35,17 @@ const CourseSearch: React.FC<Props> = () => {
       {loading ? (
         <CircularProgress size={24} sx={{ color: '#732a46', marginTop: '10px' }} />
       ) : error ? (
-        <p>error.message</p>
+        <p>{error.message}</p>
       ) : !loading && data?.getCoursesByString && !data.getCoursesByString.length ? (
         <p className="course-search__message py-3 px-10">Курсы не найдены.</p>
       ) : (
         data?.getCoursesByString.length && (
           <ul className="course-search__list w-full py-3 rounded-lg shadow-xl">
-            {data?.getCoursesByString.map((course, index) => (
-              <li key={index} className="course-search__list-item py-2 px-10">
-                <a href={`/courses/${course.slug}`} className="course-search__link">
+            {data?.getCoursesByString.map(course => (
+              <li key={course.id} className="course-search__list-item py-2 px-10">
+                <Link href={`/courses/${course.slug}`} className="course-search__link">
                   <h4 className="course-search__name">{course.name}</h4>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

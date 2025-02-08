@@ -11,6 +11,9 @@ export const getPurchasedCourses = async (currentUser: User): Promise<Course[]> 
         },
       },
     },
+    include: {
+      tags: true,
+    },
   })
 
   return purchasedCourses

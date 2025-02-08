@@ -17,6 +17,10 @@ export const getPurchasedCourseData = async (
         },
       },
     },
+    include: {
+      tags: true,
+      lessons: true,
+    },
   })
 
   return purchasedCourse

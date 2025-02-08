@@ -7,6 +7,10 @@ import { getCourseData } from '../../../prisma/functions/getCourseData'
 import { getPurchasedCourses } from '../../../prisma/functions/getPurchasedCourses'
 import { hasCourse } from '../../../prisma/functions/hasCourse'
 import { getSearchedCourses } from '../../../prisma/functions/getSearchedCourses'
+import { getVideosByProjectId } from '../../../kinescope/getVideos'
+import { createLesson } from '../../../prisma/functions/createLesson'
+import { getProjects } from '../../../kinescope/getProjects'
+import { createLessons } from '../../../prisma/functions/createLessons'
 
 export const typeDefs = gql`
   extend type Query {
@@ -16,10 +20,14 @@ export const typeDefs = gql`
     getPurchasedCourseData(slug: String!): Course
     hasCourseAccess(slug: String!): Boolean!
     getCoursesByString(query: String!): [Course!]!
+    getKinescopeProjects: [KinescopeProject]!
+    getKinescopeVideos(projectId: String!): [KinescopeVideo]!
   }
 
   extend type Mutation {
     purchaseCourse(slug: String!): PurchaseCourseResponse!
+    addLesson(name: String!, videoId: String!, courseId: Int!): AddLessonResponse!
+    addLessons(projectId: String!, courseId: Int!): AddLessonsResponse!
   }
 
   type PurchaseCourseResponse {
@@ -29,17 +37,55 @@ export const typeDefs = gql`
     course: Course
   }
 
+  type AddLessonResponse {
+    success: Boolean!
+    message: String!
+    developerMessage: String
+    lesson: Lesson
+    course: Course
+  }
+
+  type AddLessonsResponse {
+    success: Boolean!
+    message: String!
+    developerMessage: String
+    lessons: [Lesson!]
+    course: Course
+  }
+
   type Course {
     id: Int!
     name: String!
-    slug: String
-    lessons: [Lesson!]
+    description: String!
+    imageURL: String!
+    duration: Int!
+    price: Float!
+    reducedPrice: Float
+    discountValue: Int
+    tags: [Tag!]!
+    slug: String!
+    lessons: [Lesson!]!
   }
 
   type Lesson {
     id: Int!
     name: String!
-    videoURL: String!
+    videoId: String!
+    videoDuration: Int!
+    courseId: Int!
+  }
+
+  type KinescopeVideo {
+    id: String!
+  }
+
+  type KinescopeProject {
+    id: String!
+  }
+
+  type Tag {
+    id: Int!
+    name: String!
   }
 `
 
@@ -87,6 +133,17 @@ export const resolvers: Resolvers = {
 
       return courses
     },
+    getKinescopeProjects: async (_, args, ___) => {
+      const projects = await getProjects()
+
+      return projects
+    },
+    getKinescopeVideos: async (_, args, ___) => {
+      const { projectId } = args
+      const videos = await getVideosByProjectId(projectId)
+
+      return videos
+    },
   },
   Mutation: {
     purchaseCourse: async (_, args, context) => {
@@ -117,6 +174,40 @@ export const resolvers: Resolvers = {
         return {
           success: false,
           message: 'Ошибка при приобретении курса',
+          developerMessage: error.message,
+        }
+      }
+    },
+    addLesson: async (_, args, __) => {
+      try {
+        const { lesson, course } = await createLesson(args)
+        return {
+          success: true,
+          message: 'Урок успешно добавлен!',
+          lesson: lesson,
+          course: course,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Ошибка при добавлении урока',
+          developerMessage: error.message,
+        }
+      }
+    },
+    addLessons: async (_, args, ___) => {
+      try {
+        const { lessons, course } = await createLessons(args)
+        return {
+          success: true,
+          message: 'Уроки успешно добавлены!',
+          lessons: lessons,
+          course: course,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Ошибка при добавлении урока',
           developerMessage: error.message,
         }
       }

@@ -10,7 +10,7 @@ export const getCourseData = async (args: RequireFields<QueryGetCourseDataArgs, 
       slug: slug,
     },
     include: {
-      lessons: true,
+      tags: true,
     },
   })
 

@@ -6,6 +6,10 @@ export const getCourses = async (): Promise<Course[]> => {
     orderBy: {
       createdAt: 'desc',
     },
+    include: {
+      tags: true,
+      lessons: true,
+    },
   })
 
   return courses
