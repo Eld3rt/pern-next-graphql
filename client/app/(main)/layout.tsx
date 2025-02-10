@@ -4,6 +4,7 @@ import { ApolloWrapper } from '../../apollo/ApolloWrapper'
 import '../globals.css'
 import SessionProvider from '../providers/SessionProvider'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 export const metadata: Metadata = {
   title: 'PERN | Next | GraphQL',
@@ -37,6 +38,7 @@ const RootLayout: React.FC<Props> = async ({ children }) => {
           <SessionProvider>
             <Header />
             {children}
+            <Footer />
           </SessionProvider>
         </ApolloWrapper>
       </body>

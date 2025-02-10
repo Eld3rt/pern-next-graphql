@@ -1,5 +1,5 @@
-import CourseCatalog from '../components/CourseCatalog'
 import HomeIntro from '../components/HomeIntro'
+import CourseCatalog from '../components/CourseCatalog'
 
 interface Props {}
 

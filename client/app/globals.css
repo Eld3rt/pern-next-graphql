@@ -21,7 +21,7 @@
   margin-inline: auto;
 }
 
-.container--wide {
+.custom-container--wide {
   --max-width: 1400px;
 }
 
@@ -122,6 +122,11 @@
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   transition: background-color 0.2s linear;
+}
+
+.footer__nav-item-link {
+  line-height: 1.7;
+  font-size: 0.9375rem;
 }
 
 .header__nav-link:hover {
