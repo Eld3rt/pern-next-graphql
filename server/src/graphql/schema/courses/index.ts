@@ -6,20 +6,21 @@ import { getCourses } from '../../../prisma/functions/getCourses'
 import { getCourseData } from '../../../prisma/functions/getCourseData'
 import { getPurchasedCourses } from '../../../prisma/functions/getPurchasedCourses'
 import { hasCourse } from '../../../prisma/functions/hasCourse'
-import { getSearchedCourses } from '../../../prisma/functions/getSearchedCourses'
 import { getVideosByProjectId } from '../../../kinescope/getVideos'
 import { createLesson } from '../../../prisma/functions/createLesson'
 import { getProjects } from '../../../kinescope/getProjects'
 import { createLessons } from '../../../prisma/functions/createLessons'
+import { getTags } from '../../../prisma/functions/getTags'
+import { GraphQLScalarType, Kind } from 'graphql'
 
 export const typeDefs = gql`
   extend type Query {
-    getCourses: [Course!]!
+    getCourses(tags: [String!], query: String, sort: SortInput, first: PositiveInt, after: Int): GetCoursesResponse!
+    getTags(first: PositiveInt, after: Int): GetTagsResponse!
     getCourseData(slug: String!): Course
     getPurchasedCourses: [Course!]!
     getPurchasedCourseData(slug: String!): Course
     hasCourseAccess(slug: String!): Boolean!
-    getCoursesByString(query: String!): [Course!]!
     getKinescopeProjects: [KinescopeProject]!
     getKinescopeVideos(projectId: String!): [KinescopeVideo]!
   }
@@ -53,6 +54,29 @@ export const typeDefs = gql`
     course: Course
   }
 
+  type GetCoursesResponse {
+    edges: [CourseEdge!]!
+    pageInfo: PageInfo!
+  }
+
+  type GetTagsResponse {
+    edges: [TagEdge!]!
+    pageInfo: PageInfo!
+  }
+
+  type CourseEdge {
+    node: Course!
+  }
+
+  type TagEdge {
+    node: Tag!
+  }
+
+  type PageInfo {
+    hasNextPage: Boolean!
+    endCursor: Int
+  }
+
   type Course {
     id: Int!
     name: String!
@@ -60,8 +84,8 @@ export const typeDefs = gql`
     imageURL: String!
     duration: Int!
     price: Float!
-    reducedPrice: Float
-    discountValue: Int
+    reducedPrice: Float!
+    discountValue: Int!
     tags: [Tag!]!
     slug: String!
     lessons: [Lesson!]!
@@ -81,20 +105,86 @@ export const typeDefs = gql`
 
   type KinescopeProject {
     id: String!
+    name: String!
   }
 
   type Tag {
     id: Int!
     name: String!
   }
+
+  input SortInput {
+    field: String!
+    order: String!
+  }
 `
 
 export const resolvers: Resolvers = {
-  Query: {
-    getCourses: async (_, __, ___) => {
-      const courses = await getCourses()
+  PositiveInt: new GraphQLScalarType({
+    name: 'PositiveInt',
+    description: 'An integer greater than zero',
+    serialize(value: unknown): number {
+      if (typeof value !== 'number' || value <= 0) {
+        throw new Error('PositiveInt must be an integer greater than zero.')
+      }
+      return value
+    },
 
-      return courses
+    parseValue(value: unknown): number {
+      if (typeof value !== 'number' || value <= 0) {
+        throw new Error('PositiveInt must be an integer greater than zero.')
+      }
+      return value
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        const value = parseInt(ast.value, 10)
+        if (value > 0) {
+          return value
+        }
+      }
+      throw new Error('Value must be greater than zero')
+    },
+  }),
+  Query: {
+    getCourses: async (_, args, __) => {
+      const { first } = args
+
+      const courses = await getCourses(args)
+
+      const edges = courses.map(course => ({
+        node: course,
+      }))
+
+      const hasNextPage = first ? courses.length > first : false
+
+      if (hasNextPage) edges.pop()
+
+      const endCursor = courses.at(-1)?.id
+
+      return {
+        edges,
+        pageInfo: { hasNextPage, endCursor },
+      }
+    },
+    getTags: async (_, args, ___) => {
+      const { first } = args
+
+      const tags = await getTags(args)
+
+      const edges = tags.map(tag => ({
+        node: tag,
+      }))
+
+      const hasNextPage = first ? tags.length > first : false
+      if (hasNextPage) edges.pop()
+
+      const endCursor = tags.at(-1)?.id
+
+      return {
+        edges,
+        pageInfo: { hasNextPage, endCursor },
+      }
     },
     getCourseData: async (_, args, __) => {
       const course = await getCourseData(args)
@@ -128,12 +218,7 @@ export const resolvers: Resolvers = {
 
       return isPurchased
     },
-    getCoursesByString: async (_, args, __) => {
-      const courses = await getSearchedCourses(args)
-
-      return courses
-    },
-    getKinescopeProjects: async (_, args, ___) => {
+    getKinescopeProjects: async (_, __, ___) => {
       const projects = await getProjects()
 
       return projects

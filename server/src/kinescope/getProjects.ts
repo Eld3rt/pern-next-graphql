@@ -4,6 +4,7 @@ const KINESCOPE_API_KEY = process.env.KINESCOPE_API_KEY
 
 type Project = {
   id: string
+  name: string
 }
 
 export const getProjects = async (): Promise<Project[]> => {

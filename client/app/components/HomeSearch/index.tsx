@@ -1,0 +1,87 @@
+'use client'
+
+import Link from 'next/link'
+import { useState, useEffect, useRef } from 'react'
+import { debounce } from 'lodash'
+import { CircularProgress } from '@mui/material'
+import { useGetCoursesLazyQuery } from '@/graphql/generated'
+
+interface Props {}
+
+const HomeSearch: React.FC<Props> = () => {
+  const [getCourses, { data, loading }] = useGetCoursesLazyQuery()
+
+  const nodes = data?.getCourses.edges.map(edge => edge.node)
+  const pageInfo = data?.getCourses.pageInfo
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [query, setQuery] = useState()
+  const searchBarRef = useRef<HTMLDivElement | null>(null)
+
+  const handleChange = debounce((e: any) => {
+    const value = e.target.value.toLowerCase()
+    setQuery(value)
+    if (!value) return
+    setIsOpen(true)
+    handleSearch(value)
+  }, 1250)
+
+  const handleSearch = async (query: string) => {
+    await getCourses({
+      variables: {
+        query: query,
+        first: 12,
+      },
+    })
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div ref={searchBarRef} className="course-search__bar w-9/12 grid place-items-center relative">
+      <input
+        name="search"
+        type="text"
+        placeholder="Найти курс"
+        autoComplete="off"
+        onClick={() => !isOpen && query && setIsOpen(true)}
+        onChange={handleChange}
+        className="course-search__input py-2 px-10 w-full border-2 border-current rounded-full search-icon z-50"
+      />
+      {isOpen && (
+        <div className="course-search__modal grid place-items-center absolute top-0 left-0 w-full bg-white shadow-lg rounded-lg pb-4 pt-12">
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: '#732a46', marginTop: '10px' }} />
+          ) : data?.getCourses && !nodes?.length ? (
+            <p className="course-search__message py-3 px-10">Курсы не найдены.</p>
+          ) : (
+            <ul className="course-search__list w-full py-3 rounded-lg">
+              {nodes?.map(course => (
+                <li key={course.id} className="course-search__list-item py-2 px-10">
+                  <Link href={`/courses/${course.slug}`} className="course-search__link">
+                    <h4 className="course-search__name">{course.name}</h4>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {pageInfo?.hasNextPage && (
+            <Link href={`/courses?query=${query}`} className="course-show-all__link flex place-self-end">
+              <h5 className="course-show-all_text text-sm px-10 text-right">Показать все результаты</h5>
+            </Link>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default HomeSearch

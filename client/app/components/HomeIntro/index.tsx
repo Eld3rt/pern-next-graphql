@@ -1,4 +1,4 @@
-import CourseSearch from '../CourseSearch'
+import HomeSearch from '../HomeSearch'
 
 type Props = {}
 
@@ -19,7 +19,7 @@ const HomeIntro: React.FC<Props> = () => {
           </p>
         </div>
         <div className="home-intro__search w-full flex justify-center">
-          <CourseSearch />
+          <HomeSearch />
         </div>
       </div>
     </section>

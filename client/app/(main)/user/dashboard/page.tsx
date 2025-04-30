@@ -7,7 +7,6 @@ interface Props {}
 const Page: React.FC<Props> = async () => {
   const currentUser = await getCurrentUser()
   const purchasedCourses = await getPurchasedCourses()
-  console.log(purchasedCourses)
 
   return (
     <>

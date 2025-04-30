@@ -26,7 +26,7 @@ model Course {
   imageURL     String   @unique
   duration     Int
   price        Float
-  reducedPrice Float?
+  reducedPrice Float
   slug         String   @unique
   tags         Tag[]
   lessons      Lesson[]
@@ -39,7 +39,7 @@ model Course {
 
 model Lesson {
   id            Int      @id @default(autoincrement())
-  name          String   @db.VarChar(200) @default("Урок")
+  name          String   @default("Урок") @db.VarChar(200)
   course        Course   @relation(fields: [courseId], references: [id])
   courseId      Int
   videoId       String   @unique

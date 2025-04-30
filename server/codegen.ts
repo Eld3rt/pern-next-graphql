@@ -15,6 +15,9 @@ const config: CodegenConfig = {
           Course: '.prisma/client#Course as CourseModel',
           Lesson: '.prisma/client#Lesson as LessonModel',
         },
+        scalars: {
+          PositiveInt: 'number',
+        },
       },
     },
   },

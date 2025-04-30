@@ -1,6 +1,7 @@
 'use client'
 
 import { ApolloLink, HttpLink } from '@apollo/client'
+import { relayStylePagination } from '@apollo/client/utilities'
 import {
   ApolloNextAppProvider,
   InMemoryCache,
@@ -16,7 +17,16 @@ function makeClient() {
   })
 
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            getCourses: relayStylePagination(['tags', 'query', 'sort']),
+            getTags: relayStylePagination(),
+          },
+        },
+      },
+    }),
     link:
       typeof window === 'undefined'
         ? ApolloLink.from([

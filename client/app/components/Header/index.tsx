@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { SessionContext } from '@/app/providers/SessionProvider'
@@ -11,11 +11,19 @@ type Props = {}
 
 const Header: React.FC<Props> = () => {
   const { currentUser } = useContext(SessionContext)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(prev => !prev)
+    setIsOpen(prev => !prev)
   }
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+  }, [isOpen])
 
   return (
     <header className="relative pt-6">
@@ -23,7 +31,7 @@ const Header: React.FC<Props> = () => {
         <div className="logo">
           <Link href="/">Главная</Link>
         </div>
-        <nav className={` ${isMobileMenuOpen ? 'header__nav header__nav--active' : 'header__nav'}`}>
+        <nav className={` ${isOpen ? 'header__nav header__nav--active' : 'header__nav'}`}>
           <div className="logo">
             <Link href="/">Главная</Link>
           </div>
@@ -64,7 +72,7 @@ const Header: React.FC<Props> = () => {
           </div>
         </nav>
         <button className="header__mobile-menu" onClick={toggleMobileMenu}>
-          {isMobileMenuOpen ? <IoClose className="w-8 h-8" /> : <GiHamburgerMenu className="w-8 h-8" />}
+          {isOpen ? <IoClose className="w-8 h-8" /> : <GiHamburgerMenu className="w-8 h-8" />}
         </button>
       </div>
     </header>

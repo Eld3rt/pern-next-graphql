@@ -1,5 +1,5 @@
 import HomeIntro from '../components/HomeIntro'
-import CourseCatalog from '../components/CourseCatalog'
+import HomeCatalog from '../components/HomeCatalog'
 
 interface Props {}
 
@@ -7,7 +7,7 @@ const Page: React.FC<Props> = async () => {
   return (
     <main>
       <HomeIntro />
-      <CourseCatalog />
+      <HomeCatalog />
     </main>
   )
 }

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient, Course } from '@prisma/client'
 
 const prisma = new PrismaClient().$extends({
   model: {
@@ -15,8 +15,8 @@ const prisma = new PrismaClient().$extends({
     course: {
       discountValue: {
         needs: { price: true, reducedPrice: true },
-        compute(course) {
-          if (!course.reducedPrice) return null
+        compute(course: Course) {
+          if (!course.reducedPrice) return 0
           return Math.round((course.reducedPrice * 100) / course.price)
         },
       },

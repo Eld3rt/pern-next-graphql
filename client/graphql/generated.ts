@@ -15,6 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  PositiveInt: { input: any; output: any; }
 };
 
 export type AddLessonResponse = {
@@ -63,21 +64,39 @@ export type ConfirmPasswordResponse = {
 export type Course = {
   __typename?: 'Course';
   description: Scalars['String']['output'];
-  discountValue?: Maybe<Scalars['Int']['output']>;
+  discountValue: Scalars['Int']['output'];
   duration: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   imageURL: Scalars['String']['output'];
   lessons: Array<Lesson>;
   name: Scalars['String']['output'];
   price: Scalars['Float']['output'];
-  reducedPrice?: Maybe<Scalars['Float']['output']>;
+  reducedPrice: Scalars['Float']['output'];
   slug: Scalars['String']['output'];
   tags: Array<Tag>;
+};
+
+export type CourseEdge = {
+  __typename?: 'CourseEdge';
+  node: Course;
+};
+
+export type GetCoursesResponse = {
+  __typename?: 'GetCoursesResponse';
+  edges: Array<CourseEdge>;
+  pageInfo: PageInfo;
+};
+
+export type GetTagsResponse = {
+  __typename?: 'GetTagsResponse';
+  edges: Array<TagEdge>;
+  pageInfo: PageInfo;
 };
 
 export type KinescopeProject = {
   __typename?: 'KinescopeProject';
   id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type KinescopeVideo = {
@@ -168,6 +187,12 @@ export type MutationUpdateUserNameArgs = {
   newName: Scalars['String']['input'];
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['Int']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
+};
+
 export type PurchaseCourseResponse = {
   __typename?: 'PurchaseCourseResponse';
   course?: Maybe<Course>;
@@ -181,12 +206,12 @@ export type Query = {
   confirmAccount: ConfirmAccountResponse;
   confirmEmail: ConfirmEmailResponse;
   getCourseData?: Maybe<Course>;
-  getCourses: Array<Course>;
-  getCoursesByString: Array<Course>;
+  getCourses: GetCoursesResponse;
   getKinescopeProjects: Array<Maybe<KinescopeProject>>;
   getKinescopeVideos: Array<Maybe<KinescopeVideo>>;
   getPurchasedCourseData?: Maybe<Course>;
   getPurchasedCourses: Array<Course>;
+  getTags: GetTagsResponse;
   hasCachedKey: Scalars['Boolean']['output'];
   hasCourseAccess: Scalars['Boolean']['output'];
   me?: Maybe<User>;
@@ -208,8 +233,12 @@ export type QueryGetCourseDataArgs = {
 };
 
 
-export type QueryGetCoursesByStringArgs = {
-  query: Scalars['String']['input'];
+export type QueryGetCoursesArgs = {
+  after?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['PositiveInt']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<SortInput>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
@@ -220,6 +249,12 @@ export type QueryGetKinescopeVideosArgs = {
 
 export type QueryGetPurchasedCourseDataArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryGetTagsArgs = {
+  after?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['PositiveInt']['input']>;
 };
 
 
@@ -261,10 +296,20 @@ export type SignUpResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type SortInput = {
+  field: Scalars['String']['input'];
+  order: Scalars['String']['input'];
+};
+
 export type Tag = {
   __typename?: 'Tag';
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+};
+
+export type TagEdge = {
+  __typename?: 'TagEdge';
+  node: Tag;
 };
 
 export type UpdateEmailResponse = {
@@ -296,13 +341,15 @@ export type User = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoId: string, videoDuration: number, courseId: number }> };
+export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoId: string, videoDuration: number, courseId: number }> };
 
-export type CourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> };
+export type CourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> };
 
-export type CourseInfoFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> };
+export type CourseInfoFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> };
 
-export type PurchasedCourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoDuration: number }> };
+export type PurchasedCourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoDuration: number }> };
+
+export type TagFragment = { __typename?: 'Tag', id: number, name: string };
 
 export type UserFragment = { __typename?: 'User', id: number, name?: string | null, email: string };
 
@@ -392,38 +439,45 @@ export type GetCourseDataQueryVariables = Exact<{
 }>;
 
 
-export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } | null };
+export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } | null };
 
 export type GetCourseInfoQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetCourseInfoQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> } | null };
+export type GetCourseInfoQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> } | null };
 
-export type GetCoursesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetCoursesQuery = { __typename?: 'Query', getCourses: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> };
-
-export type GetCoursesByStringQueryVariables = Exact<{
-  query: Scalars['String']['input'];
+export type GetCoursesQueryVariables = Exact<{
+  tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<SortInput>;
+  first?: InputMaybe<Scalars['PositiveInt']['input']>;
+  cursor?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
-export type GetCoursesByStringQuery = { __typename?: 'Query', getCoursesByString: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> }> };
+export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
 
 export type GetPurchasedCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> }> };
+export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> }> };
 
 export type GetPurchasedCourseDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice?: number | null, discountValue?: number | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoDuration: number }> } | null };
+export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoDuration: number }> } | null };
+
+export type GetTagsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['PositiveInt']['input']>;
+  cursor?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type GetTagsQuery = { __typename?: 'Query', getTags: { __typename?: 'GetTagsResponse', edges: Array<{ __typename?: 'TagEdge', node: { __typename?: 'Tag', id: number, name: string } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -512,6 +566,12 @@ export const PurchasedCourseDataFragmentDoc = gql`
     name
     videoDuration
   }
+}
+    `;
+export const TagFragmentDoc = gql`
+    fragment Tag on Tag {
+  id
+  name
 }
     `;
 export const UserFragmentDoc = gql`
@@ -996,9 +1056,23 @@ export type GetCourseInfoLazyQueryHookResult = ReturnType<typeof useGetCourseInf
 export type GetCourseInfoSuspenseQueryHookResult = ReturnType<typeof useGetCourseInfoSuspenseQuery>;
 export type GetCourseInfoQueryResult = Apollo.QueryResult<GetCourseInfoQuery, GetCourseInfoQueryVariables>;
 export const GetCoursesDocument = gql`
-    query GetCourses {
-  getCourses {
-    ...CourseData
+    query GetCourses($tags: [String!], $query: String, $sort: SortInput, $first: PositiveInt, $cursor: Int) {
+  getCourses(
+    tags: $tags
+    query: $query
+    sort: $sort
+    first: $first
+    after: $cursor
+  ) {
+    edges {
+      node {
+        ...CourseData
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
     ${CourseDataFragmentDoc}`;
@@ -1015,6 +1089,11 @@ export const GetCoursesDocument = gql`
  * @example
  * const { data, loading, error } = useGetCoursesQuery({
  *   variables: {
+ *      tags: // value for 'tags'
+ *      query: // value for 'query'
+ *      sort: // value for 'sort'
+ *      first: // value for 'first'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
@@ -1034,46 +1113,6 @@ export type GetCoursesQueryHookResult = ReturnType<typeof useGetCoursesQuery>;
 export type GetCoursesLazyQueryHookResult = ReturnType<typeof useGetCoursesLazyQuery>;
 export type GetCoursesSuspenseQueryHookResult = ReturnType<typeof useGetCoursesSuspenseQuery>;
 export type GetCoursesQueryResult = Apollo.QueryResult<GetCoursesQuery, GetCoursesQueryVariables>;
-export const GetCoursesByStringDocument = gql`
-    query GetCoursesByString($query: String!) {
-  getCoursesByString(query: $query) {
-    ...CourseInfo
-  }
-}
-    ${CourseInfoFragmentDoc}`;
-
-/**
- * __useGetCoursesByStringQuery__
- *
- * To run a query within a React component, call `useGetCoursesByStringQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCoursesByStringQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCoursesByStringQuery({
- *   variables: {
- *      query: // value for 'query'
- *   },
- * });
- */
-export function useGetCoursesByStringQuery(baseOptions: Apollo.QueryHookOptions<GetCoursesByStringQuery, GetCoursesByStringQueryVariables> & ({ variables: GetCoursesByStringQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>(GetCoursesByStringDocument, options);
-      }
-export function useGetCoursesByStringLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>(GetCoursesByStringDocument, options);
-        }
-export function useGetCoursesByStringSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>(GetCoursesByStringDocument, options);
-        }
-export type GetCoursesByStringQueryHookResult = ReturnType<typeof useGetCoursesByStringQuery>;
-export type GetCoursesByStringLazyQueryHookResult = ReturnType<typeof useGetCoursesByStringLazyQuery>;
-export type GetCoursesByStringSuspenseQueryHookResult = ReturnType<typeof useGetCoursesByStringSuspenseQuery>;
-export type GetCoursesByStringQueryResult = Apollo.QueryResult<GetCoursesByStringQuery, GetCoursesByStringQueryVariables>;
 export const GetPurchasedCoursesDocument = gql`
     query GetPurchasedCourses {
   getPurchasedCourses {
@@ -1153,6 +1192,55 @@ export type GetPurchasedCourseDataQueryHookResult = ReturnType<typeof useGetPurc
 export type GetPurchasedCourseDataLazyQueryHookResult = ReturnType<typeof useGetPurchasedCourseDataLazyQuery>;
 export type GetPurchasedCourseDataSuspenseQueryHookResult = ReturnType<typeof useGetPurchasedCourseDataSuspenseQuery>;
 export type GetPurchasedCourseDataQueryResult = Apollo.QueryResult<GetPurchasedCourseDataQuery, GetPurchasedCourseDataQueryVariables>;
+export const GetTagsDocument = gql`
+    query GetTags($first: PositiveInt, $cursor: Int) {
+  getTags(first: $first, after: $cursor) {
+    edges {
+      node {
+        ...Tag
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    ${TagFragmentDoc}`;
+
+/**
+ * __useGetTagsQuery__
+ *
+ * To run a query within a React component, call `useGetTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTagsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useGetTagsQuery(baseOptions?: Apollo.QueryHookOptions<GetTagsQuery, GetTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, options);
+      }
+export function useGetTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTagsQuery, GetTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, options);
+        }
+export function useGetTagsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTagsQuery, GetTagsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, options);
+        }
+export type GetTagsQueryHookResult = ReturnType<typeof useGetTagsQuery>;
+export type GetTagsLazyQueryHookResult = ReturnType<typeof useGetTagsLazyQuery>;
+export type GetTagsSuspenseQueryHookResult = ReturnType<typeof useGetTagsSuspenseQuery>;
+export type GetTagsQueryResult = Apollo.QueryResult<GetTagsQuery, GetTagsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
