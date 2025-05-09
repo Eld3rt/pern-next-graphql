@@ -69,11 +69,15 @@ export type Course = {
   id: Scalars['Int']['output'];
   imageURL: Scalars['String']['output'];
   lessons: Array<Lesson>;
+  level?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  offerMessage?: Maybe<Scalars['String']['output']>;
+  prerequisites?: Maybe<Scalars['String']['output']>;
   price: Scalars['Float']['output'];
   reducedPrice: Scalars['Float']['output'];
   slug: Scalars['String']['output'];
   tags: Array<Tag>;
+  topics: Array<Topic>;
 };
 
 export type CourseEdge = {
@@ -106,7 +110,6 @@ export type KinescopeVideo = {
 
 export type Lesson = {
   __typename?: 'Lesson';
-  courseId: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   videoDuration: Scalars['Int']['output'];
@@ -312,6 +315,13 @@ export type TagEdge = {
   node: Tag;
 };
 
+export type Topic = {
+  __typename?: 'Topic';
+  id: Scalars['Int']['output'];
+  lessons: Array<Lesson>;
+  name: Scalars['String']['output'];
+};
+
 export type UpdateEmailResponse = {
   __typename?: 'UpdateEmailResponse';
   developerMessage?: Maybe<Scalars['String']['output']>;
@@ -341,9 +351,9 @@ export type User = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoId: string, videoDuration: number, courseId: number }> };
+export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoId: string, videoDuration: number }> };
 
-export type CourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> };
+export type CourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> };
 
 export type CourseInfoFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> };
 
@@ -439,7 +449,7 @@ export type GetCourseDataQueryVariables = Exact<{
 }>;
 
 
-export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } | null };
+export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } | null };
 
 export type GetCourseInfoQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -457,7 +467,7 @@ export type GetCoursesQueryVariables = Exact<{
 }>;
 
 
-export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
+export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
 
 export type GetPurchasedCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -493,18 +503,20 @@ export const CourseFragmentDoc = gql`
   duration
   price
   reducedPrice
+  level
+  prerequisites
+  offerMessage
   discountValue
+  slug
   tags {
     id
     name
   }
-  slug
   lessons {
     id
     name
     videoId
     videoDuration
-    courseId
   }
 }
     `;
@@ -517,12 +529,23 @@ export const CourseDataFragmentDoc = gql`
   duration
   price
   reducedPrice
+  level
+  prerequisites
+  offerMessage
   discountValue
+  slug
   tags {
     id
     name
   }
-  slug
+  topics {
+    id
+    name
+    lessons {
+      id
+      name
+    }
+  }
   lessons {
     id
     name

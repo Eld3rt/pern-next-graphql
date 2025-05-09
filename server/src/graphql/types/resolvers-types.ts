@@ -71,11 +71,15 @@ export type Course = {
   id: Scalars['Int']['output'];
   imageURL: Scalars['String']['output'];
   lessons: Array<Lesson>;
+  level?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  offerMessage?: Maybe<Scalars['String']['output']>;
+  prerequisites?: Maybe<Scalars['String']['output']>;
   price: Scalars['Float']['output'];
   reducedPrice: Scalars['Float']['output'];
   slug: Scalars['String']['output'];
   tags: Array<Tag>;
+  topics: Array<Topic>;
 };
 
 export type CourseEdge = {
@@ -108,7 +112,6 @@ export type KinescopeVideo = {
 
 export type Lesson = {
   __typename?: 'Lesson';
-  courseId: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   videoDuration: Scalars['Int']['output'];
@@ -314,6 +317,13 @@ export type TagEdge = {
   node: Tag;
 };
 
+export type Topic = {
+  __typename?: 'Topic';
+  id: Scalars['Int']['output'];
+  lessons: Array<Lesson>;
+  name: Scalars['String']['output'];
+};
+
 export type UpdateEmailResponse = {
   __typename?: 'UpdateEmailResponse';
   developerMessage?: Maybe<Scalars['String']['output']>;
@@ -443,6 +453,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Tag: ResolverTypeWrapper<Tag>;
   TagEdge: ResolverTypeWrapper<TagEdge>;
+  Topic: ResolverTypeWrapper<Omit<Topic, 'lessons'> & { lessons: Array<ResolversTypes['Lesson']> }>;
   UpdateEmailResponse: ResolverTypeWrapper<UpdateEmailResponse>;
   UpdatePasswordResponse: ResolverTypeWrapper<UpdatePasswordResponse>;
   UpdateUserNameResponse: ResolverTypeWrapper<Omit<UpdateUserNameResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }>;
@@ -479,6 +490,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String']['output'];
   Tag: Tag;
   TagEdge: TagEdge;
+  Topic: Omit<Topic, 'lessons'> & { lessons: Array<ResolversParentTypes['Lesson']> };
   UpdateEmailResponse: UpdateEmailResponse;
   UpdatePasswordResponse: UpdatePasswordResponse;
   UpdateUserNameResponse: Omit<UpdateUserNameResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> };
@@ -535,11 +547,15 @@ export type CourseResolvers<ContextType = MyContext, ParentType extends Resolver
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imageURL?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lessons?: Resolver<Array<ResolversTypes['Lesson']>, ParentType, ContextType>;
+  level?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  offerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  prerequisites?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   reducedPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
+  topics?: Resolver<Array<ResolversTypes['Topic']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -572,7 +588,6 @@ export type KinescopeVideoResolvers<ContextType = MyContext, ParentType extends 
 }>;
 
 export type LessonResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Lesson'] = ResolversParentTypes['Lesson']> = ResolversObject<{
-  courseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   videoDuration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -667,6 +682,13 @@ export type TagEdgeResolvers<ContextType = MyContext, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type TopicResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Topic'] = ResolversParentTypes['Topic']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  lessons?: Resolver<Array<ResolversTypes['Lesson']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type UpdateEmailResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['UpdateEmailResponse'] = ResolversParentTypes['UpdateEmailResponse']> = ResolversObject<{
   developerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -720,6 +742,7 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   SignUpResponse?: SignUpResponseResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagEdge?: TagEdgeResolvers<ContextType>;
+  Topic?: TopicResolvers<ContextType>;
   UpdateEmailResponse?: UpdateEmailResponseResolvers<ContextType>;
   UpdatePasswordResponse?: UpdatePasswordResponseResolvers<ContextType>;
   UpdateUserNameResponse?: UpdateUserNameResponseResolvers<ContextType>;

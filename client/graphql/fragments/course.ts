@@ -9,18 +9,20 @@ export default gql`
     duration
     price
     reducedPrice
+    level
+    prerequisites
+    offerMessage
     discountValue
+    slug
     tags {
       id
       name
     }
-    slug
     lessons {
       id
       name
       videoId
       videoDuration
-      courseId
     }
   }
 `

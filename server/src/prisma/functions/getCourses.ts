@@ -28,6 +28,11 @@ export const getCourses = async (args: Partial<QueryGetCoursesArgs>): Promise<Co
     cursor,
     include: {
       tags: true,
+      topics: {
+        include: {
+          lessons: true,
+        },
+      },
       lessons: true,
     },
   })

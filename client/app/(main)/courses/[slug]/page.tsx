@@ -1,7 +1,10 @@
 import { query } from '@/apollo/ApolloClient'
 import { notFound } from 'next/navigation'
-import PurchaseCourseButton from '@/app/components/buttons/PurchaseCourseButton'
-import { GetCourseInfoDocument, GetCourseInfoQuery } from '@/graphql/generated'
+import { GetCourseDataDocument, GetCourseDataQuery } from '@/graphql/generated'
+import CourseIntro from '@/app/components/CourseIntro'
+import CourseBrief from '@/app/components/CourseBrief'
+import CourseProgram from '@/app/components/CourseProgram'
+import CourseOffer from '@/app/components/CourseOffer'
 
 interface Props {
   params: { slug: string }
@@ -9,19 +12,23 @@ interface Props {
 
 const Page: React.FC<Props> = async ({ params }) => {
   const { slug } = await params
-  const { data } = await query<GetCourseInfoQuery>({
-    query: GetCourseInfoDocument,
+  const { data } = await query<GetCourseDataQuery>({
+    query: GetCourseDataDocument,
     variables: { slug },
   })
 
   if (!data.getCourseData) {
-    notFound()
+    return notFound()
   }
+
+  const course = data.getCourseData
 
   return (
     <>
-      <h1>{data.getCourseData.name}</h1>
-      <PurchaseCourseButton slug={slug} />
+      <CourseIntro slug={slug} course={course} />
+      <CourseBrief course={course} />
+      <CourseProgram course={course} />
+      <CourseOffer slug={slug} course={course} />
     </>
   )
 }

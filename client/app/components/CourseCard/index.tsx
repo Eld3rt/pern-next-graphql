@@ -54,8 +54,8 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           </span>
           <div className="course-catalog__course-prices text-xl mb-[1.5rem]">
             <span
-              className={`course-catalog__course-price ${
-                course.price ? (course.reducedPrice < course.price ? 'price-with-discount' : '') : 'free-price'
+              className={`course-catalog__course-price${
+                course.price ? (course.reducedPrice < course.price ? ' price-with-discount' : '') : ' free-price'
               }`}
             >
               {course.price ? `${course.price}₽` : 'Бесплатно'}

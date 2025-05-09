@@ -20,19 +20,23 @@ model User {
 }
 
 model Course {
-  id           Int      @id @default(autoincrement())
-  name         String   @db.VarChar(200)
-  description  String
-  imageURL     String   @unique
-  duration     Int
-  price        Float
-  reducedPrice Float
-  slug         String   @unique
-  tags         Tag[]
-  lessons      Lesson[]
-  users        User[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(200)
+  description   String
+  imageURL      String   @unique
+  duration      Int
+  price         Float
+  reducedPrice  Float
+  level         String?
+  prerequisites String?
+  offerMessage  String?
+  slug          String   @unique
+  tags          Tag[]
+  topics        Topic[]
+  lessons       Lesson[]
+  users         User[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("courses")
 }
@@ -42,6 +46,8 @@ model Lesson {
   name          String   @default("Урок") @db.VarChar(200)
   course        Course   @relation(fields: [courseId], references: [id])
   courseId      Int
+  topic         Topic?   @relation(fields: [topicId], references: [id])
+  topicId       Int?
   videoId       String   @unique
   videoDuration Int
   createdAt     DateTime @default(now())
@@ -54,4 +60,12 @@ model Tag {
   id     Int      @id @default(autoincrement())
   name   String   @db.VarChar(200)
   course Course[]
+}
+
+model Topic {
+  id       Int      @id @default(autoincrement())
+  name     String
+  course   Course   @relation(fields: [courseId], references: [id])
+  courseId Int
+  lessons  Lesson[]
 }

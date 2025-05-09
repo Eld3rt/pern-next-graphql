@@ -26,15 +26,13 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
 
   return (
     <>
-      {!data?.purchaseCourse && (
-        <button className="btn" onClick={handleClick}>
-          Приобрести курс
-        </button>
-      )}
+      <button className="btn text-white px-[1rem] py-[0.5rem] rounded-full bg-[#701437]" onClick={handleClick}>
+        Приобрести курс
+      </button>
 
       {data?.purchaseCourse.success && <p className="text-success">{data.purchaseCourse.message}</p>}
-      {(error || (data?.purchaseCourse && !data.purchaseCourse.success)) && (
-        <p className="text-error text-red-500">{error?.message || data?.purchaseCourse.message}</p>
+      {(error || (data?.purchaseCourse && !data.purchaseCourse.success && currentUser)) && (
+        <p className="text-error text-red-500 mt-6">{error?.message || data?.purchaseCourse.message}</p>
       )}
     </>
   )

@@ -85,9 +85,13 @@ export const typeDefs = gql`
     duration: Int!
     price: Float!
     reducedPrice: Float!
+    level: String
+    prerequisites: String
+    offerMessage: String
     discountValue: Int!
-    tags: [Tag!]!
     slug: String!
+    tags: [Tag!]!
+    topics: [Topic!]!
     lessons: [Lesson!]!
   }
 
@@ -96,7 +100,6 @@ export const typeDefs = gql`
     name: String!
     videoId: String!
     videoDuration: Int!
-    courseId: Int!
   }
 
   type KinescopeVideo {
@@ -111,6 +114,12 @@ export const typeDefs = gql`
   type Tag {
     id: Int!
     name: String!
+  }
+
+  type Topic {
+    id: Int!
+    name: String!
+    lessons: [Lesson!]!
   }
 
   input SortInput {
