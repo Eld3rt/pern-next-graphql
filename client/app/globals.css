@@ -38,6 +38,18 @@
   }
 }
 
+.btn {
+  color: white;
+  padding-inline: 1rem;
+  padding-block: 0.5rem;
+  border-radius: calc(infinity * 1px);
+  background-color: #701437;
+}
+
+.validation-message {
+  margin-bottom: 1rem;
+}
+
 .tag {
   display: inline-block;
   font-size: 0.8125rem;

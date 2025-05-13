@@ -26,7 +26,7 @@ const PurchaseCourseButton: React.FC<Props> = ({ slug }) => {
 
   return (
     <>
-      <button className="btn text-white px-[1rem] py-[0.5rem] rounded-full bg-[#701437]" onClick={handleClick}>
+      <button className="btn" onClick={handleClick}>
         Приобрести курс
       </button>
 

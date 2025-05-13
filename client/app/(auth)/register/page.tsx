@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import SignUp from '../../components/SignUp'
 
 interface Props {}
@@ -5,7 +6,9 @@ interface Props {}
 const Page: React.FC<Props> = () => {
   return (
     <>
-      <h1>Страница регистрации</h1>
+      <div className="logo pt-8 pl-8">
+        <Link href="/">Главная</Link>
+      </div>
       <SignUp />
     </>
   )
