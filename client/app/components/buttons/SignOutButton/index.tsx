@@ -4,9 +4,11 @@ import { useSignOutMutation } from '@/graphql/generated'
 import { useApolloClient } from '@apollo/client'
 import { clearCookie } from '@/utils/clearCookie'
 
-interface Props {}
+interface Props {
+  className?: string
+}
 
-const SignOutButton: React.FC<Props> = () => {
+const SignOutButton: React.FC<Props> = ({ className }) => {
   const client = useApolloClient()
 
   const [signOut] = useSignOutMutation({
@@ -20,11 +22,9 @@ const SignOutButton: React.FC<Props> = () => {
       .then(() => location.reload())
   }
   return (
-    <>
-      <button className="header__nav-link" type="submit" onClick={handleClick}>
-        Выход
-      </button>
-    </>
+    <button type="submit" onClick={handleClick} className={className}>
+      Выход
+    </button>
   )
 }
 

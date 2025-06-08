@@ -1,8 +1,8 @@
-import { CourseDataFragment } from '@/graphql/generated'
+import { CourseFragment } from '@/graphql/generated'
 import Link from 'next/link'
 
 type Props = {
-  course: CourseDataFragment
+  course: CourseFragment
 }
 
 const CourseBrief: React.FC<Props> = ({ course }) => {

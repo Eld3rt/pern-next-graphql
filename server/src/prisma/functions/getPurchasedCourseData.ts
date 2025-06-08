@@ -11,15 +11,14 @@ export const getPurchasedCourseData = async (
   const purchasedCourse = await prisma.course.findFirst({
     where: {
       slug: slug,
-      users: {
+      courseProgress: {
         some: {
-          id: userId,
+          userId: userId,
         },
       },
     },
     include: {
       tags: true,
-      lessons: true,
     },
   })
 

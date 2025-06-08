@@ -6,11 +6,13 @@ import { IoClose } from 'react-icons/io5'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { SessionContext } from '@/app/providers/SessionProvider'
 import SignOutButton from '../buttons/SignOutButton'
+import { User } from '@/graphql/generated'
 
-type Props = {}
+type Props = {
+  currentUser: User | null | undefined
+}
 
-const Header: React.FC<Props> = () => {
-  const { currentUser } = useContext(SessionContext)
+const Header: React.FC<Props> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleMobileMenu = () => {
@@ -64,7 +66,7 @@ const Header: React.FC<Props> = () => {
                     </Link>
                   </li>
                   <li className="flex">
-                    <SignOutButton />
+                    <SignOutButton className="header__nav-link" />
                   </li>
                 </>
               )}

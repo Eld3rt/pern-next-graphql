@@ -12,13 +12,21 @@ import { getProjects } from '../../../kinescope/getProjects'
 import { createLessons } from '../../../prisma/functions/createLessons'
 import { getTags } from '../../../prisma/functions/getTags'
 import { GraphQLScalarType, Kind } from 'graphql'
+import { getPurchasedCoursesWithProgress } from '../../../prisma/functions/getPurchasedCoursesWithProgress'
 
 export const typeDefs = gql`
   extend type Query {
     getCourses(tags: [String!], query: String, sort: SortInput, first: PositiveInt, after: Int): GetCoursesResponse!
     getTags(first: PositiveInt, after: Int): GetTagsResponse!
     getCourseData(slug: String!): Course
-    getPurchasedCourses: [Course!]!
+    getPurchasedCourses(
+      tags: [String!]
+      query: String
+      sort: SortInput
+      first: PositiveInt
+      after: Int
+    ): GetPurchasedCoursesResponse
+    getPurchasedCoursesWithProgress: [Course!]!
     getPurchasedCourseData(slug: String!): Course
     hasCourseAccess(slug: String!): Boolean!
     getKinescopeProjects: [KinescopeProject]!
@@ -64,6 +72,11 @@ export const typeDefs = gql`
     pageInfo: PageInfo!
   }
 
+  type GetPurchasedCoursesResponse {
+    edges: [CourseEdge!]!
+    pageInfo: PageInfo!
+  }
+
   type CourseEdge {
     node: Course!
   }
@@ -82,6 +95,7 @@ export const typeDefs = gql`
     name: String!
     description: String!
     imageURL: String!
+    smallImageURL: String!
     duration: Int!
     price: Float!
     reducedPrice: Float!
@@ -92,7 +106,7 @@ export const typeDefs = gql`
     slug: String!
     tags: [Tag!]!
     topics: [Topic!]!
-    lessons: [Lesson!]!
+    courseProgress: [CourseProgress!]!
   }
 
   type Lesson {
@@ -100,6 +114,18 @@ export const typeDefs = gql`
     name: String!
     videoId: String!
     videoDuration: Int!
+    topic: Topic!
+  }
+
+  type CourseProgress {
+    id: Int!
+    course: Course!
+    lessonProgress: [LessonProgress!]!
+  }
+
+  type LessonProgress {
+    id: Int!
+    lesson: Lesson!
   }
 
   type KinescopeVideo {
@@ -200,14 +226,37 @@ export const resolvers: Resolvers = {
 
       return course
     },
-    getPurchasedCourses: async (_, __, context) => {
+    getPurchasedCourses: async (_, args, context) => {
+      const { currentUser } = context
+      const { first } = args
+
+      if (!currentUser) return null
+
+      const purchasedCourses = await getPurchasedCourses(currentUser, args)
+
+      const edges = purchasedCourses.map(course => ({
+        node: course,
+      }))
+
+      const hasNextPage = first ? purchasedCourses.length > first : false
+
+      if (hasNextPage) edges.pop()
+
+      const endCursor = purchasedCourses.at(-1)?.id
+
+      return {
+        edges,
+        pageInfo: { hasNextPage, endCursor },
+      }
+    },
+    getPurchasedCoursesWithProgress: async (_, __, context) => {
       const { currentUser } = context
 
       if (!currentUser) return []
 
-      const purchasedCourses = await getPurchasedCourses(currentUser)
+      const purchasedCoursesWithProgress = await getPurchasedCoursesWithProgress(currentUser)
 
-      return purchasedCourses
+      return purchasedCoursesWithProgress
     },
     getPurchasedCourseData: async (_, args, context) => {
       const { currentUser } = context

@@ -9,6 +9,7 @@ type SessionContextValue = {
     email: string
     name?: string | null
   } | null
+  loading?: boolean
 }
 
 export const SessionContext = createContext<SessionContextValue>({})
@@ -18,10 +19,10 @@ interface Props {
 }
 
 const SessionProvider: React.FC<Props> = ({ children }) => {
-  const { data } = useMeQuery()
+  const { data, loading } = useMeQuery()
   const currentUser = data?.me
 
-  return <SessionContext.Provider value={{ currentUser }}>{children}</SessionContext.Provider>
+  return <SessionContext.Provider value={{ currentUser, loading }}>{children}</SessionContext.Provider>
 }
 
 export default SessionProvider

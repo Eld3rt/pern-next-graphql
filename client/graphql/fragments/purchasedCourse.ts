@@ -1,18 +1,13 @@
 import { gql } from '@apollo/client'
 
 export default gql`
-  fragment CourseData on Course {
+  fragment PurchasedCourse on Course {
     id
     name
-    description
     imageURL
+    smallImageURL
     duration
-    price
-    reducedPrice
     level
-    prerequisites
-    offerMessage
-    discountValue
     slug
     tags {
       id
@@ -26,9 +21,11 @@ export default gql`
         name
       }
     }
-    lessons {
+    courseProgress {
       id
-      name
+      lessonProgress {
+        id
+      }
     }
   }
 `

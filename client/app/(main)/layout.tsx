@@ -5,6 +5,7 @@ import '../globals.css'
 import SessionProvider from '../providers/SessionProvider'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { getCurrentUser } from '@/utils/getCurrentUser'
 
 export const metadata: Metadata = {
   title: 'PERN | Next | GraphQL',
@@ -31,12 +32,14 @@ interface Props {
 }
 
 const RootLayout: React.FC<Props> = async ({ children }) => {
+  const currentUser = await getCurrentUser()
+
   return (
     <html lang="en" className={`${inter.variable} ${lorenzo.variable}`}>
       <body>
         <ApolloWrapper>
           <SessionProvider>
-            <Header />
+            <Header currentUser={currentUser} />
             {children}
             <Footer />
           </SessionProvider>

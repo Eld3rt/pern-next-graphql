@@ -8,52 +8,76 @@ generator client {
 }
 
 model User {
-  id               Int      @id @default(autoincrement())
-  name             String?  @db.VarChar(200)
-  email            String   @unique @db.VarChar(200)
-  passhash         String   @db.VarChar(200)
-  purchasedCourses Course[]
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id             Int              @id @default(autoincrement())
+  name           String?          @db.VarChar(200)
+  email          String           @unique @db.VarChar(200)
+  passhash       String           @db.VarChar(200)
+  courseProgress CourseProgress[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@map("users")
 }
 
 model Course {
-  id            Int      @id @default(autoincrement())
-  name          String   @db.VarChar(200)
-  description   String
-  imageURL      String   @unique
-  duration      Int
-  price         Float
-  reducedPrice  Float
-  level         String?
-  prerequisites String?
-  offerMessage  String?
-  slug          String   @unique
-  tags          Tag[]
-  topics        Topic[]
-  lessons       Lesson[]
-  users         User[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(200)
+  description    String
+  imageURL       String           @unique
+	smallImageURL  String?          @unique
+  duration       Int
+  price          Float
+  reducedPrice   Float
+  level          String?
+  prerequisites  String?
+  offerMessage   String?
+  slug           String           @unique
+  tags           Tag[]
+  topics         Topic[]
+  courseProgress CourseProgress[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@map("courses")
 }
 
 model Lesson {
-  id            Int      @id @default(autoincrement())
-  name          String   @default("Урок") @db.VarChar(200)
-  course        Course   @relation(fields: [courseId], references: [id])
-  courseId      Int
-  topic         Topic?   @relation(fields: [topicId], references: [id])
-  topicId       Int?
-  videoId       String   @unique
-  videoDuration Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id             Int              @id @default(autoincrement())
+  name           String           @default("Урок") @db.VarChar(200)
+  topic          Topic?           @relation(fields: [topicId], references: [id])
+  topicId        Int?
+  videoId        String           @unique
+  videoDuration  Int
+  courseProgress LessonProgress[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@map("lessons")
+}
+
+model CourseProgress {
+  id             Int              @id @default(autoincrement())
+  user           User             @relation(fields: [userId], references: [id])
+  userId         Int
+  course         Course           @relation(fields: [courseId], references: [id])
+  courseId       Int
+  lessonProgress LessonProgress[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id               Int            @id @default(autoincrement())
+  courseProgress   CourseProgress @relation(fields: [courseProgressId], references: [id])
+  courseProgressId Int
+  lesson           Lesson         @relation(fields: [lessonId], references: [id])
+  lessonId         Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([courseProgressId, lessonId])
 }
 
 model Tag {

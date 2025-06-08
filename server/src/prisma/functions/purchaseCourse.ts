@@ -13,14 +13,11 @@ export const purchaseCourse = async (
       slug: slug,
     },
     data: {
-      users: {
+      courseProgress: {
         connect: {
           id: userId,
         },
       },
-    },
-    include: {
-      lessons: true,
     },
   })
 

@@ -1,30 +1,10 @@
 'use client'
 
+import { CourseFragment } from '@/graphql/generated'
 import Link from 'next/link'
 
 type Props = {
-  course: {
-    __typename?: 'Course'
-    id: number
-    name: string
-    description: string
-    imageURL: string
-    duration: number
-    price: number
-    reducedPrice: number
-    discountValue: number
-    slug: string
-    tags: Array<{
-      __typename?: 'Tag'
-      id: number
-      name: string
-    }>
-    lessons: Array<{
-      __typename?: 'Lesson'
-      id: number
-      name: string
-    }>
-  }
+  course: CourseFragment
 }
 
 const CourseCard: React.FC<Props> = ({ course }) => {
@@ -47,7 +27,9 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           <p className="course-catalog__course-description text-sm mt-[0.8rem] mb-[1.5rem]">
             {course.description.slice(0, 100)}...
           </p>
-          <span className="course-catalog__course-lessons-quantity mb-[0.5rem]">{`${course.lessons.length} уроков`}</span>
+          <span className="course-catalog__course-lessons-quantity mb-[0.5rem]">
+            {`${course.topics.reduce((total, topic) => total + topic.lessons.length, 0)} уроков`}
+          </span>
           <span className="course-catalog__course-duration mb-[0.5rem]">
             {`${Math.floor(course.duration / 3600)} ч. `}
             {`${Math.floor((course.duration % 3600) / 60)} мин.`}

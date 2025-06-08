@@ -1,6 +1,14 @@
-export const setFilters = (tags?: string[], query?: string) => {
+export const setPurchasedCoursesFilters = (userId: number, tags?: string[], query?: string) => {
   const where: any = {
-    AND: [],
+    AND: [
+      {
+        courseProgress: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+    ],
   }
 
   if (tags && tags.length > 0) {

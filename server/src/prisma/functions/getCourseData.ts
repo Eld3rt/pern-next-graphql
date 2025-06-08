@@ -16,7 +16,6 @@ export const getCourseData = async (args: RequireFields<QueryGetCourseDataArgs, 
           lessons: true,
         },
       },
-      lessons: true,
     },
   })
 

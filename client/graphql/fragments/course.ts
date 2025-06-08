@@ -6,6 +6,7 @@ export default gql`
     name
     description
     imageURL
+    smallImageURL
     duration
     price
     reducedPrice
@@ -18,11 +19,13 @@ export default gql`
       id
       name
     }
-    lessons {
+    topics {
       id
       name
-      videoId
-      videoDuration
+      lessons {
+        id
+        name
+      }
     }
   }
 `

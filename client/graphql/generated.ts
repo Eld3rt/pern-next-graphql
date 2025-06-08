@@ -63,12 +63,12 @@ export type ConfirmPasswordResponse = {
 
 export type Course = {
   __typename?: 'Course';
+  courseProgress: Array<CourseProgress>;
   description: Scalars['String']['output'];
   discountValue: Scalars['Int']['output'];
   duration: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   imageURL: Scalars['String']['output'];
-  lessons: Array<Lesson>;
   level?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   offerMessage?: Maybe<Scalars['String']['output']>;
@@ -76,6 +76,7 @@ export type Course = {
   price: Scalars['Float']['output'];
   reducedPrice: Scalars['Float']['output'];
   slug: Scalars['String']['output'];
+  smallImageURL: Scalars['String']['output'];
   tags: Array<Tag>;
   topics: Array<Topic>;
 };
@@ -85,8 +86,21 @@ export type CourseEdge = {
   node: Course;
 };
 
+export type CourseProgress = {
+  __typename?: 'CourseProgress';
+  course: Course;
+  id: Scalars['Int']['output'];
+  lessonProgress: Array<LessonProgress>;
+};
+
 export type GetCoursesResponse = {
   __typename?: 'GetCoursesResponse';
+  edges: Array<CourseEdge>;
+  pageInfo: PageInfo;
+};
+
+export type GetPurchasedCoursesResponse = {
+  __typename?: 'GetPurchasedCoursesResponse';
   edges: Array<CourseEdge>;
   pageInfo: PageInfo;
 };
@@ -112,8 +126,15 @@ export type Lesson = {
   __typename?: 'Lesson';
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  topic: Topic;
   videoDuration: Scalars['Int']['output'];
   videoId: Scalars['String']['output'];
+};
+
+export type LessonProgress = {
+  __typename?: 'LessonProgress';
+  id: Scalars['Int']['output'];
+  lesson: Lesson;
 };
 
 export type Mutation = {
@@ -213,7 +234,8 @@ export type Query = {
   getKinescopeProjects: Array<Maybe<KinescopeProject>>;
   getKinescopeVideos: Array<Maybe<KinescopeVideo>>;
   getPurchasedCourseData?: Maybe<Course>;
-  getPurchasedCourses: Array<Course>;
+  getPurchasedCourses?: Maybe<GetPurchasedCoursesResponse>;
+  getPurchasedCoursesWithProgress: Array<Course>;
   getTags: GetTagsResponse;
   hasCachedKey: Scalars['Boolean']['output'];
   hasCourseAccess: Scalars['Boolean']['output'];
@@ -252,6 +274,15 @@ export type QueryGetKinescopeVideosArgs = {
 
 export type QueryGetPurchasedCourseDataArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryGetPurchasedCoursesArgs = {
+  after?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['PositiveInt']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<SortInput>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
@@ -351,13 +382,9 @@ export type User = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoId: string, videoDuration: number }> };
+export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> };
 
-export type CourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> };
-
-export type CourseInfoFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> };
-
-export type PurchasedCourseDataFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoDuration: number }> };
+export type PurchasedCourseFragment = { __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> };
 
 export type TagFragment = { __typename?: 'Tag', id: number, name: string };
 
@@ -449,14 +476,7 @@ export type GetCourseDataQueryVariables = Exact<{
 }>;
 
 
-export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } | null };
-
-export type GetCourseInfoQueryVariables = Exact<{
-  slug: Scalars['String']['input'];
-}>;
-
-
-export type GetCourseInfoQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> } | null };
+export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } | null };
 
 export type GetCoursesQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -467,19 +487,30 @@ export type GetCoursesQueryVariables = Exact<{
 }>;
 
 
-export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
+export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
 
-export type GetPurchasedCoursesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetPurchasedCoursesQueryVariables = Exact<{
+  tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<SortInput>;
+  first?: InputMaybe<Scalars['PositiveInt']['input']>;
+  cursor?: InputMaybe<Scalars['Int']['input']>;
+}>;
 
 
-export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }> }> };
+export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses?: { __typename?: 'GetPurchasedCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } | null };
 
 export type GetPurchasedCourseDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, duration: number, price: number, reducedPrice: number, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, videoDuration: number }> } | null };
+export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> } | null };
+
+export type GetPurchasedCoursesWithProgressQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPurchasedCoursesWithProgressQuery = { __typename?: 'Query', getPurchasedCoursesWithProgress: Array<{ __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> }> };
 
 export type GetTagsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['PositiveInt']['input']>;
@@ -500,32 +531,7 @@ export const CourseFragmentDoc = gql`
   name
   description
   imageURL
-  duration
-  price
-  reducedPrice
-  level
-  prerequisites
-  offerMessage
-  discountValue
-  slug
-  tags {
-    id
-    name
-  }
-  lessons {
-    id
-    name
-    videoId
-    videoDuration
-  }
-}
-    `;
-export const CourseDataFragmentDoc = gql`
-    fragment CourseData on Course {
-  id
-  name
-  description
-  imageURL
+  smallImageURL
   duration
   price
   reducedPrice
@@ -546,48 +552,34 @@ export const CourseDataFragmentDoc = gql`
       name
     }
   }
-  lessons {
-    id
-    name
-  }
 }
     `;
-export const CourseInfoFragmentDoc = gql`
-    fragment CourseInfo on Course {
+export const PurchasedCourseFragmentDoc = gql`
+    fragment PurchasedCourse on Course {
   id
   name
-  description
   imageURL
+  smallImageURL
   duration
-  price
-  reducedPrice
-  discountValue
+  level
+  slug
   tags {
     id
     name
   }
-  slug
-}
-    `;
-export const PurchasedCourseDataFragmentDoc = gql`
-    fragment PurchasedCourseData on Course {
-  id
-  name
-  description
-  imageURL
-  duration
-  price
-  reducedPrice
-  discountValue
-  tags {
+  topics {
     id
     name
+    lessons {
+      id
+      name
+    }
   }
-  slug
-  lessons {
+  courseProgress {
     id
-    name
-    videoDuration
+    lessonProgress {
+      id
+    }
   }
 }
     `;
@@ -1001,10 +993,10 @@ export type ConfirmEmailQueryResult = Apollo.QueryResult<ConfirmEmailQuery, Conf
 export const GetCourseDataDocument = gql`
     query GetCourseData($slug: String!) {
   getCourseData(slug: $slug) {
-    ...CourseData
+    ...Course
   }
 }
-    ${CourseDataFragmentDoc}`;
+    ${CourseFragmentDoc}`;
 
 /**
  * __useGetCourseDataQuery__
@@ -1038,46 +1030,6 @@ export type GetCourseDataQueryHookResult = ReturnType<typeof useGetCourseDataQue
 export type GetCourseDataLazyQueryHookResult = ReturnType<typeof useGetCourseDataLazyQuery>;
 export type GetCourseDataSuspenseQueryHookResult = ReturnType<typeof useGetCourseDataSuspenseQuery>;
 export type GetCourseDataQueryResult = Apollo.QueryResult<GetCourseDataQuery, GetCourseDataQueryVariables>;
-export const GetCourseInfoDocument = gql`
-    query GetCourseInfo($slug: String!) {
-  getCourseData(slug: $slug) {
-    ...CourseInfo
-  }
-}
-    ${CourseInfoFragmentDoc}`;
-
-/**
- * __useGetCourseInfoQuery__
- *
- * To run a query within a React component, call `useGetCourseInfoQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCourseInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCourseInfoQuery({
- *   variables: {
- *      slug: // value for 'slug'
- *   },
- * });
- */
-export function useGetCourseInfoQuery(baseOptions: Apollo.QueryHookOptions<GetCourseInfoQuery, GetCourseInfoQueryVariables> & ({ variables: GetCourseInfoQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCourseInfoQuery, GetCourseInfoQueryVariables>(GetCourseInfoDocument, options);
-      }
-export function useGetCourseInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCourseInfoQuery, GetCourseInfoQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCourseInfoQuery, GetCourseInfoQueryVariables>(GetCourseInfoDocument, options);
-        }
-export function useGetCourseInfoSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetCourseInfoQuery, GetCourseInfoQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetCourseInfoQuery, GetCourseInfoQueryVariables>(GetCourseInfoDocument, options);
-        }
-export type GetCourseInfoQueryHookResult = ReturnType<typeof useGetCourseInfoQuery>;
-export type GetCourseInfoLazyQueryHookResult = ReturnType<typeof useGetCourseInfoLazyQuery>;
-export type GetCourseInfoSuspenseQueryHookResult = ReturnType<typeof useGetCourseInfoSuspenseQuery>;
-export type GetCourseInfoQueryResult = Apollo.QueryResult<GetCourseInfoQuery, GetCourseInfoQueryVariables>;
 export const GetCoursesDocument = gql`
     query GetCourses($tags: [String!], $query: String, $sort: SortInput, $first: PositiveInt, $cursor: Int) {
   getCourses(
@@ -1089,7 +1041,7 @@ export const GetCoursesDocument = gql`
   ) {
     edges {
       node {
-        ...CourseData
+        ...Course
       }
     }
     pageInfo {
@@ -1098,7 +1050,7 @@ export const GetCoursesDocument = gql`
     }
   }
 }
-    ${CourseDataFragmentDoc}`;
+    ${CourseFragmentDoc}`;
 
 /**
  * __useGetCoursesQuery__
@@ -1137,12 +1089,26 @@ export type GetCoursesLazyQueryHookResult = ReturnType<typeof useGetCoursesLazyQ
 export type GetCoursesSuspenseQueryHookResult = ReturnType<typeof useGetCoursesSuspenseQuery>;
 export type GetCoursesQueryResult = Apollo.QueryResult<GetCoursesQuery, GetCoursesQueryVariables>;
 export const GetPurchasedCoursesDocument = gql`
-    query GetPurchasedCourses {
-  getPurchasedCourses {
-    ...CourseInfo
+    query GetPurchasedCourses($tags: [String!], $query: String, $sort: SortInput, $first: PositiveInt, $cursor: Int) {
+  getPurchasedCourses(
+    tags: $tags
+    query: $query
+    sort: $sort
+    first: $first
+    after: $cursor
+  ) {
+    edges {
+      node {
+        ...PurchasedCourse
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
-    ${CourseInfoFragmentDoc}`;
+    ${PurchasedCourseFragmentDoc}`;
 
 /**
  * __useGetPurchasedCoursesQuery__
@@ -1156,6 +1122,11 @@ export const GetPurchasedCoursesDocument = gql`
  * @example
  * const { data, loading, error } = useGetPurchasedCoursesQuery({
  *   variables: {
+ *      tags: // value for 'tags'
+ *      query: // value for 'query'
+ *      sort: // value for 'sort'
+ *      first: // value for 'first'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
@@ -1178,10 +1149,10 @@ export type GetPurchasedCoursesQueryResult = Apollo.QueryResult<GetPurchasedCour
 export const GetPurchasedCourseDataDocument = gql`
     query GetPurchasedCourseData($slug: String!) {
   getPurchasedCourseData(slug: $slug) {
-    ...PurchasedCourseData
+    ...PurchasedCourse
   }
 }
-    ${PurchasedCourseDataFragmentDoc}`;
+    ${PurchasedCourseFragmentDoc}`;
 
 /**
  * __useGetPurchasedCourseDataQuery__
@@ -1215,6 +1186,45 @@ export type GetPurchasedCourseDataQueryHookResult = ReturnType<typeof useGetPurc
 export type GetPurchasedCourseDataLazyQueryHookResult = ReturnType<typeof useGetPurchasedCourseDataLazyQuery>;
 export type GetPurchasedCourseDataSuspenseQueryHookResult = ReturnType<typeof useGetPurchasedCourseDataSuspenseQuery>;
 export type GetPurchasedCourseDataQueryResult = Apollo.QueryResult<GetPurchasedCourseDataQuery, GetPurchasedCourseDataQueryVariables>;
+export const GetPurchasedCoursesWithProgressDocument = gql`
+    query GetPurchasedCoursesWithProgress {
+  getPurchasedCoursesWithProgress {
+    ...PurchasedCourse
+  }
+}
+    ${PurchasedCourseFragmentDoc}`;
+
+/**
+ * __useGetPurchasedCoursesWithProgressQuery__
+ *
+ * To run a query within a React component, call `useGetPurchasedCoursesWithProgressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPurchasedCoursesWithProgressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPurchasedCoursesWithProgressQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetPurchasedCoursesWithProgressQuery(baseOptions?: Apollo.QueryHookOptions<GetPurchasedCoursesWithProgressQuery, GetPurchasedCoursesWithProgressQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPurchasedCoursesWithProgressQuery, GetPurchasedCoursesWithProgressQueryVariables>(GetPurchasedCoursesWithProgressDocument, options);
+      }
+export function useGetPurchasedCoursesWithProgressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPurchasedCoursesWithProgressQuery, GetPurchasedCoursesWithProgressQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPurchasedCoursesWithProgressQuery, GetPurchasedCoursesWithProgressQueryVariables>(GetPurchasedCoursesWithProgressDocument, options);
+        }
+export function useGetPurchasedCoursesWithProgressSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPurchasedCoursesWithProgressQuery, GetPurchasedCoursesWithProgressQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetPurchasedCoursesWithProgressQuery, GetPurchasedCoursesWithProgressQueryVariables>(GetPurchasedCoursesWithProgressDocument, options);
+        }
+export type GetPurchasedCoursesWithProgressQueryHookResult = ReturnType<typeof useGetPurchasedCoursesWithProgressQuery>;
+export type GetPurchasedCoursesWithProgressLazyQueryHookResult = ReturnType<typeof useGetPurchasedCoursesWithProgressLazyQuery>;
+export type GetPurchasedCoursesWithProgressSuspenseQueryHookResult = ReturnType<typeof useGetPurchasedCoursesWithProgressSuspenseQuery>;
+export type GetPurchasedCoursesWithProgressQueryResult = Apollo.QueryResult<GetPurchasedCoursesWithProgressQuery, GetPurchasedCoursesWithProgressQueryVariables>;
 export const GetTagsDocument = gql`
     query GetTags($first: PositiveInt, $cursor: Int) {
   getTags(first: $first, after: $cursor) {

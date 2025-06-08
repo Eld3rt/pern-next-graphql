@@ -1,9 +1,9 @@
-import { CourseDataFragment } from '@/graphql/generated'
+import { CourseFragment } from '@/graphql/generated'
 import PurchaseCourseButton from '../buttons/PurchaseCourseButton'
 
 type Props = {
   slug: string
-  course: CourseDataFragment
+  course: CourseFragment
 }
 
 const CourseIntro: React.FC<Props> = ({ slug, course }) => {
@@ -43,7 +43,10 @@ const CourseIntro: React.FC<Props> = ({ slug, course }) => {
           </li>
           <li className="course-intro__tag">
             <h4 className="text-sm text-gray-600">Кол-во уроков</h4>
-            <p className="text-base font-medium">{`${course.lessons.length} уроков`}</p>
+            <p className="text-base font-medium">{`${course.topics.reduce(
+              (total, topic) => total + topic.lessons.length,
+              0
+            )} уроков`}</p>
           </li>
           <li className="course-intro__tag">
             <h4 className="text-sm text-gray-600">Стоимость</h4>

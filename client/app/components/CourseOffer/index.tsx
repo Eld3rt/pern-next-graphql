@@ -1,9 +1,9 @@
-import { CourseDataFragment } from '@/graphql/generated'
+import { CourseFragment } from '@/graphql/generated'
 import PurchaseCourseButton from '../buttons/PurchaseCourseButton'
 
 type Props = {
   slug: string
-  course: CourseDataFragment
+  course: CourseFragment
 }
 
 const CourseOffer: React.FC<Props> = async ({ slug, course }) => {

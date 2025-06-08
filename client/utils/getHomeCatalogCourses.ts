@@ -3,7 +3,7 @@
 import { query } from '@/apollo/ApolloClient'
 import { GetCoursesQuery, GetCoursesDocument, GetCoursesQueryVariables } from '@/graphql/generated'
 
-export const getCourses = async () => {
+export const getHomeCatalogCourses = async () => {
   const { data } = await query<GetCoursesQuery, GetCoursesQueryVariables>({
     query: GetCoursesDocument,
     variables: { sort: { field: 'popular', order: 'desc' }, first: 6 },

@@ -6,6 +6,7 @@ import { GetPurchasedCoursesQuery, GetPurchasedCoursesDocument } from '@/graphql
 export const getPurchasedCourses = async () => {
   const { data } = await query<GetPurchasedCoursesQuery>({
     query: GetPurchasedCoursesDocument,
+    variables: { first: 6 },
   })
   return data.getPurchasedCourses
 }

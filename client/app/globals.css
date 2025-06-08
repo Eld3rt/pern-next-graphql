@@ -14,6 +14,28 @@
   }
 }
 
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-inter), Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-lorenzo), sans-serif;
+}
+
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p {
+  margin-top: 1rem;
+}
+
 .custom-container {
   --max-width: 1200px;
   --container-padding: 1.5rem;
@@ -60,6 +82,11 @@
   padding: 0.25rem 0.625rem;
 }
 
+.tag--small {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+}
+
 .search-icon {
   background-image: url('data:image/svg+xml;utf-8, <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg>');
   background-repeat: no-repeat;
@@ -78,6 +105,38 @@
 .sort-icon-desc {
   background-image: url('data:image/svg+xml;utf-8, <svg xmlns="http://www.w3.org/2000/svg" id="Flat" viewBox="0 0 256 256"><path d="M232.48486,96.47107a11.99915,11.99915,0,0,1-16.97021.002L196,76.9613v67.03223a12,12,0,0,1-24,0V76.964L152.48535,96.47888a12.0001,12.0001,0,0,1-16.9707-16.9707l40-40c.019-.019.04-.03467.05908-.05347.26221-.25854.53418-.50634.81885-.74.14306-.11767.29443-.22021.4414-.33008.16651-.12451.32911-.25341.50245-.36914.17187-.11523.35058-.21533.52734-.32055.15967-.09546.31543-.19556.47949-.28345.1792-.0957.36328-.17676.54541-.26294.17285-.0813.34229-.16748.51953-.241.17676-.07324.35742-.13208.53711-.19653.18994-.06811.377-.14087.57129-.2.17969-.0542.36182-.09375.543-.13965.19824-.0498.39355-.10547.5957-.14526.209-.04151.42041-.06616.63086-.09644.17676-.02539.35059-.05884.53028-.07641.39355-.03882.78808-.05982,1.18359-.05982h0l.00928.00049c.39209.00024.78418.02075,1.1748.05933.17578.01733.34571.05.519.075.21436.03051.4292.05566.64209.0979.19678.03906.3877.09326.58106.14184.18652.04663.37451.08789.55908.14356.188.05713.36963.12793.55371.19385.18555.06616.37207.12744.55518.20312.17041.0708.334.15381.50049.23218.189.08862.37939.17285.56445.27173.15625.084.30469.17968.457.27.18408.10962.37012.21411.54981.33422.16455.11011.31884.23316.47753.35083.15528.11548.314.22388.46485.34766.26416.217.51562.44873.76025.687.0376.03662.07862.06763.11572.105l39.999,39.99317A11.99974,11.99974,0,0,1,232.48486,96.47107ZM48,139.99353h71.999a12,12,0,0,0,0-24H48a12,12,0,0,0,0,24Zm0-64h55.999a12,12,0,0,0,0-24H48a12,12,0,0,0,0,24Zm135.999,104H48a12,12,0,0,0,0,24H183.999a12,12,0,0,0,0-24Z"/></svg>');
   background-repeat: no-repeat;
+}
+
+@media (width >= 64rem) {
+  .dashboard-icon-desktop {
+    background-image: url('data:image/svg+xml;utf-8, <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="LightGoldenRodYellow"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-layout-dashboard"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" /><path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" /><path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" /><path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" /></svg>');
+    background-repeat: no-repeat;
+  }
+
+  .dashboard-icon-desktop:hover {
+    background-image: url('data:image/svg+xml;utf-8, <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="Gold"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-layout-dashboard"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" /><path d="M5 16h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" /><path d="M15 12h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1" /><path d="M15 4h4a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1" /></svg>');
+    background-repeat: no-repeat;
+  }
+
+  .courses-icon-desktop {
+    background-image: url('data:image/svg+xml;utf-8, <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="LightGoldenRodYellow"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-school"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" /><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" /></svg>');
+    background-repeat: no-repeat;
+  }
+
+  .courses-icon-desktop:hover {
+    background-image: url('data:image/svg+xml;utf-8, <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="Gold"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-school"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" /><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" /></svg>');
+    background-repeat: no-repeat;
+  }
+
+  .settings-icon-desktop {
+    background-image: url('data:image/svg+xml;utf-8, <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="LightGoldenRodYellow"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>');
+    background-repeat: no-repeat;
+  }
+
+  .settings-icon-desktop:hover {
+    background-image: url('data:image/svg+xml;utf-8, <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="Gold"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>');
+    background-repeat: no-repeat;
+  }
 }
 
 .header__inner > .logo {
@@ -183,10 +242,6 @@
   background-position: 1rem;
 }
 
-.course-catalog__link {
-  background-position: right;
-}
-
 .course-catalog__sidebar-tag-menu {
   display: none;
   position: fixed;
@@ -227,7 +282,7 @@
   width: 100%;
   height: 1px;
   background-color: black;
-  transform: rotate(15deg); /* Adjust angle for diagonal effect */
+  transform: rotate(15deg);
   transform-origin: center;
 }
 
@@ -235,24 +290,19 @@
   color: rgb(249 115 22 / var(--tw-text-opacity, 1));
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-inter), Helvetica, sans-serif;
+@media only screen and (min-width: 27.5em) {
+  .dashboard-course-card-small__info {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-lorenzo), sans-serif;
-}
+@media only screen and (min-width: 37.5em) {
+  .dashboard-user-courses__course-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-h1 + p,
-h2 + p,
-h3 + p,
-h4 + p {
-  margin-top: 1rem;
+  .dashboard-course-card-small__info {
+    display: block;
+  }
 }

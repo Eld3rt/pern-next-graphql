@@ -1,30 +1,10 @@
 'use client'
 
+import { CourseFragment } from '@/graphql/generated'
 import CourseCard from '../CourseCard'
 
 type Props = {
-  entries: {
-    __typename?: 'Course'
-    id: number
-    name: string
-    description: string
-    imageURL: string
-    duration: number
-    price: number
-    reducedPrice: number
-    discountValue: number
-    slug: string
-    tags: Array<{
-      __typename?: 'Tag'
-      id: number
-      name: string
-    }>
-    lessons: Array<{
-      __typename?: 'Lesson'
-      id: number
-      name: string
-    }>
-  }[]
+  entries: CourseFragment[]
 }
 
 const CourseList: React.FC<Props> = ({ entries }) => {

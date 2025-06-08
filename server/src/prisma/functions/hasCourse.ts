@@ -10,9 +10,9 @@ export const hasCourse = async (
   const userId = currentUser.id
   const isPurchased = await prisma.course.exists({
     slug: slug,
-    users: {
+    courseProgress: {
       some: {
-        id: userId,
+        userId: userId,
       },
     },
   })

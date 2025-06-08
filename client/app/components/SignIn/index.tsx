@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation'
 import { useSignInMutation } from '@/graphql/generated'
 import * as Yup from 'yup'
 import FormInput from '../forms/FormInput'
+import { useRouter } from 'next/navigation'
 
 interface Props {}
 interface FormikValues {
@@ -15,6 +16,7 @@ interface FormikValues {
 }
 
 const SignIn: React.FC<Props> = () => {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const course_slug = searchParams.get('course_slug')
   const [signIn, { data, error }] = useSignInMutation({
@@ -44,7 +46,7 @@ const SignIn: React.FC<Props> = () => {
       },
     })
     if (data?.signIn.success) {
-      location.assign(`${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000'}`)
+      router.push(`${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000'}`)
     }
   }
 

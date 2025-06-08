@@ -65,12 +65,12 @@ export type ConfirmPasswordResponse = {
 
 export type Course = {
   __typename?: 'Course';
+  courseProgress: Array<CourseProgress>;
   description: Scalars['String']['output'];
   discountValue: Scalars['Int']['output'];
   duration: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   imageURL: Scalars['String']['output'];
-  lessons: Array<Lesson>;
   level?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   offerMessage?: Maybe<Scalars['String']['output']>;
@@ -78,6 +78,7 @@ export type Course = {
   price: Scalars['Float']['output'];
   reducedPrice: Scalars['Float']['output'];
   slug: Scalars['String']['output'];
+  smallImageURL: Scalars['String']['output'];
   tags: Array<Tag>;
   topics: Array<Topic>;
 };
@@ -87,8 +88,21 @@ export type CourseEdge = {
   node: Course;
 };
 
+export type CourseProgress = {
+  __typename?: 'CourseProgress';
+  course: Course;
+  id: Scalars['Int']['output'];
+  lessonProgress: Array<LessonProgress>;
+};
+
 export type GetCoursesResponse = {
   __typename?: 'GetCoursesResponse';
+  edges: Array<CourseEdge>;
+  pageInfo: PageInfo;
+};
+
+export type GetPurchasedCoursesResponse = {
+  __typename?: 'GetPurchasedCoursesResponse';
   edges: Array<CourseEdge>;
   pageInfo: PageInfo;
 };
@@ -114,8 +128,15 @@ export type Lesson = {
   __typename?: 'Lesson';
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  topic: Topic;
   videoDuration: Scalars['Int']['output'];
   videoId: Scalars['String']['output'];
+};
+
+export type LessonProgress = {
+  __typename?: 'LessonProgress';
+  id: Scalars['Int']['output'];
+  lesson: Lesson;
 };
 
 export type Mutation = {
@@ -215,7 +236,8 @@ export type Query = {
   getKinescopeProjects: Array<Maybe<KinescopeProject>>;
   getKinescopeVideos: Array<Maybe<KinescopeVideo>>;
   getPurchasedCourseData?: Maybe<Course>;
-  getPurchasedCourses: Array<Course>;
+  getPurchasedCourses?: Maybe<GetPurchasedCoursesResponse>;
+  getPurchasedCoursesWithProgress: Array<Course>;
   getTags: GetTagsResponse;
   hasCachedKey: Scalars['Boolean']['output'];
   hasCourseAccess: Scalars['Boolean']['output'];
@@ -254,6 +276,15 @@ export type QueryGetKinescopeVideosArgs = {
 
 export type QueryGetPurchasedCourseDataArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryGetPurchasedCoursesArgs = {
+  after?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['PositiveInt']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<SortInput>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
@@ -433,13 +464,16 @@ export type ResolversTypes = ResolversObject<{
   ConfirmPasswordResponse: ResolverTypeWrapper<ConfirmPasswordResponse>;
   Course: ResolverTypeWrapper<CourseModel>;
   CourseEdge: ResolverTypeWrapper<Omit<CourseEdge, 'node'> & { node: ResolversTypes['Course'] }>;
+  CourseProgress: ResolverTypeWrapper<Omit<CourseProgress, 'course' | 'lessonProgress'> & { course: ResolversTypes['Course'], lessonProgress: Array<ResolversTypes['LessonProgress']> }>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   GetCoursesResponse: ResolverTypeWrapper<Omit<GetCoursesResponse, 'edges'> & { edges: Array<ResolversTypes['CourseEdge']> }>;
+  GetPurchasedCoursesResponse: ResolverTypeWrapper<Omit<GetPurchasedCoursesResponse, 'edges'> & { edges: Array<ResolversTypes['CourseEdge']> }>;
   GetTagsResponse: ResolverTypeWrapper<GetTagsResponse>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   KinescopeProject: ResolverTypeWrapper<KinescopeProject>;
   KinescopeVideo: ResolverTypeWrapper<KinescopeVideo>;
   Lesson: ResolverTypeWrapper<LessonModel>;
+  LessonProgress: ResolverTypeWrapper<Omit<LessonProgress, 'lesson'> & { lesson: ResolversTypes['Lesson'] }>;
   Mutation: ResolverTypeWrapper<{}>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   PositiveInt: ResolverTypeWrapper<Scalars['PositiveInt']['output']>;
@@ -470,13 +504,16 @@ export type ResolversParentTypes = ResolversObject<{
   ConfirmPasswordResponse: ConfirmPasswordResponse;
   Course: CourseModel;
   CourseEdge: Omit<CourseEdge, 'node'> & { node: ResolversParentTypes['Course'] };
+  CourseProgress: Omit<CourseProgress, 'course' | 'lessonProgress'> & { course: ResolversParentTypes['Course'], lessonProgress: Array<ResolversParentTypes['LessonProgress']> };
   Float: Scalars['Float']['output'];
   GetCoursesResponse: Omit<GetCoursesResponse, 'edges'> & { edges: Array<ResolversParentTypes['CourseEdge']> };
+  GetPurchasedCoursesResponse: Omit<GetPurchasedCoursesResponse, 'edges'> & { edges: Array<ResolversParentTypes['CourseEdge']> };
   GetTagsResponse: GetTagsResponse;
   Int: Scalars['Int']['output'];
   KinescopeProject: KinescopeProject;
   KinescopeVideo: KinescopeVideo;
   Lesson: LessonModel;
+  LessonProgress: Omit<LessonProgress, 'lesson'> & { lesson: ResolversParentTypes['Lesson'] };
   Mutation: {};
   PageInfo: PageInfo;
   PositiveInt: Scalars['PositiveInt']['output'];
@@ -541,12 +578,12 @@ export type ConfirmPasswordResponseResolvers<ContextType = MyContext, ParentType
 }>;
 
 export type CourseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Course'] = ResolversParentTypes['Course']> = ResolversObject<{
+  courseProgress?: Resolver<Array<ResolversTypes['CourseProgress']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   discountValue?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imageURL?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  lessons?: Resolver<Array<ResolversTypes['Lesson']>, ParentType, ContextType>;
   level?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   offerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -554,6 +591,7 @@ export type CourseResolvers<ContextType = MyContext, ParentType extends Resolver
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   reducedPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  smallImageURL?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   topics?: Resolver<Array<ResolversTypes['Topic']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -564,7 +602,20 @@ export type CourseEdgeResolvers<ContextType = MyContext, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type CourseProgressResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['CourseProgress'] = ResolversParentTypes['CourseProgress']> = ResolversObject<{
+  course?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  lessonProgress?: Resolver<Array<ResolversTypes['LessonProgress']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type GetCoursesResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GetCoursesResponse'] = ResolversParentTypes['GetCoursesResponse']> = ResolversObject<{
+  edges?: Resolver<Array<ResolversTypes['CourseEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type GetPurchasedCoursesResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GetPurchasedCoursesResponse'] = ResolversParentTypes['GetPurchasedCoursesResponse']> = ResolversObject<{
   edges?: Resolver<Array<ResolversTypes['CourseEdge']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -590,8 +641,15 @@ export type KinescopeVideoResolvers<ContextType = MyContext, ParentType extends 
 export type LessonResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Lesson'] = ResolversParentTypes['Lesson']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  topic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType>;
   videoDuration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   videoId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type LessonProgressResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['LessonProgress'] = ResolversParentTypes['LessonProgress']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  lesson?: Resolver<ResolversTypes['Lesson'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -635,7 +693,8 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
   getKinescopeProjects?: Resolver<Array<Maybe<ResolversTypes['KinescopeProject']>>, ParentType, ContextType>;
   getKinescopeVideos?: Resolver<Array<Maybe<ResolversTypes['KinescopeVideo']>>, ParentType, ContextType, RequireFields<QueryGetKinescopeVideosArgs, 'projectId'>>;
   getPurchasedCourseData?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryGetPurchasedCourseDataArgs, 'slug'>>;
-  getPurchasedCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
+  getPurchasedCourses?: Resolver<Maybe<ResolversTypes['GetPurchasedCoursesResponse']>, ParentType, ContextType, Partial<QueryGetPurchasedCoursesArgs>>;
+  getPurchasedCoursesWithProgress?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   getTags?: Resolver<ResolversTypes['GetTagsResponse'], ParentType, ContextType, Partial<QueryGetTagsArgs>>;
   hasCachedKey?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryHasCachedKeyArgs, 'key'>>;
   hasCourseAccess?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryHasCourseAccessArgs, 'slug'>>;
@@ -726,11 +785,14 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   ConfirmPasswordResponse?: ConfirmPasswordResponseResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
   CourseEdge?: CourseEdgeResolvers<ContextType>;
+  CourseProgress?: CourseProgressResolvers<ContextType>;
   GetCoursesResponse?: GetCoursesResponseResolvers<ContextType>;
+  GetPurchasedCoursesResponse?: GetPurchasedCoursesResponseResolvers<ContextType>;
   GetTagsResponse?: GetTagsResponseResolvers<ContextType>;
   KinescopeProject?: KinescopeProjectResolvers<ContextType>;
   KinescopeVideo?: KinescopeVideoResolvers<ContextType>;
   Lesson?: LessonResolvers<ContextType>;
+  LessonProgress?: LessonProgressResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PositiveInt?: GraphQLScalarType;
