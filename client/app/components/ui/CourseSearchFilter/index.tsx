@@ -7,7 +7,7 @@ type Props = {
   setSearchQuery: (searchQuery: string) => void
 }
 
-const CatalogSearch: React.FC<Props> = ({ setSearchQuery }) => {
+const CourseSearchFilter: React.FC<Props> = ({ setSearchQuery }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams)
@@ -29,9 +29,9 @@ const CatalogSearch: React.FC<Props> = ({ setSearchQuery }) => {
       type="text"
       placeholder="Найти курс"
       onChange={handleChange}
-      className="course-search__input w-[13rem] py-2 px-10 border-2 border-current rounded-3xl search-icon sm:w-[18rem] lg:w-[24rem]"
+      className="course-search__input bg-position-[1rem] w-[13rem] py-2 px-10 border-2 border-current rounded-3xl search-icon sm:w-[18rem] lg:w-[24rem]"
     />
   )
 }
 
-export default CatalogSearch
+export default CourseSearchFilter

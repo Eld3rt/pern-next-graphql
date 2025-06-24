@@ -16,7 +16,7 @@ const UserSidebar: React.FC<Props> = () => {
       <div className="user-sidebar__inner grid grid-cols-5 py-3 lg:flex lg:flex-col lg:min-h-screen lg:py-10">
         <Link
           href="/"
-          className="user-sidebar__logo block col-span-1 hover:text-[gold] text-xs text-center font-bold sm:text-base lg:text-xl lg:mx-10 lg:block"
+          className="user-sidebar__logo block col-span-1 hover:text-[gold] text-xs text-center font-bold sm:text-base lg:text-xl lg:text-left lg:mx-10 lg:block"
         >
           Главная
         </Link>

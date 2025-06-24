@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ApolloWrapper } from '@/apollo/ApolloWrapper'
 import '../../globals.css'
 import localFont from 'next/font/local'
+import { cookies } from 'next/headers'
 import SessionProvider from '@/app/providers/SessionProvider'
 import UserSidebar from '@/app/components/UserSidebar'
 import Footer from '@/app/components/Footer'
@@ -31,10 +32,13 @@ interface Props {
 }
 
 const RootLayout: React.FC<Props> = async ({ children }) => {
+  const cookieStore = await cookies()
+  const authToken = cookieStore.get('sid')?.value
+
   return (
     <html lang="en" className={`${inter.variable} ${lorenzo.variable}`}>
       <body className="grid grid-cols-1 lg:grid-cols-[minmax(0px,_300px)_1fr_1fr_1fr_1fr_1fr]">
-        <ApolloWrapper>
+        <ApolloWrapper authToken={authToken}>
           <SessionProvider>
             <UserSidebar />
             {children}

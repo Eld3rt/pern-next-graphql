@@ -242,7 +242,7 @@ h4 + p {
   background-position: 1rem;
 }
 
-.course-catalog__sidebar-tag-menu {
+.course-tag-list__tag-menu {
   display: none;
   position: fixed;
   inset: 0;
@@ -250,7 +250,7 @@ h4 + p {
   z-index: 1;
 }
 
-.course-catalog__sidebar-tag-menu--active {
+.course-tag-list__tag-menu--active {
   display: block;
   place-items: center;
   padding: 4rem;
@@ -266,7 +266,7 @@ h4 + p {
 }
 
 @media only screen and (min-width: 64em) {
-  .course-catalog__sidebar-tag-menu {
+  .course-tag-list__tag-menu {
     display: block;
     position: static;
     background-color: inherit;
@@ -291,7 +291,7 @@ h4 + p {
 }
 
 @media only screen and (min-width: 27.5em) {
-  .dashboard-course-card-small__info {
+  .user-course-card-small__info {
     display: flex;
     justify-content: space-between;
   }
@@ -302,7 +302,7 @@ h4 + p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .dashboard-course-card-small__info {
+  .user-course-card-small__info {
     display: block;
   }
 }

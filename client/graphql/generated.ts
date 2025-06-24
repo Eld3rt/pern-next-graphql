@@ -237,6 +237,7 @@ export type Query = {
   getPurchasedCourses?: Maybe<GetPurchasedCoursesResponse>;
   getPurchasedCoursesWithProgress: Array<Course>;
   getTags: GetTagsResponse;
+  getUserCoursesTags: Array<Tag>;
   hasCachedKey: Scalars['Boolean']['output'];
   hasCourseAccess: Scalars['Boolean']['output'];
   me?: Maybe<User>;
@@ -519,6 +520,11 @@ export type GetTagsQueryVariables = Exact<{
 
 
 export type GetTagsQuery = { __typename?: 'Query', getTags: { __typename?: 'GetTagsResponse', edges: Array<{ __typename?: 'TagEdge', node: { __typename?: 'Tag', id: number, name: string } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
+
+export type GetUserCoursesTagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserCoursesTagsQuery = { __typename?: 'Query', getUserCoursesTags: Array<{ __typename?: 'Tag', id: number, name: string }> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1274,6 +1280,45 @@ export type GetTagsQueryHookResult = ReturnType<typeof useGetTagsQuery>;
 export type GetTagsLazyQueryHookResult = ReturnType<typeof useGetTagsLazyQuery>;
 export type GetTagsSuspenseQueryHookResult = ReturnType<typeof useGetTagsSuspenseQuery>;
 export type GetTagsQueryResult = Apollo.QueryResult<GetTagsQuery, GetTagsQueryVariables>;
+export const GetUserCoursesTagsDocument = gql`
+    query GetUserCoursesTags {
+  getUserCoursesTags {
+    ...Tag
+  }
+}
+    ${TagFragmentDoc}`;
+
+/**
+ * __useGetUserCoursesTagsQuery__
+ *
+ * To run a query within a React component, call `useGetUserCoursesTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserCoursesTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserCoursesTagsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserCoursesTagsQuery(baseOptions?: Apollo.QueryHookOptions<GetUserCoursesTagsQuery, GetUserCoursesTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserCoursesTagsQuery, GetUserCoursesTagsQueryVariables>(GetUserCoursesTagsDocument, options);
+      }
+export function useGetUserCoursesTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserCoursesTagsQuery, GetUserCoursesTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserCoursesTagsQuery, GetUserCoursesTagsQueryVariables>(GetUserCoursesTagsDocument, options);
+        }
+export function useGetUserCoursesTagsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUserCoursesTagsQuery, GetUserCoursesTagsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserCoursesTagsQuery, GetUserCoursesTagsQueryVariables>(GetUserCoursesTagsDocument, options);
+        }
+export type GetUserCoursesTagsQueryHookResult = ReturnType<typeof useGetUserCoursesTagsQuery>;
+export type GetUserCoursesTagsLazyQueryHookResult = ReturnType<typeof useGetUserCoursesTagsLazyQuery>;
+export type GetUserCoursesTagsSuspenseQueryHookResult = ReturnType<typeof useGetUserCoursesTagsSuspenseQuery>;
+export type GetUserCoursesTagsQueryResult = Apollo.QueryResult<GetUserCoursesTagsQuery, GetUserCoursesTagsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

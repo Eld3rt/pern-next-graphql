@@ -1,5 +1,5 @@
 import { getPurchasedCourses } from '@/utils/getPurchasedCourses'
-import DashboardCourseCardSmall from '../DashboardCourseCardSmall'
+import UserCourseCardSmall from '../ui/UserCourseCardSmall'
 import Link from 'next/link'
 
 type Props = {}
@@ -21,7 +21,7 @@ const DashboardUserCourses: React.FC<Props> = async () => {
       </div>
       <ul className="dashboard-user-courses__course-list grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
         {nodes?.map(course => (
-          <DashboardCourseCardSmall key={course.id} course={course} />
+          <UserCourseCardSmall key={course.id} course={course} />
         ))}
       </ul>
     </section>

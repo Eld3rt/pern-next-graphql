@@ -13,6 +13,7 @@ import { createLessons } from '../../../prisma/functions/createLessons'
 import { getTags } from '../../../prisma/functions/getTags'
 import { GraphQLScalarType, Kind } from 'graphql'
 import { getPurchasedCoursesWithProgress } from '../../../prisma/functions/getPurchasedCoursesWithProgress'
+import { getUserCoursesTags } from '../../../prisma/functions/getUserCoursesTags'
 
 export const typeDefs = gql`
   extend type Query {
@@ -26,6 +27,7 @@ export const typeDefs = gql`
       first: PositiveInt
       after: Int
     ): GetPurchasedCoursesResponse
+    getUserCoursesTags: [Tag!]!
     getPurchasedCoursesWithProgress: [Course!]!
     getPurchasedCourseData(slug: String!): Course
     hasCourseAccess(slug: String!): Boolean!
@@ -248,6 +250,15 @@ export const resolvers: Resolvers = {
         edges,
         pageInfo: { hasNextPage, endCursor },
       }
+    },
+    getUserCoursesTags: async (_, __, context) => {
+      const { currentUser } = context
+
+      if (!currentUser) return []
+
+      const userCoursesTags = getUserCoursesTags(currentUser)
+
+      return userCoursesTags
     },
     getPurchasedCoursesWithProgress: async (_, __, context) => {
       const { currentUser } = context

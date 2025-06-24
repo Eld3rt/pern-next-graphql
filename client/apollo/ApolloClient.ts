@@ -14,6 +14,7 @@ export const { getClient, query } = registerApolloClient(async () => {
         Query: {
           fields: {
             getCourses: relayStylePagination(['tags', 'query', 'sort']),
+            getPurchasedCourses: relayStylePagination(['tags', 'query', 'sort']),
             getTags: relayStylePagination(),
           },
         },
@@ -21,6 +22,7 @@ export const { getClient, query } = registerApolloClient(async () => {
     }),
     link: new HttpLink({
       uri: 'http://localhost:3000/graphql',
+      credentials: 'include',
       headers: { Cookie: `${authToken ? `sid=${authToken}` : ''}` },
     }),
   })

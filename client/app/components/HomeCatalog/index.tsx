@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getHomeCatalogCourses } from '@/utils/getHomeCatalogCourses'
-import CourseList from '../CourseList'
+import CourseList from '../ui/CourseList'
 
 type Props = {}
 

@@ -68,7 +68,7 @@ const CourseSearchDropdown = <TData, TVariables extends SearchVariables>({
   }, [])
 
   return (
-    <div ref={searchBarRef} className="course-search__bar md:w-9/12 grid place-items-center relative">
+    <div ref={searchBarRef} className="course-search__bar md:w-9/12 max-w-[900px] grid place-items-center relative">
       <input
         name="search"
         type="text"

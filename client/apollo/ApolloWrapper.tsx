@@ -9,7 +9,12 @@ import {
   SSRMultipartLink,
 } from '@apollo/experimental-nextjs-app-support'
 
-function makeClient() {
+interface Props {
+  children: React.ReactNode
+  authToken?: string | undefined
+}
+
+function makeClient(authToken: string | undefined) {
   const httpLink = new HttpLink({
     uri: 'http://localhost:3000/graphql',
     fetchOptions: { cache: 'no-store' },
@@ -33,13 +38,16 @@ function makeClient() {
             new SSRMultipartLink({
               stripDefer: true,
             }),
-            httpLink,
+            new HttpLink({
+              uri: 'http://localhost:3000/graphql',
+              credentials: 'include',
+              headers: { Cookie: `${authToken ? `sid=${authToken}` : ''}` },
+            }),
           ])
         : httpLink,
-    credentials: 'include',
   })
 }
 
-export function ApolloWrapper({ children }: React.PropsWithChildren) {
-  return <ApolloNextAppProvider makeClient={makeClient}>{children}</ApolloNextAppProvider>
+export const ApolloWrapper: React.FC<Props> = ({ children, authToken }) => {
+  return <ApolloNextAppProvider makeClient={() => makeClient(authToken)}>{children}</ApolloNextAppProvider>
 }
