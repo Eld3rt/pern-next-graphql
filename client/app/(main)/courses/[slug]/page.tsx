@@ -24,12 +24,12 @@ const Page: React.FC<Props> = async ({ params }) => {
   const course = data.getCourseData
 
   return (
-    <>
+    <main className="course-page mb-8 md:mb-16">
       <CourseIntro slug={slug} course={course} />
       <CourseBrief course={course} />
       <CourseProgram course={course} />
       <CourseOffer slug={slug} course={course} />
-    </>
+    </main>
   )
 }
 

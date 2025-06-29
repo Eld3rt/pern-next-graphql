@@ -62,7 +62,7 @@ h4 + p {
 
 .btn {
   color: white;
-  padding-inline: 1rem;
+  padding-inline: 2rem;
   padding-block: 0.5rem;
   border-radius: calc(infinity * 1px);
   background-color: #701437;

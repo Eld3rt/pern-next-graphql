@@ -55,25 +55,32 @@ const UpdateUserName: React.FC<Props> = ({ currentName }) => {
       {({ errors, setFieldError }) => (
         <div className="loginForm">
           <Form noValidate={true}>
-            <FormInput
-              name="name"
-              type="text"
-              label="Имя пользователя:"
-              onInput={e => {
-                if (errors.name == yupMessages.name.max) {
-                  if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
-                    setFieldError('name', '')
+            <div className="grid justify-center md:flex md:justify-start gap-x-[2rem]">
+              <FormInput
+                name="name"
+                type="text"
+                label="Имя пользователя:"
+                onInput={e => {
+                  if (errors.name == yupMessages.name.max) {
+                    if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
+                      setFieldError('name', '')
+                    }
                   }
-                }
-              }}
-            />
-
-            <button className="btn" type="submit">
-              Сохранить
-            </button>
-            {data?.updateUserName.success && <p className="text-success">{data.updateUserName.message}</p>}
+                }}
+              />
+              <button className="btn h-[46px] mt-auto mb-4" type="submit">
+                Сохранить
+              </button>
+            </div>
+            {data?.updateUserName.success && (
+              <p className="validation-message text-center md:text-left text-sm text-green-500">
+                {data.updateUserName.message}
+              </p>
+            )}
             {(error || errors.name || (data?.updateUserName && !data.updateUserName.success)) && (
-              <p className="text-error text-red-500">{error?.message || errors.name || data?.updateUserName.message}</p>
+              <p className="validation-message text-center md:text-left text-sm text-red-500">
+                {error?.message || errors.name || data?.updateUserName.message}
+              </p>
             )}
           </Form>
         </div>

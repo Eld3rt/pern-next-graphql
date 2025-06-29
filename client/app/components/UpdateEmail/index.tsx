@@ -51,32 +51,40 @@ const UpdateEmail: React.FC<Props> = ({ currentEmail }) => {
       {({ errors, setFieldError }) => (
         <div className="updateEmailForm">
           <Form noValidate={true}>
-            <FormInput
-              name="email"
-              type="text"
-              label="Email:"
-              onInput={e => {
-                if (errors.email == yupMessages.email.required) {
-                  setFieldError('email', '')
-                }
-                if (errors.email == yupMessages.email.email) {
-                  if (Yup.string().email().isValidSync(e.currentTarget.value) && e.currentTarget.value) {
+            <div className="grid justify-center md:flex md:justify-start gap-x-[2rem]">
+              <FormInput
+                name="email"
+                type="text"
+                label="Email:"
+                onInput={e => {
+                  if (errors.email == yupMessages.email.required) {
                     setFieldError('email', '')
                   }
-                }
-                if (errors.email == yupMessages.email.max) {
-                  if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
-                    setFieldError('email', '')
+                  if (errors.email == yupMessages.email.email) {
+                    if (Yup.string().email().isValidSync(e.currentTarget.value) && e.currentTarget.value) {
+                      setFieldError('email', '')
+                    }
                   }
-                }
-              }}
-            />
-            <button className="btn" type="submit">
-              Сохранить
-            </button>
-            {data?.updateEmail.success && <p className="text-success">{data.updateEmail.message}</p>}
+                  if (errors.email == yupMessages.email.max) {
+                    if (Yup.string().max(200).isValidSync(e.currentTarget.value)) {
+                      setFieldError('email', '')
+                    }
+                  }
+                }}
+              />
+              <button className="btn h-[46px] mt-auto mb-4" type="submit">
+                Сохранить
+              </button>
+            </div>
+            {data?.updateEmail.success && (
+              <p className="validation-message text-center md:text-left text-sm text-green-500">
+                {data.updateEmail.message}
+              </p>
+            )}
             {(error || errors.email || (data?.updateEmail && !data.updateEmail.success)) && (
-              <p className="text-error text-red-500">{error?.message || errors.email || data?.updateEmail.message}</p>
+              <p className="validation-message text-center md:text-left text-sm text-red-500">
+                {error?.message || errors.email || data?.updateEmail.message}
+              </p>
             )}
           </Form>
         </div>

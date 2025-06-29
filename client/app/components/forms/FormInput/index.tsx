@@ -2,6 +2,7 @@ import React from 'react'
 import { Field } from 'formik'
 
 interface Props {
+  className?: string
   type: string
   name: string
   label?: string

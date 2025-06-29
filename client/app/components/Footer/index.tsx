@@ -4,7 +4,7 @@ type Props = {}
 
 const Footer: React.FC<Props> = () => {
   return (
-    <footer className="col-span-1 md:col-span-5 p-4 md:p-8 border-t mt-8 md:mt-16 mb-[2rem] md:mb-[3rem] pt-[2rem] md:pt-[3rem]">
+    <footer className="col-span-1 md:col-span-5 p-4 md:p-8 border-t mt-auto mb-[2rem] md:mb-[3rem] pt-[2rem] md:pt-[3rem]">
       <div className="footer__inner custom-container custom-container--wide grid justify-center items-center sm:flex sm:justify-between">
         <h3 className="footer-company mb-[1.5rem] text-center text-lg md:text-xl lg:text-2xl">
           Удобная платформа для обучения

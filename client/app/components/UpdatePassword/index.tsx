@@ -32,7 +32,7 @@ const UpdatePassword: React.FC<Props> = () => {
 
   const handleSubmit = async (values: FormikValues, actions: FormikHelpers<FormikValues>) => {
     const { oldPassword, newPassword } = { ...values }
-    actions.resetForm()
+    actions.resetForm({})
     await updatePassword({
       variables: {
         oldPassword: oldPassword,
@@ -77,7 +77,7 @@ const UpdatePassword: React.FC<Props> = () => {
 
         return (
           <div className="loginForm">
-            <Form noValidate={true}>
+            <Form noValidate={true} className="grid max-w-[220px] justify-items-center">
               <FormInput
                 name="oldPassword"
                 type="password"
@@ -88,8 +88,10 @@ const UpdatePassword: React.FC<Props> = () => {
                   }
                 }}
               />
-              {errors.oldPassword == yupMessages.oldPassword.required && (
-                <p className="text-error text-red-500">{errors.oldPassword}</p>
+              {(errors.oldPassword || data?.updatePassword?.message === 'Неверно указан старый пароль') && (
+                <p className="validation-message text-sm text-red-500">
+                  {errors.oldPassword || data?.updatePassword?.message}
+                </p>
               )}
               <FormInput
                 name="newPassword"
@@ -122,18 +124,21 @@ const UpdatePassword: React.FC<Props> = () => {
                   }
                 }}
               />
-              {errors.newPassword && <p className="text-error text-red-500">{errors.newPassword}</p>}
-              <button className="btn" type="submit">
+              {errors.newPassword && <p className="validation-message text-sm text-red-500">{errors.newPassword}</p>}
+              <button className="btn mt-[1rem]" type="submit">
                 Сохранить
               </button>
               {data?.updatePassword.success && <p className="text-success">{data.updatePassword.message}</p>}
               {(error || errors.oldPassword || (data?.updatePassword && !data.updatePassword.success)) &&
+                !(data?.updatePassword.message == 'Неверно указан старый пароль') &&
                 !(errors.oldPassword == yupMessages.oldPassword.required) &&
+                !(errors.oldPassword == yupMessages.oldPassword.min) &&
+                !(errors.oldPassword == yupMessages.oldPassword.max) &&
                 !(errors.newPassword == yupMessages.newPassword.required) &&
                 !(errors.newPassword == yupMessages.newPassword.min) &&
                 !(errors.newPassword == yupMessages.newPassword.max) && (
-                  <p className="text-error text-red-500">
-                    {error?.message || errors.oldPassword || data?.updatePassword.message}
+                  <p className="validation-message text-sm text-red-500 mt-[1rem]">
+                    {error?.message || data?.updatePassword.message}
                   </p>
                 )}
             </Form>
