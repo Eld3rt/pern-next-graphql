@@ -46,7 +46,9 @@ const SignIn: React.FC<Props> = () => {
       },
     })
     if (data?.signIn.success) {
-      router.push(`${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000'}`)
+      router.push(
+        `${course_slug ? `http://localhost:4000/courses/${course_slug}` : 'http://localhost:4000/user/dashboard'}`
+      )
     }
   }
 

@@ -19,6 +19,30 @@ export const getPurchasedCourseData = async (
     },
     include: {
       tags: true,
+      topics: {
+        include: {
+          lessons: {
+            orderBy: {
+              position: 'asc',
+            },
+          },
+        },
+        orderBy: {
+          position: 'asc',
+        },
+      },
+      courseProgress: {
+        where: {
+          userId: userId,
+        },
+        include: {
+          lessonProgress: {
+            include: {
+              lesson: true,
+            },
+          },
+        },
+      },
     },
   })
 

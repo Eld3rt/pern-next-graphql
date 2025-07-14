@@ -4,8 +4,10 @@ export default gql`
   fragment PurchasedCourse on Course {
     id
     name
+    description
     imageURL
     smallImageURL
+    mainColor
     duration
     level
     slug
@@ -19,12 +21,17 @@ export default gql`
       lessons {
         id
         name
+        slug
+        videoDuration
       }
     }
     courseProgress {
       id
       lessonProgress {
         id
+        lesson {
+          id
+        }
       }
     }
   }

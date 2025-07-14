@@ -15,7 +15,7 @@ const UserCourseCardMedium: React.FC<Props> = ({ course }) => {
   return (
     <li className="user-course-card-medium bg-[#fbfaf8] border rounded-[16px]">
       <Link
-        href={`/courses/${course.slug}`}
+        href={`/user/courses/${course.slug}`}
         className="user-course-card-medium__link block sm:flex sm:gap-x-[1rem] md:gap-x-[2rem] sm:flex-col sm:h-[100%]"
       >
         <div className="user-course-card-medium__image flex justify-center sm:block sm:w-[100%] sm:mb-[0] lg:mb-[0.5rem]">

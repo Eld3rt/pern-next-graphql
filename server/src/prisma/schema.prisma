@@ -24,7 +24,8 @@ model Course {
   name           String           @db.VarChar(200)
   description    String
   imageURL       String           @unique
-	smallImageURL  String?          @unique
+  smallImageURL  String?          @unique
+  mainColor      String          @db.VarChar(7) @default("#701437")
   duration       Int
   price          Float
   reducedPrice   Float
@@ -43,11 +44,13 @@ model Course {
 
 model Lesson {
   id             Int              @id @default(autoincrement())
+  position       Int
   name           String           @default("Урок") @db.VarChar(200)
   topic          Topic?           @relation(fields: [topicId], references: [id])
   topicId        Int?
   videoId        String           @unique
   videoDuration  Int
+  slug           String
   courseProgress LessonProgress[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
@@ -88,6 +91,7 @@ model Tag {
 
 model Topic {
   id       Int      @id @default(autoincrement())
+  position Int
   name     String
   course   Course   @relation(fields: [courseId], references: [id])
   courseId Int

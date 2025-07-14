@@ -70,6 +70,7 @@ export type Course = {
   id: Scalars['Int']['output'];
   imageURL: Scalars['String']['output'];
   level?: Maybe<Scalars['String']['output']>;
+  mainColor: Scalars['String']['output'];
   name: Scalars['String']['output'];
   offerMessage?: Maybe<Scalars['String']['output']>;
   prerequisites?: Maybe<Scalars['String']['output']>;
@@ -126,6 +127,8 @@ export type Lesson = {
   __typename?: 'Lesson';
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
   topic: Topic;
   videoDuration: Scalars['Int']['output'];
   videoId: Scalars['String']['output'];
@@ -352,6 +355,7 @@ export type Topic = {
   id: Scalars['Int']['output'];
   lessons: Array<Lesson>;
   name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
 };
 
 export type UpdateEmailResponse = {
@@ -383,9 +387,9 @@ export type User = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> };
+export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> };
 
-export type PurchasedCourseFragment = { __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> };
+export type PurchasedCourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> };
 
 export type TagFragment = { __typename?: 'Tag', id: number, name: string };
 
@@ -477,7 +481,7 @@ export type GetCourseDataQueryVariables = Exact<{
 }>;
 
 
-export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } | null };
+export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } | null };
 
 export type GetCoursesQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -488,7 +492,7 @@ export type GetCoursesQueryVariables = Exact<{
 }>;
 
 
-export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
+export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
 
 export type GetPurchasedCoursesQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -499,19 +503,19 @@ export type GetPurchasedCoursesQueryVariables = Exact<{
 }>;
 
 
-export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses?: { __typename?: 'GetPurchasedCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } | null };
+export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses?: { __typename?: 'GetPurchasedCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } | null };
 
 export type GetPurchasedCourseDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> } | null };
+export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> } | null };
 
 export type GetPurchasedCoursesWithProgressQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPurchasedCoursesWithProgressQuery = { __typename?: 'Query', getPurchasedCoursesWithProgress: Array<{ __typename?: 'Course', id: number, name: string, imageURL: string, smallImageURL: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> }> };
+export type GetPurchasedCoursesWithProgressQuery = { __typename?: 'Query', getPurchasedCoursesWithProgress: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> }> };
 
 export type GetTagsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['PositiveInt']['input']>;
@@ -538,6 +542,7 @@ export const CourseFragmentDoc = gql`
   description
   imageURL
   smallImageURL
+  mainColor
   duration
   price
   reducedPrice
@@ -564,8 +569,10 @@ export const PurchasedCourseFragmentDoc = gql`
     fragment PurchasedCourse on Course {
   id
   name
+  description
   imageURL
   smallImageURL
+  mainColor
   duration
   level
   slug
@@ -579,12 +586,17 @@ export const PurchasedCourseFragmentDoc = gql`
     lessons {
       id
       name
+      slug
+      videoDuration
     }
   }
   courseProgress {
     id
     lessonProgress {
       id
+      lesson {
+        id
+      }
     }
   }
 }

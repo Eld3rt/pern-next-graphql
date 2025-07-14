@@ -31,7 +31,7 @@ const CourseCard: React.FC<Props> = ({ course }) => {
             {`${course.topics.reduce((total, topic) => total + topic.lessons.length, 0)} уроков`}
           </span>
           <span className="course-card__course-duration mb-[0.5rem]">
-            {`${Math.floor(course.duration / 3600)} ч. `}
+            {course.duration >= 3600 && `${Math.floor(course.duration / 3600)} ч. `}
             {`${Math.floor((course.duration % 3600) / 60)} мин.`}
           </span>
           <div className="course-card__course-prices text-xl mb-[1.5rem]">

@@ -39,7 +39,11 @@ export const getPurchasedCourses = async (
           userId: userId,
         },
         include: {
-          lessonProgress: true,
+          lessonProgress: {
+            include: {
+              lesson: true,
+            },
+          },
         },
       },
     },

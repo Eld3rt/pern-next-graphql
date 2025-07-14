@@ -7,6 +7,7 @@ export default gql`
     description
     imageURL
     smallImageURL
+    mainColor
     duration
     price
     reducedPrice

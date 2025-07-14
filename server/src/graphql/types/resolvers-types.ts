@@ -72,6 +72,7 @@ export type Course = {
   id: Scalars['Int']['output'];
   imageURL: Scalars['String']['output'];
   level?: Maybe<Scalars['String']['output']>;
+  mainColor: Scalars['String']['output'];
   name: Scalars['String']['output'];
   offerMessage?: Maybe<Scalars['String']['output']>;
   prerequisites?: Maybe<Scalars['String']['output']>;
@@ -128,6 +129,8 @@ export type Lesson = {
   __typename?: 'Lesson';
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
+  slug: Scalars['String']['output'];
   topic: Topic;
   videoDuration: Scalars['Int']['output'];
   videoId: Scalars['String']['output'];
@@ -354,6 +357,7 @@ export type Topic = {
   id: Scalars['Int']['output'];
   lessons: Array<Lesson>;
   name: Scalars['String']['output'];
+  position: Scalars['Int']['output'];
 };
 
 export type UpdateEmailResponse = {
@@ -586,6 +590,7 @@ export type CourseResolvers<ContextType = MyContext, ParentType extends Resolver
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imageURL?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   level?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  mainColor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   offerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   prerequisites?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -642,6 +647,8 @@ export type KinescopeVideoResolvers<ContextType = MyContext, ParentType extends 
 export type LessonResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Lesson'] = ResolversParentTypes['Lesson']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  position?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   topic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType>;
   videoDuration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   videoId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -747,6 +754,7 @@ export type TopicResolvers<ContextType = MyContext, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   lessons?: Resolver<Array<ResolversTypes['Lesson']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  position?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

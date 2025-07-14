@@ -98,6 +98,7 @@ export const typeDefs = gql`
     description: String!
     imageURL: String!
     smallImageURL: String!
+    mainColor: String!
     duration: Int!
     price: Float!
     reducedPrice: Float!
@@ -113,10 +114,12 @@ export const typeDefs = gql`
 
   type Lesson {
     id: Int!
+    position: Int!
     name: String!
     videoId: String!
     videoDuration: Int!
     topic: Topic!
+    slug: String!
   }
 
   type CourseProgress {
@@ -146,6 +149,7 @@ export const typeDefs = gql`
 
   type Topic {
     id: Int!
+    position: Int!
     name: String!
     lessons: [Lesson!]!
   }

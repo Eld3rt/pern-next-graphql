@@ -13,7 +13,7 @@ const UserCourseCardSmall: React.FC<Props> = ({ course }) => {
   return (
     <li className="user-course-card-small bg-[#fbfaf8] border rounded-[16px]">
       <Link
-        href={`/courses/${course.slug}`}
+        href={`/user/courses/${course.slug}`}
         className="user-course-card-small__link block p-3 flex gap-x-[1rem] xl:gap-x-[2rem] sm:h-[100%]"
       >
         <div className="user-course-card-small__image flex justify-center md:mb-3 sm:mb-0 w-[40%] xl:w-[30%]">
