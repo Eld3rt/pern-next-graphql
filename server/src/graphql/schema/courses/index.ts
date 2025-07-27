@@ -14,6 +14,9 @@ import { getTags } from '../../../prisma/functions/getTags'
 import { GraphQLScalarType, Kind } from 'graphql'
 import { getPurchasedCoursesWithProgress } from '../../../prisma/functions/getPurchasedCoursesWithProgress'
 import { getUserCoursesTags } from '../../../prisma/functions/getUserCoursesTags'
+import { getLessonData } from '../../../prisma/functions/getLessonData'
+import { updateLessons } from '../../../prisma/functions/updateLessons'
+import { getGetCourseLessons } from '../../../prisma/functions/getCourseLessons'
 
 export const typeDefs = gql`
   extend type Query {
@@ -30,6 +33,8 @@ export const typeDefs = gql`
     getUserCoursesTags: [Tag!]!
     getPurchasedCoursesWithProgress: [Course!]!
     getPurchasedCourseData(slug: String!): Course
+    getCourseLessons(slug: String!): [Lesson!]!
+    getLessonData(courseSlug: String!, lessonSlug: String!): Lesson
     hasCourseAccess(slug: String!): Boolean!
     getKinescopeProjects: [KinescopeProject]!
     getKinescopeVideos(projectId: String!): [KinescopeVideo]!
@@ -39,6 +44,7 @@ export const typeDefs = gql`
     purchaseCourse(slug: String!): PurchaseCourseResponse!
     addLesson(name: String!, videoId: String!, courseId: Int!): AddLessonResponse!
     addLessons(projectId: String!, courseId: Int!): AddLessonsResponse!
+    updateLessons(projectId: String!, courseId: Int!): UpdateLessonsResponse!
   }
 
   type PurchaseCourseResponse {
@@ -57,6 +63,14 @@ export const typeDefs = gql`
   }
 
   type AddLessonsResponse {
+    success: Boolean!
+    message: String!
+    developerMessage: String
+    lessons: [Lesson!]
+    course: Course
+  }
+
+  type UpdateLessonsResponse {
     success: Boolean!
     message: String!
     developerMessage: String
@@ -116,10 +130,13 @@ export const typeDefs = gql`
     id: Int!
     position: Int!
     name: String!
+    content: String
     videoId: String!
+    videoURL: String!
     videoDuration: Int!
     topic: Topic!
     slug: String!
+    lessonProgress: [LessonProgress!]!
   }
 
   type CourseProgress {
@@ -135,6 +152,7 @@ export const typeDefs = gql`
 
   type KinescopeVideo {
     id: String!
+    embed_link: String!
   }
 
   type KinescopeProject {
@@ -282,6 +300,25 @@ export const resolvers: Resolvers = {
 
       return purchasedCourse
     },
+    getCourseLessons: async (_, args, context) => {
+      const { currentUser } = context
+
+      if (!currentUser) return []
+
+      const lessons = await getGetCourseLessons(args, currentUser)
+
+      return lessons
+    },
+    getLessonData: async (_, args, context) => {
+      const { currentUser } = context
+
+      if (!currentUser) return null
+
+      const lesson = await getLessonData(args, currentUser)
+
+      return lesson
+    },
+
     hasCourseAccess: async (_, args, context) => {
       const { currentUser } = context
 
@@ -365,7 +402,24 @@ export const resolvers: Resolvers = {
       } catch (error: any) {
         return {
           success: false,
-          message: 'Ошибка при добавлении урока',
+          message: 'Ошибка при добавлении уроков',
+          developerMessage: error.message,
+        }
+      }
+    },
+    updateLessons: async (_, args, ___) => {
+      try {
+        const { lessons, course } = await updateLessons(args)
+        return {
+          success: true,
+          message: 'Уроки успешно обновлены!',
+          lessons: lessons,
+          course: course,
+        }
+      } catch (error: any) {
+        return {
+          success: false,
+          message: 'Ошибка при обновлении уроков',
           developerMessage: error.message,
         }
       }

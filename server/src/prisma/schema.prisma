@@ -13,6 +13,7 @@ model User {
   email          String           @unique @db.VarChar(200)
   passhash       String           @db.VarChar(200)
   courseProgress CourseProgress[]
+  lessonProgress LessonProgress[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
@@ -25,7 +26,7 @@ model Course {
   description    String
   imageURL       String           @unique
   smallImageURL  String?          @unique
-  mainColor      String          @db.VarChar(7) @default("#701437")
+  mainColor      String           @default("#701437") @db.VarChar(7)
   duration       Int
   price          Float
   reducedPrice   Float
@@ -35,6 +36,7 @@ model Course {
   slug           String           @unique
   tags           Tag[]
   topics         Topic[]
+  lessons        Lesson[]
   courseProgress CourseProgress[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
@@ -46,12 +48,16 @@ model Lesson {
   id             Int              @id @default(autoincrement())
   position       Int
   name           String           @default("Урок") @db.VarChar(200)
-  topic          Topic?           @relation(fields: [topicId], references: [id])
-  topicId        Int?
+	content        String?
+  course         Course           @relation(fields: [courseId], references: [id])
+  courseId       Int
+  topic          Topic            @relation(fields: [topicId], references: [id])
+  topicId        Int
   videoId        String           @unique
+  videoURL       String           @unique
   videoDuration  Int
   slug           String
-  courseProgress LessonProgress[]
+  lessonProgress LessonProgress[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
@@ -77,6 +83,8 @@ model LessonProgress {
   courseProgressId Int
   lesson           Lesson         @relation(fields: [lessonId], references: [id])
   lessonId         Int
+  user             User           @relation(fields: [userId], references: [id])
+  userId           Int
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 

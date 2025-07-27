@@ -5,19 +5,19 @@ import { getPurchasedCourseData } from '@/utils/getPurchasedCourseData'
 import chroma from 'chroma-js'
 
 interface Props {
-  params: { slug: string }
+  params: { courseSlug: string }
 }
 
 const Page: React.FC<Props> = async ({ params }) => {
-  const { slug } = await params
+  const { courseSlug } = await params
 
-  const course = await getPurchasedCourseData(slug)
+  const course = await getPurchasedCourseData(courseSlug)
 
   if (!course) {
     notFound()
   }
 
-  const minLuminance = 0.25 // adjust as needed (0 = black, 1 = white)
+  const minLuminance = 0.25
   const maxLuminance = 0.75
 
   let color = chroma(course.mainColor)

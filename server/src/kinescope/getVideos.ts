@@ -4,6 +4,7 @@ const KINESCOPE_API_KEY = process.env.KINESCOPE_API_KEY
 
 type LessonVideo = {
   id: string
+  embed_link: string
   duration: number
 }
 

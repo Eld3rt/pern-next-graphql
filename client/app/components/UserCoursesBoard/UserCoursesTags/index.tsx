@@ -68,7 +68,7 @@ const UserCoursesTags: React.FC<Props> = ({ setSearchTags }) => {
       >
         Фильтр по тегам
       </button>
-      {searchTags && (
+      {searchTags.length > 0 && (
         <ul className="course-tag-list__filter-list flex flex-wrap justify-center gap-[0.4rem] lg:hidden">
           {searchTags.map((tag, i) => {
             return (

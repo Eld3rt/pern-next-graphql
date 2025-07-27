@@ -16,9 +16,10 @@ type Props = {
     }>
   }[]
   color: string
+  courseSlug: string
 }
 
-const UserCourseLessonsByTopics: React.FC<Props> = ({ entries, color }) => {
+const UserCourseLessonsByTopics: React.FC<Props> = ({ entries, color, courseSlug }) => {
   return (
     <ul className="user-course-topics-list grid 2xl:grid-cols-2 justify-center gap-y-[1.5rem] gap-x-[2rem] 2xl:gap-[2.5rem]">
       {entries?.map(topic => (
@@ -28,7 +29,7 @@ const UserCourseLessonsByTopics: React.FC<Props> = ({ entries, color }) => {
           </div>
           <ul className="user-course-lessons-list grid sm:flex flex-wrap gap-[1rem]">
             {topic.lessons.map(lesson => (
-              <UserLessonCard key={lesson.id} lesson={lesson} color={color} />
+              <UserLessonCard key={lesson.id} lesson={lesson} color={color} courseSlug={courseSlug} />
             ))}
           </ul>
         </li>

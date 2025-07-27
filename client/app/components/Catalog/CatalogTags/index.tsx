@@ -73,7 +73,7 @@ const CatalogTags: React.FC<Props> = ({ setSearchTags }) => {
       >
         Фильтр по тегам
       </button>
-      {searchTags && (
+      {searchTags.length > 0 && (
         <ul className="course-catalog__filter-list flex flex-wrap justify-center gap-[0.4rem] lg:hidden">
           {searchTags.map((tag, i) => {
             return (
@@ -89,9 +89,7 @@ const CatalogTags: React.FC<Props> = ({ setSearchTags }) => {
       ) : (
         <div
           className={`${
-            isOpen
-              ? 'course-catalog__sidebar-tag-menu course-catalog__sidebar-tag-menu--active'
-              : 'course-catalog__sidebar-tag-menu'
+            isOpen ? 'course-tag-list__tag-menu course-tag-list__tag-menu--active' : 'course-tag-list__tag-menu'
           }`}
         >
           <CourseTagList entries={nodes} selectedTags={selectedTags} handleTagSelection={handleTagSelection} />

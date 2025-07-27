@@ -1,5 +1,5 @@
 import { PurchasedCourseFragment } from '@/graphql/generated'
-import UserCourseLessonList from './UserCourseLessonsByTopics'
+import UserCourseLessonsByTopics from './UserCourseLessonsByTopics'
 
 type Props = {
   course: PurchasedCourseFragment
@@ -15,7 +15,7 @@ const UserCourseLessonsBoard: React.FC<Props> = ({ course }) => {
         <h2 className="user-course-lessons__head text-lg md:text-xl font-semibold">Доска уроков</h2>
       </div>
       <div className="user-course-lessons-board__main lg:flex">
-        <UserCourseLessonList entries={topics} color={color} />
+        <UserCourseLessonsByTopics entries={topics} color={color} courseSlug={course.slug} />
       </div>
     </section>
   )

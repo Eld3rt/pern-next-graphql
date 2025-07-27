@@ -253,16 +253,25 @@ h4 + p {
 .course-tag-list__tag-menu--active {
   display: block;
   place-items: center;
-  padding: 4rem;
+  padding: 4rem 3rem;
   overscroll-behavior: none;
   overflow: auto;
 }
 
-.price-with-discount {
-  color: black;
-  position: relative;
-  display: inline-flex;
-  margin-right: 1rem;
+.lesson-navigation__menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: white;
+  z-index: 1;
+}
+
+.lesson-navigation__menu--active {
+  display: block;
+  place-items: center;
+  padding: 4rem 3rem;
+  overscroll-behavior: none;
+  overflow: auto;
 }
 
 @media only screen and (min-width: 64em) {
@@ -272,6 +281,22 @@ h4 + p {
     background-color: inherit;
     inset: auto;
   }
+}
+
+@media only screen and (min-width: 64em) {
+  .lesson-navigation__menu {
+    display: flex;
+    position: static;
+    background-color: inherit;
+    inset: auto;
+  }
+}
+
+.price-with-discount {
+  color: black;
+  position: relative;
+  display: inline-flex;
+  margin-right: 1rem;
 }
 
 .price-with-discount::after {
@@ -305,4 +330,12 @@ h4 + p {
   .user-course-card-small__info {
     display: block;
   }
+}
+
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }

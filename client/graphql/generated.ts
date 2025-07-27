@@ -120,18 +120,22 @@ export type KinescopeProject = {
 
 export type KinescopeVideo = {
   __typename?: 'KinescopeVideo';
+  embed_link: Scalars['String']['output'];
   id: Scalars['String']['output'];
 };
 
 export type Lesson = {
   __typename?: 'Lesson';
+  content?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
+  lessonProgress: Array<LessonProgress>;
   name: Scalars['String']['output'];
   position: Scalars['Int']['output'];
   slug: Scalars['String']['output'];
   topic: Topic;
   videoDuration: Scalars['Int']['output'];
   videoId: Scalars['String']['output'];
+  videoURL: Scalars['String']['output'];
 };
 
 export type LessonProgress = {
@@ -151,6 +155,7 @@ export type Mutation = {
   signOut: SignOutResponse;
   signUp: SignUpResponse;
   updateEmail: UpdateEmailResponse;
+  updateLessons: UpdateLessonsResponse;
   updatePassword: UpdatePasswordResponse;
   updateUserName: UpdateUserNameResponse;
 };
@@ -204,6 +209,12 @@ export type MutationUpdateEmailArgs = {
 };
 
 
+export type MutationUpdateLessonsArgs = {
+  courseId: Scalars['Int']['input'];
+  projectId: Scalars['String']['input'];
+};
+
+
 export type MutationUpdatePasswordArgs = {
   newPassword: Scalars['String']['input'];
   oldPassword: Scalars['String']['input'];
@@ -233,9 +244,11 @@ export type Query = {
   confirmAccount: ConfirmAccountResponse;
   confirmEmail: ConfirmEmailResponse;
   getCourseData?: Maybe<Course>;
+  getCourseLessons: Array<Lesson>;
   getCourses: GetCoursesResponse;
   getKinescopeProjects: Array<Maybe<KinescopeProject>>;
   getKinescopeVideos: Array<Maybe<KinescopeVideo>>;
+  getLessonData?: Maybe<Lesson>;
   getPurchasedCourseData?: Maybe<Course>;
   getPurchasedCourses?: Maybe<GetPurchasedCoursesResponse>;
   getPurchasedCoursesWithProgress: Array<Course>;
@@ -262,6 +275,11 @@ export type QueryGetCourseDataArgs = {
 };
 
 
+export type QueryGetCourseLessonsArgs = {
+  slug: Scalars['String']['input'];
+};
+
+
 export type QueryGetCoursesArgs = {
   after?: InputMaybe<Scalars['Int']['input']>;
   first?: InputMaybe<Scalars['PositiveInt']['input']>;
@@ -273,6 +291,12 @@ export type QueryGetCoursesArgs = {
 
 export type QueryGetKinescopeVideosArgs = {
   projectId: Scalars['String']['input'];
+};
+
+
+export type QueryGetLessonDataArgs = {
+  courseSlug: Scalars['String']['input'];
+  lessonSlug: Scalars['String']['input'];
 };
 
 
@@ -365,6 +389,15 @@ export type UpdateEmailResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type UpdateLessonsResponse = {
+  __typename?: 'UpdateLessonsResponse';
+  course?: Maybe<Course>;
+  developerMessage?: Maybe<Scalars['String']['output']>;
+  lessons?: Maybe<Array<Lesson>>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type UpdatePasswordResponse = {
   __typename?: 'UpdatePasswordResponse';
   developerMessage?: Maybe<Scalars['String']['output']>;
@@ -388,6 +421,10 @@ export type User = {
 };
 
 export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> };
+
+export type LessonFragment = { __typename?: 'Lesson', id: number, position: number, name: string, content?: string | null, videoId: string, videoURL: string, videoDuration: number, slug: string, topic: { __typename?: 'Topic', id: number, name: string }, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> };
+
+export type LessonInfoFragment = { __typename?: 'Lesson', id: number, position: number, name: string, videoDuration: number, slug: string, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> };
 
 export type PurchasedCourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> };
 
@@ -483,6 +520,13 @@ export type GetCourseDataQueryVariables = Exact<{
 
 export type GetCourseDataQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } | null };
 
+export type GetCourseLessonsQueryVariables = Exact<{
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type GetCourseLessonsQuery = { __typename?: 'Query', getCourseLessons: Array<{ __typename?: 'Lesson', id: number, position: number, name: string, videoDuration: number, slug: string, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> };
+
 export type GetCoursesQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
   query?: InputMaybe<Scalars['String']['input']>;
@@ -493,6 +537,14 @@ export type GetCoursesQueryVariables = Exact<{
 
 
 export type GetCoursesQuery = { __typename?: 'Query', getCourses: { __typename?: 'GetCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } };
+
+export type GetLessonDataQueryVariables = Exact<{
+  courseSlug: Scalars['String']['input'];
+  lessonSlug: Scalars['String']['input'];
+}>;
+
+
+export type GetLessonDataQuery = { __typename?: 'Query', getLessonData?: { __typename?: 'Lesson', id: number, position: number, name: string, content?: string | null, videoId: string, videoURL: string, videoDuration: number, slug: string, topic: { __typename?: 'Topic', id: number, name: string }, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> } | null };
 
 export type GetPurchasedCoursesQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -562,6 +614,37 @@ export const CourseFragmentDoc = gql`
       id
       name
     }
+  }
+}
+    `;
+export const LessonFragmentDoc = gql`
+    fragment Lesson on Lesson {
+  id
+  position
+  name
+  content
+  videoId
+  videoURL
+  videoDuration
+  topic {
+    id
+    name
+  }
+  slug
+  lessonProgress {
+    id
+  }
+}
+    `;
+export const LessonInfoFragmentDoc = gql`
+    fragment LessonInfo on Lesson {
+  id
+  position
+  name
+  videoDuration
+  slug
+  lessonProgress {
+    id
   }
 }
     `;
@@ -1048,6 +1131,46 @@ export type GetCourseDataQueryHookResult = ReturnType<typeof useGetCourseDataQue
 export type GetCourseDataLazyQueryHookResult = ReturnType<typeof useGetCourseDataLazyQuery>;
 export type GetCourseDataSuspenseQueryHookResult = ReturnType<typeof useGetCourseDataSuspenseQuery>;
 export type GetCourseDataQueryResult = Apollo.QueryResult<GetCourseDataQuery, GetCourseDataQueryVariables>;
+export const GetCourseLessonsDocument = gql`
+    query GetCourseLessons($slug: String!) {
+  getCourseLessons(slug: $slug) {
+    ...LessonInfo
+  }
+}
+    ${LessonInfoFragmentDoc}`;
+
+/**
+ * __useGetCourseLessonsQuery__
+ *
+ * To run a query within a React component, call `useGetCourseLessonsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCourseLessonsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCourseLessonsQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useGetCourseLessonsQuery(baseOptions: Apollo.QueryHookOptions<GetCourseLessonsQuery, GetCourseLessonsQueryVariables> & ({ variables: GetCourseLessonsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCourseLessonsQuery, GetCourseLessonsQueryVariables>(GetCourseLessonsDocument, options);
+      }
+export function useGetCourseLessonsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCourseLessonsQuery, GetCourseLessonsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCourseLessonsQuery, GetCourseLessonsQueryVariables>(GetCourseLessonsDocument, options);
+        }
+export function useGetCourseLessonsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetCourseLessonsQuery, GetCourseLessonsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetCourseLessonsQuery, GetCourseLessonsQueryVariables>(GetCourseLessonsDocument, options);
+        }
+export type GetCourseLessonsQueryHookResult = ReturnType<typeof useGetCourseLessonsQuery>;
+export type GetCourseLessonsLazyQueryHookResult = ReturnType<typeof useGetCourseLessonsLazyQuery>;
+export type GetCourseLessonsSuspenseQueryHookResult = ReturnType<typeof useGetCourseLessonsSuspenseQuery>;
+export type GetCourseLessonsQueryResult = Apollo.QueryResult<GetCourseLessonsQuery, GetCourseLessonsQueryVariables>;
 export const GetCoursesDocument = gql`
     query GetCourses($tags: [String!], $query: String, $sort: SortInput, $first: PositiveInt, $cursor: Int) {
   getCourses(
@@ -1106,6 +1229,47 @@ export type GetCoursesQueryHookResult = ReturnType<typeof useGetCoursesQuery>;
 export type GetCoursesLazyQueryHookResult = ReturnType<typeof useGetCoursesLazyQuery>;
 export type GetCoursesSuspenseQueryHookResult = ReturnType<typeof useGetCoursesSuspenseQuery>;
 export type GetCoursesQueryResult = Apollo.QueryResult<GetCoursesQuery, GetCoursesQueryVariables>;
+export const GetLessonDataDocument = gql`
+    query GetLessonData($courseSlug: String!, $lessonSlug: String!) {
+  getLessonData(courseSlug: $courseSlug, lessonSlug: $lessonSlug) {
+    ...Lesson
+  }
+}
+    ${LessonFragmentDoc}`;
+
+/**
+ * __useGetLessonDataQuery__
+ *
+ * To run a query within a React component, call `useGetLessonDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLessonDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLessonDataQuery({
+ *   variables: {
+ *      courseSlug: // value for 'courseSlug'
+ *      lessonSlug: // value for 'lessonSlug'
+ *   },
+ * });
+ */
+export function useGetLessonDataQuery(baseOptions: Apollo.QueryHookOptions<GetLessonDataQuery, GetLessonDataQueryVariables> & ({ variables: GetLessonDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLessonDataQuery, GetLessonDataQueryVariables>(GetLessonDataDocument, options);
+      }
+export function useGetLessonDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLessonDataQuery, GetLessonDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLessonDataQuery, GetLessonDataQueryVariables>(GetLessonDataDocument, options);
+        }
+export function useGetLessonDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLessonDataQuery, GetLessonDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLessonDataQuery, GetLessonDataQueryVariables>(GetLessonDataDocument, options);
+        }
+export type GetLessonDataQueryHookResult = ReturnType<typeof useGetLessonDataQuery>;
+export type GetLessonDataLazyQueryHookResult = ReturnType<typeof useGetLessonDataLazyQuery>;
+export type GetLessonDataSuspenseQueryHookResult = ReturnType<typeof useGetLessonDataSuspenseQuery>;
+export type GetLessonDataQueryResult = Apollo.QueryResult<GetLessonDataQuery, GetLessonDataQueryVariables>;
 export const GetPurchasedCoursesDocument = gql`
     query GetPurchasedCourses($tags: [String!], $query: String, $sort: SortInput, $first: PositiveInt, $cursor: Int) {
   getPurchasedCourses(

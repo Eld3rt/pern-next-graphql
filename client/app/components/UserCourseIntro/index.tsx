@@ -7,7 +7,7 @@ type Props = {
 
 const UserCourseIntro: React.FC<Props> = ({ course }) => {
   const allLessons = course.topics.flatMap(topic => topic.lessons)
-  const completedLessonIds = course.courseProgress.flatMap(progress => progress.lessonProgress.map(lp => lp.lesson.id))
+  const completedLessonIds = course.courseProgress.flatMap(progress => progress.lessonProgress.map(lp => lp.lesson?.id))
 
   const isCourseCompleted = allLessons.length === completedLessonIds.length
   let uncompletedLesson = undefined

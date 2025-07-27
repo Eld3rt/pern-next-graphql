@@ -10,7 +10,7 @@ export const middleware = async (request: NextRequest) => {
   const isOnLoginPath = pathname.endsWith('/login')
   const isOnRegisterPath = pathname.endsWith('/register')
   const isOnCoursePath = (pathname: string) => {
-    const coursePagePattern = /^\/user\/courses\/[a-z0-9]+(?:-[a-z0-9]+)*$/
+    const coursePagePattern = /^\/user\/courses\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/.*)?$/
     return coursePagePattern.test(pathname)
   }
   const isOnResetPath = pathname.startsWith('/user/confirm/reset')
