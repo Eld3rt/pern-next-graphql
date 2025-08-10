@@ -28,8 +28,8 @@ const CatalogCourses: React.FC<Props> = ({ searchQuery, searchTags, sortField, s
   const [isPending, startTransition] = useTransition()
 
   const handleLoadMore = () => {
-    startTransition(() => {
-      fetchMore({
+    startTransition(async () => {
+      await fetchMore({
         variables: {
           cursor: pageInfo?.endCursor,
         },

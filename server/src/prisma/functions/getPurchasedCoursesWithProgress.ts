@@ -20,7 +20,11 @@ export const getPurchasedCoursesWithProgress = async (currentUser: User): Promis
       tags: true,
       topics: {
         include: {
-          lessons: true,
+          lessons: {
+            include: {
+              lessonProgress: true,
+            },
+          },
         },
       },
       courseProgress: {

@@ -38,10 +38,14 @@ const RootLayout: React.FC<Props> = async ({ children }) => {
     <html lang="en" className={`${inter.variable} ${lorenzo.variable}`}>
       <body>
         <ApolloWrapper>
-          <SessionProvider>
-            <Header currentUser={currentUser} />
+          <SessionProvider currentUser={currentUser}>
+            <div className="main-container main-container--wide">
+              <Header currentUser={currentUser} />
+            </div>
             {children}
-            <Footer />
+            <div className="main-container main-container--wide">
+              <Footer />
+            </div>
           </SessionProvider>
         </ApolloWrapper>
       </body>

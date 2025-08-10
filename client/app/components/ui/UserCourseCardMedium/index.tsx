@@ -23,10 +23,10 @@ const UserCourseCardMedium: React.FC<Props> = ({ course }) => {
             src={course.imageURL}
             alt={course.name}
             loading="lazy"
-            className="user-course-card-medium__picture max-h-[200px] w-full object-contain rounded-t-[16px]"
+            className="user-course-card-medium__picture max-h-[200px] lg:max-h-full w-full object-contain rounded-t-[16px]"
           />
         </div>
-        <div className="user-course-card-medium__text flex flex-col max-w-[267px] p-3 md:py-[1.5rem] md:px-[1rem] lg:w-[100%] md:h-[100%]">
+        <div className="user-course-card-medium__text flex flex-col max-w-[267px] lg:max-w-full h-full p-3 md:py-[1.5rem] md:px-[1rem] lg:w-[100%] md:h-[100%]">
           <h3 className="user-course-card-medium__title text-base text-center md:text-left md:text-xl">
             {course.name}
           </h3>

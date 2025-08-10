@@ -21,8 +21,12 @@ export default gql`
       lessons {
         id
         name
+        position
         slug
         videoDuration
+        lessonProgress {
+          id
+        }
       }
     }
     courseProgress {

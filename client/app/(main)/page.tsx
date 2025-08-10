@@ -5,7 +5,7 @@ interface Props {}
 
 const Page: React.FC<Props> = async () => {
   return (
-    <main className="home mb-8 md:mb-16">
+    <main className="home mb-8 md:mb-16 main-container">
       <HomeIntro />
       <HomeCatalog />
     </main>

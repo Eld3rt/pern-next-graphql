@@ -79,7 +79,7 @@ const UserSidebar: React.FC<Props> = () => {
             Продолжай учиться, двигайся вперед...
           </h3>
           <img
-            src="https://ik.imagekit.io/x3xxjzs9x/user/sidebar-promo.png?updatedAt=1748707388634"
+            src="https://lh3.googleusercontent.com/pw/AP1GczNar5AFwOdMtw0NsTSUxFUUjvYmS3EeuSpO9E_fq26-a4x3Xz6HmkJyoZOFDfYF1_ld4-PpSxUr7FUzwZfUt79k9SUioF6vfj00iTpUX7eZbcxcVH5KySiQtHvnm5tGm4svgQuV2z3J2tLI-_9ZgYiN=w338-h501-s-no-gm"
             alt="Promo Image"
           />
           <p className="user-sidebar-promo__description text-sm text-center my-4">

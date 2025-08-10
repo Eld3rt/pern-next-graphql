@@ -29,14 +29,18 @@ const Catalog: React.FC<Props> = () => {
     <section className="course-catalog mt-16">
       <div className="course-catalog__inner custom-container custom-container--wide">
         <div className="course-catalog__head flex flex-wrap sm:flex-nowrap justify-center sm:justify-between items-center border-b-2 border-current gap-x-[2.5rem] gap-y-[2rem] py-[1rem]">
-          <CourseSearchFilter setSearchQuery={setSearchQuery} />
-          <CoursesSort
-            sortOptions={sortOptions}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            setSortField={setSortField}
-            setSortOrder={setSortOrder}
-          />
+          <Suspense>
+            <CourseSearchFilter setSearchQuery={setSearchQuery} />
+          </Suspense>
+          <Suspense>
+            <CoursesSort
+              sortOptions={sortOptions}
+              sortField={sortField}
+              sortOrder={sortOrder}
+              setSortField={setSortField}
+              setSortOrder={setSortOrder}
+            />
+          </Suspense>
         </div>
         <div className="course-catalog__main lg:flex">
           <Suspense

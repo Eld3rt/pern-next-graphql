@@ -7,7 +7,7 @@ import CourseProgram from '@/app/components/CourseProgram'
 import CourseOffer from '@/app/components/CourseOffer'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 const Page: React.FC<Props> = async ({ params }) => {
@@ -24,7 +24,7 @@ const Page: React.FC<Props> = async ({ params }) => {
   const course = data.getCourseData
 
   return (
-    <main className="course-page mb-8 md:mb-16">
+    <main className="course-page mb-8 md:mb-16 main-container main-container--wide">
       <CourseIntro slug={slug} course={course} />
       <CourseBrief course={course} />
       <CourseProgram course={course} />

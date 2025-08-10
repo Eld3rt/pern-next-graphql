@@ -27,6 +27,7 @@ function makeClient(authToken: string | undefined) {
         Query: {
           fields: {
             getCourses: relayStylePagination(['tags', 'query', 'sort']),
+            getPurchasedCourses: relayStylePagination(['tags', 'query', 'sort']),
             getTags: relayStylePagination(),
           },
         },

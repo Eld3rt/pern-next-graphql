@@ -1,17 +1,54 @@
-import { User, Course } from '@prisma/client'
+import { User, Prisma } from '@prisma/client'
 import { prisma } from '../prisma'
 import { QueryGetPurchasedCoursesArgs } from '../../graphql/types/resolvers-types'
 import { setPurchasedCoursesFilters } from '../../utils/setPurchasedCoursesFilters'
 
+const CourseProgress = Prisma.validator()({
+  include: {
+    course: {
+      include: {
+        tags: true,
+        topics: {
+          include: {
+            lessons: {
+              include: {
+                lessonProgress: true,
+              },
+            },
+          },
+        },
+        courseProgress: {
+          include: {
+            lessonProgress: {
+              include: {
+                lesson: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+})
+
+type CourseProgress = Prisma.CourseProgressGetPayload<typeof CourseProgress>
+
 export const getPurchasedCourses = async (
   currentUser: User,
   args: Partial<QueryGetPurchasedCoursesArgs>
-): Promise<Course[]> => {
+): Promise<CourseProgress[]> => {
   const userId = currentUser.id
   const { tags, query, sort, first, after } = args
 
-  const orderBy: any =
-    sort && !(sort.field === 'progress') ? [{ [sort.field]: sort.order as 'asc' | 'desc' }, { id: 'asc' }] : undefined
+  const orderBy: any = sort
+    ? sort.field === 'progress'
+      ? [{ lessonProgress: { _count: sort.order as 'asc' | 'desc' } }, { id: 'asc' }]
+      : sort.field === 'duration'
+      ? [{ course: { duration: sort.order as 'asc' | 'desc' } }, { id: 'asc' }]
+      : sort.field === 'purchasedAt'
+      ? { createdAt: sort.order as 'asc' | 'desc' }
+      : [{ [sort.field]: sort.order as 'asc' | 'desc' }, { id: 'asc' }]
+    : { createdAt: 'desc' }
 
   const where = setPurchasedCoursesFilters(userId, tags, query)
 
@@ -22,26 +59,31 @@ export const getPurchasedCourses = async (
       }
     : undefined
 
-  const purchasedCourses = await prisma.course.findMany({
+  const courseProgresses = await prisma.courseProgress.findMany({
     where,
     orderBy,
     take,
     cursor,
     include: {
-      tags: true,
-      topics: {
+      course: {
         include: {
-          lessons: true,
-        },
-      },
-      courseProgress: {
-        where: {
-          userId: userId,
-        },
-        include: {
-          lessonProgress: {
+          tags: true,
+          topics: {
             include: {
-              lesson: true,
+              lessons: {
+                include: {
+                  lessonProgress: true,
+                },
+              },
+            },
+          },
+          courseProgress: {
+            include: {
+              lessonProgress: {
+                include: {
+                  lesson: true,
+                },
+              },
             },
           },
         },
@@ -49,22 +91,5 @@ export const getPurchasedCourses = async (
     },
   })
 
-  const sortByProgressDesc = (courses: typeof purchasedCourses) =>
-    courses.sort((a, b) => b.courseProgress[0].lessonProgress.length - a.courseProgress[0].lessonProgress.length)
-
-  const sortByProgressAsc = (courses: typeof purchasedCourses) =>
-    courses.sort((a, b) => a.courseProgress[0].lessonProgress.length - b.courseProgress[0].lessonProgress.length)
-
-  const sortByDate = (courses: typeof purchasedCourses) =>
-    courses.sort((a, b) => b.courseProgress[0].createdAt.getTime() - a.courseProgress[0].createdAt.getTime())
-
-  if (sort?.field === 'progress' && sort?.order === 'desc') {
-    sortByProgressDesc(purchasedCourses)
-  } else if (sort?.field === 'progress' && sort?.order === 'asc') {
-    sortByProgressAsc(purchasedCourses)
-  } else if (!sort) {
-    sortByDate(purchasedCourses)
-  }
-
-  return purchasedCourses
+  return courseProgresses
 }

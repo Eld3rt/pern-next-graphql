@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import { ApolloWrapper } from '@/apollo/ApolloWrapper'
+import { ApolloWrapper } from '../../../apollo/ApolloWrapper'
 import '../../globals.css'
 import localFont from 'next/font/local'
 import { cookies } from 'next/headers'
 import SessionProvider from '@/app/providers/SessionProvider'
 import UserSidebar from '@/app/components/UserSidebar'
 import Footer from '@/app/components/Footer'
+import { getCurrentUser } from '@/utils/getCurrentUser'
 
 export const metadata: Metadata = {
   title: 'PERN | Next | GraphQL',
@@ -35,14 +36,18 @@ const RootLayout: React.FC<Props> = async ({ children }) => {
   const cookieStore = await cookies()
   const authToken = cookieStore.get('sid')?.value
 
+  const currentUser = await getCurrentUser()
+
   return (
     <html lang="en" className={`${inter.variable} ${lorenzo.variable}`}>
-      <body className="grid grid-cols-1 lg:grid-cols-[minmax(0px,_300px)_1fr_1fr_1fr_1fr_1fr]">
+      <body>
         <ApolloWrapper authToken={authToken}>
-          <SessionProvider>
-            <UserSidebar />
-            {children}
-            <Footer />
+          <SessionProvider currentUser={currentUser}>
+            <div className="user-container grid grid-cols-1 lg:grid-cols-[minmax(0px,_300px)_1fr_1fr_1fr_1fr_1fr]">
+              <UserSidebar />
+              {children}
+              <Footer />
+            </div>
           </SessionProvider>
         </ApolloWrapper>
       </body>

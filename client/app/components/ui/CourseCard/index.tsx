@@ -19,10 +19,10 @@ const CourseCard: React.FC<Props> = ({ course }) => {
             src={course.imageURL}
             alt={course.name}
             loading="lazy"
-            className="course-card__course-picture object-contain rounded-t-[16px] sm:rounded-[16px] lg:rounded-b-[0]"
+            className="course-card__course-picture object-contain max-h-[200px] lg:max-h-full rounded-t-[16px] sm:rounded-[16px] lg:rounded-b-[0]"
           />
         </div>
-        <div className="course-card__course-text flex flex-col py-[1.5rem] px-[1rem] lg:w-[100%] lg:h-[100%]">
+        <div className="course-card__course-text flex flex-col max-w-[267px] lg:max-w-full py-[1.5rem] px-[1rem] lg:w-[100%] lg:h-[100%]">
           <h3 className="course-card__course-title text-xl md:text-2xl">{course.name}</h3>
           <p className="course-card__course-description text-sm mt-[0.8rem] mb-[1.5rem]">
             {course.description.slice(0, 100)}...

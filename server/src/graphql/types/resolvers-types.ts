@@ -146,11 +146,20 @@ export type LessonProgress = {
   lesson: Lesson;
 };
 
+export type MarkLessonCompleteResponse = {
+  __typename?: 'MarkLessonCompleteResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
+  lesson?: Maybe<Lesson>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addLesson: AddLessonResponse;
   addLessons: AddLessonsResponse;
   confirmPassword: ConfirmPasswordResponse;
+  markLessonComplete: MarkLessonCompleteResponse;
   purchaseCourse: PurchaseCourseResponse;
   resetPassword: ResetPasswordResponse;
   signIn: SignInResponse;
@@ -179,6 +188,12 @@ export type MutationAddLessonsArgs = {
 export type MutationConfirmPasswordArgs = {
   key: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+
+export type MutationMarkLessonCompleteArgs = {
+  courseSlug: Scalars['String']['input'];
+  lessonId: Scalars['Int']['input'];
 };
 
 
@@ -512,6 +527,7 @@ export type ResolversTypes = ResolversObject<{
   KinescopeVideo: ResolverTypeWrapper<KinescopeVideo>;
   Lesson: ResolverTypeWrapper<LessonModel>;
   LessonProgress: ResolverTypeWrapper<Omit<LessonProgress, 'lesson'> & { lesson: ResolversTypes['Lesson'] }>;
+  MarkLessonCompleteResponse: ResolverTypeWrapper<Omit<MarkLessonCompleteResponse, 'lesson'> & { lesson?: Maybe<ResolversTypes['Lesson']> }>;
   Mutation: ResolverTypeWrapper<{}>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   PositiveInt: ResolverTypeWrapper<Scalars['PositiveInt']['output']>;
@@ -553,6 +569,7 @@ export type ResolversParentTypes = ResolversObject<{
   KinescopeVideo: KinescopeVideo;
   Lesson: LessonModel;
   LessonProgress: Omit<LessonProgress, 'lesson'> & { lesson: ResolversParentTypes['Lesson'] };
+  MarkLessonCompleteResponse: Omit<MarkLessonCompleteResponse, 'lesson'> & { lesson?: Maybe<ResolversParentTypes['Lesson']> };
   Mutation: {};
   PageInfo: PageInfo;
   PositiveInt: Scalars['PositiveInt']['output'];
@@ -700,10 +717,19 @@ export type LessonProgressResolvers<ContextType = MyContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MarkLessonCompleteResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['MarkLessonCompleteResponse'] = ResolversParentTypes['MarkLessonCompleteResponse']> = ResolversObject<{
+  developerMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lesson?: Resolver<Maybe<ResolversTypes['Lesson']>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addLesson?: Resolver<ResolversTypes['AddLessonResponse'], ParentType, ContextType, RequireFields<MutationAddLessonArgs, 'courseId' | 'name' | 'videoId'>>;
   addLessons?: Resolver<ResolversTypes['AddLessonsResponse'], ParentType, ContextType, RequireFields<MutationAddLessonsArgs, 'courseId' | 'projectId'>>;
   confirmPassword?: Resolver<ResolversTypes['ConfirmPasswordResponse'], ParentType, ContextType, RequireFields<MutationConfirmPasswordArgs, 'key' | 'password'>>;
+  markLessonComplete?: Resolver<ResolversTypes['MarkLessonCompleteResponse'], ParentType, ContextType, RequireFields<MutationMarkLessonCompleteArgs, 'courseSlug' | 'lessonId'>>;
   purchaseCourse?: Resolver<ResolversTypes['PurchaseCourseResponse'], ParentType, ContextType, RequireFields<MutationPurchaseCourseArgs, 'slug'>>;
   resetPassword?: Resolver<ResolversTypes['ResetPasswordResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'email'>>;
   signIn?: Resolver<ResolversTypes['SignInResponse'], ParentType, ContextType, RequireFields<MutationSignInArgs, 'email' | 'password'>>;
@@ -854,6 +880,7 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   KinescopeVideo?: KinescopeVideoResolvers<ContextType>;
   Lesson?: LessonResolvers<ContextType>;
   LessonProgress?: LessonProgressResolvers<ContextType>;
+  MarkLessonCompleteResponse?: MarkLessonCompleteResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PositiveInt?: GraphQLScalarType;

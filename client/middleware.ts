@@ -21,7 +21,6 @@ export const middleware = async (request: NextRequest) => {
 
   if (isOnResetPath) {
     const key = request.nextUrl.searchParams.get('key')
-    console.log(key)
     const res = await fetch('http://localhost:3000/graphql', {
       method: 'POST',
       headers: {
@@ -37,8 +36,6 @@ export const middleware = async (request: NextRequest) => {
     const {
       data: { hasCachedKey },
     } = await res.json()
-
-    console.log(hasCachedKey)
 
     if (hasCachedKey) {
       return NextResponse.next()

@@ -21,20 +21,24 @@ const UserCoursesBoard: React.FC<Props> = () => {
 
   const [searchQuery, setSearchQuery] = useState(searchParams.get('query') || '')
   const [searchTags, setSearchTags] = useState(searchParams.getAll('tag'))
-  const [sortField, setSortField] = useState(searchParams.get('sortField') || 'createdAt')
+  const [sortField, setSortField] = useState(searchParams.get('sortField') || 'purchasedAt')
   const [sortOrder, setSortOrder] = useState(searchParams.get('order') || 'desc')
 
   return (
     <section className="user-courses-board flex-1 col-span-1 md:col-span-5">
       <div className="user-courses-board__head flex flex-wrap sm:flex-nowrap justify-center sm:justify-between items-center border-b-2 border-current gap-x-[2.5rem] gap-y-[2rem] py-[1rem]">
-        <CourseSearchFilter setSearchQuery={setSearchQuery} />
-        <CoursesSort
-          sortOptions={sortOptions}
-          sortField={sortField}
-          sortOrder={sortOrder}
-          setSortField={setSortField}
-          setSortOrder={setSortOrder}
-        />
+        <Suspense>
+          <CourseSearchFilter setSearchQuery={setSearchQuery} />
+        </Suspense>
+        <Suspense>
+          <CoursesSort
+            sortOptions={sortOptions}
+            sortField={sortField}
+            sortOrder={sortOrder}
+            setSortField={setSortField}
+            setSortOrder={setSortOrder}
+          />
+        </Suspense>
       </div>
       <div className="user-courses-board__main lg:flex">
         <Suspense

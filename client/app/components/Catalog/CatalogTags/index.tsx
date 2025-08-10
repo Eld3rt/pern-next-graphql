@@ -48,8 +48,8 @@ const CatalogTags: React.FC<Props> = ({ setSearchTags }) => {
   }
 
   const handleLoadMore = () => {
-    startTransition(() => {
-      fetchMore({
+    startTransition(async () => {
+      await fetchMore({
         variables: {
           cursor: pageInfo?.endCursor,
         },

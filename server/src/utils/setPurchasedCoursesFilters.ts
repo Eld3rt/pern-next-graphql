@@ -2,21 +2,19 @@ export const setPurchasedCoursesFilters = (userId: number, tags?: string[], quer
   const where: any = {
     AND: [
       {
-        courseProgress: {
-          some: {
-            userId: userId,
-          },
-        },
+        userId: userId,
       },
     ],
   }
 
   if (tags && tags.length > 0) {
     where.AND.push({
-      tags: {
-        some: {
-          name: {
-            in: tags,
+      course: {
+        tags: {
+          some: {
+            name: {
+              in: tags,
+            },
           },
         },
       },
@@ -25,10 +23,12 @@ export const setPurchasedCoursesFilters = (userId: number, tags?: string[], quer
 
   if (query) {
     where.AND.push({
-      OR: [
-        { name: { contains: query, mode: 'insensitive' } },
-        { description: { contains: query, mode: 'insensitive' } },
-      ],
+      course: {
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+        ],
+      },
     })
   }
 

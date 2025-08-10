@@ -25,6 +25,9 @@ export const getPurchasedCourseData = async (
             orderBy: {
               position: 'asc',
             },
+            include: {
+              lessonProgress: true,
+            },
           },
         },
         orderBy: {

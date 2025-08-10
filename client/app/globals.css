@@ -36,15 +36,21 @@ h4 + p {
   margin-top: 1rem;
 }
 
-.custom-container {
+.main-container {
   --max-width: 1200px;
   --container-padding: 1.5rem;
   width: min(var(--max-width), 100% - (var(--container-padding)) * 2);
   margin-inline: auto;
 }
 
-.custom-container--wide {
+.main-container--wide {
   --max-width: 1400px;
+}
+
+.user-container {
+  --max-width: 1980px;
+  width: min(var(--max-width), 100%);
+  margin-inline: auto;
 }
 
 .even-columns {
@@ -70,6 +76,19 @@ h4 + p {
 
 .validation-message {
   margin-bottom: 1rem;
+}
+
+.modal-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tag {
@@ -319,16 +338,6 @@ h4 + p {
   .user-course-card-small__info {
     display: flex;
     justify-content: space-between;
-  }
-}
-
-@media only screen and (min-width: 37.5em) {
-  .dashboard-user-courses__course-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .user-course-card-small__info {
-    display: block;
   }
 }
 

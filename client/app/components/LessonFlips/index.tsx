@@ -1,5 +1,10 @@
+'use client'
+
+import { CourseColorContext } from '@/app/providers/CourseColorProvider'
 import { LessonInfoFragment } from '@/graphql/generated'
+import chroma from 'chroma-js'
 import Link from 'next/link'
+import { useContext } from 'react'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6'
 
 interface Props {
@@ -9,6 +14,13 @@ interface Props {
 }
 
 const LessonsFlips: React.FC<Props> = ({ lessons, currentPosition, courseSlug }) => {
+  const { mainColor } = useContext(CourseColorContext)
+
+  const moreLightenedColor = chroma(mainColor).brighten(3).hex()
+  const moreDarkenedColor = chroma(mainColor).darken(3).hex()
+
+  const lessonNameColor = chroma.contrast(mainColor, '#1f2431ff') > 4.5 ? moreDarkenedColor : moreLightenedColor
+
   const prevLesson = currentPosition > 1 ? lessons[currentPosition - 2] : null
   const nextLesson = currentPosition < lessons.length ? lessons[currentPosition] : null
 
@@ -20,12 +32,16 @@ const LessonsFlips: React.FC<Props> = ({ lessons, currentPosition, courseSlug })
     >
       {prevLesson && (
         <div className="flex items-center gap-2 min-h-[48px] content-between">
-          <FaChevronLeft className="lesson-flips__arrow text-gray-500 text-xl" />
+          <FaChevronLeft fill={mainColor} className="lesson-flips__arrow text-gray-500 text-xl" />
           <Link
             href={`/user/courses/${courseSlug}/lesson-${currentPosition - 1}`}
-            className="lesson-flips__link w-[130px] sm:w-[200px] h-full bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition-shadow duration-200 p-2 flex items-center justify-center gap-2 group cursor-pointer"
+            style={{ backgroundColor: mainColor }}
+            className="lesson-flips__link w-[130px] sm:w-[200px] h-full rounded-lg p-2 flex items-center justify-center gap-2 group cursor-pointer"
           >
-            <h3 className="lesson-flips__title lesson-flips__title text-xs text-center sm:text-sm leading-tight">
+            <h3
+              style={{ color: lessonNameColor }}
+              className="lesson-flips__title lesson-flips__title text-xs text-center sm:text-sm leading-tight"
+            >
               {currentPosition - 1}. {prevLesson.name}
             </h3>
           </Link>
@@ -36,13 +52,17 @@ const LessonsFlips: React.FC<Props> = ({ lessons, currentPosition, courseSlug })
         <div className="flex items-center gap-2 min-h-[48px] content-between">
           <Link
             href={`/user/courses/${courseSlug}/lesson-${currentPosition + 1}`}
-            className="lesson-flips__link w-[130px] sm:w-[200px] h-full bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition-shadow duration-200 p-2 flex items-center justify-center gap-2 group cursor-pointer"
+            style={{ backgroundColor: mainColor }}
+            className="lesson-flips__link w-[130px] sm:w-[200px] h-full rounded-lg p-2 flex items-center justify-center gap-2 group cursor-pointer"
           >
-            <h3 className="lesson-flips__title text-xs text-center sm:text-sm leading-tight">
+            <h3
+              style={{ color: lessonNameColor }}
+              className="lesson-flips__title text-xs text-center sm:text-sm leading-tight"
+            >
               {currentPosition + 1}. {nextLesson.name}
             </h3>
           </Link>
-          <FaChevronRight className="lesson-flips__arrow text-gray-500 text-xl" />
+          <FaChevronRight fill={mainColor} className="lesson-flips__arrow text-gray-500 text-xl" />
         </div>
       )}
     </section>
