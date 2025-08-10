@@ -1,6 +1,6 @@
 import { Lesson, LessonProgress, User } from '@prisma/client'
-import { prisma } from '../prisma'
-import { MutationMarkLessonCompleteArgs } from '../../graphql/types/resolvers-types'
+import { prisma } from '../prisma.js'
+import { MutationMarkLessonCompleteArgs } from '../../graphql/types/resolvers-types.js'
 
 export const markLessonComplete = async (
   args: MutationMarkLessonCompleteArgs,

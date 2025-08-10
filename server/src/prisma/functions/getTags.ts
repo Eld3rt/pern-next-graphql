@@ -1,6 +1,6 @@
 import { Tag } from '@prisma/client'
-import { prisma } from '../prisma'
-import { QueryGetTagsArgs } from '../../graphql/types/resolvers-types'
+import { prisma } from '../prisma.js'
+import { QueryGetTagsArgs } from '../../graphql/types/resolvers-types.js'
 
 export const getTags = async (args: Partial<QueryGetTagsArgs>): Promise<Tag[]> => {
   const { first, after } = args

@@ -1,4 +1,4 @@
-import { redis } from '../redis'
+import { redis } from '../redis.js'
 
 export const createCachedEmail = async (args: { email: string }, key: string, userId: number) => {
   const updateObj = {

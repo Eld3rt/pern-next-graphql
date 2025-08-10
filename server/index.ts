@@ -1,10 +1,10 @@
 import express, { json } from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import { server } from './src/apollo/server'
-import { prisma } from './src/prisma/prisma'
+import { server } from './src/apollo/server.js'
+import { prisma } from './src/prisma/prisma.js'
 import { expressMiddleware } from '@apollo/server/express4'
-import { getCachedSession } from './src/redis/functions/getCachedSession'
+import { getCachedSession } from './src/redis/functions/getCachedSession.js'
 
 const PORT = process.env.PORT || 5050
 const app = express()
@@ -41,6 +41,10 @@ app.use(
   })
 )
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`)
-})
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port: ${PORT}`)
+  })
+}
+
+export default app

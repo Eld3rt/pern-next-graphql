@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import { prisma } from '../prisma'
+import { prisma } from '../prisma.js'
 
 export const checkCompletedLesson = async (lessonId: number, currentUser: User): Promise<boolean> => {
   const userId = currentUser.id

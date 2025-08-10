@@ -1,5 +1,5 @@
 import { Tag, User } from '@prisma/client'
-import { prisma } from '../prisma'
+import { prisma } from '../prisma.js'
 
 export const getUserCoursesTags = async (currentUser: User): Promise<Tag[]> => {
   const userId = currentUser.id

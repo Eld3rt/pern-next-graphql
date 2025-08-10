@@ -1,4 +1,5 @@
-import gql from 'graphql-tag'
+import pkg from 'graphql-tag'
+const gql = pkg.default
 import { v4 as uuidv4 } from 'uuid'
 import nodemailer from 'nodemailer'
 import { compare } from 'bcrypt'

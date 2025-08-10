@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { User as UserModel, Course as CourseModel, Lesson as LessonModel } from '.prisma/client';
-import { MyContext } from '../../apollo/server';
+import { MyContext } from '../../apollo/server.js';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = undefined | T;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };

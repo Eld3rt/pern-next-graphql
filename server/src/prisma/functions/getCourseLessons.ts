@@ -1,6 +1,6 @@
 import { User, Lesson } from '@prisma/client'
-import { QueryGetCourseLessonsArgs, RequireFields } from '../../graphql/types/resolvers-types'
-import { prisma } from '../prisma'
+import { QueryGetCourseLessonsArgs, RequireFields } from '../../graphql/types/resolvers-types.js'
+import { prisma } from '../prisma.js'
 
 export const getGetCourseLessons = async (
   args: RequireFields<QueryGetCourseLessonsArgs, 'slug'>,

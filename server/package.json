@@ -3,11 +3,12 @@
   "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "dev": "tsx watch index.ts",
-    "codegen": "graphql-codegen-esm --config codegen.ts"
-  },
+    "main": "dist/index.js",
+    "scripts": {
+      "dev": "tsx watch index.ts",
+      "codegen": "graphql-codegen-esm --config codegen.ts",
+      "build": "tsc"
+    },
   "keywords": [],
   "author": "",
   "license": "ISC",

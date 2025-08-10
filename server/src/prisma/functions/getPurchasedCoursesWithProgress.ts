@@ -1,5 +1,5 @@
 import { User, Course } from '@prisma/client'
-import { prisma } from '../prisma'
+import { prisma } from '../prisma.js'
 
 export const getPurchasedCoursesWithProgress = async (currentUser: User): Promise<Course[]> => {
   const userId = currentUser.id

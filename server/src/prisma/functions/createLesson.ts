@@ -1,6 +1,6 @@
 import { Course, Lesson } from '@prisma/client'
-import { prisma } from '../prisma'
-import { getVideo } from '../../kinescope/getVideo'
+import { prisma } from '../prisma.js'
+import { getVideo } from '../../kinescope/getVideo.js'
 
 export const createLesson = async (args: {
   name: string
@@ -18,7 +18,7 @@ export const createLesson = async (args: {
         videoId,
         videoDuration: duration,
         courseId,
-      },
+      } as any,
     })
 
     const course = await prisma.course.update({

@@ -1,4 +1,4 @@
-import { redis } from '../redis'
+import { redis } from '../redis.js'
 
 export const createCachedSession = async (userId: number, sessionToken: string) => {
   await redis

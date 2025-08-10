@@ -1,4 +1,4 @@
-import { redis } from '../redis'
+import { redis } from '../redis.js'
 
 export const deleteCachedSession = async (id: number, authToken: string) => {
   await redis

@@ -1,6 +1,6 @@
 import { Course, Lesson } from '@prisma/client'
-import { prisma } from '../prisma'
-import { getVideosByProjectId } from '../../kinescope/getVideos'
+import { prisma } from '../prisma.js'
+import { getVideosByProjectId } from '../../kinescope/getVideos.js'
 
 export const createLessons = async (args: {
   projectId: string
@@ -14,7 +14,7 @@ export const createLessons = async (args: {
     const videosData = videos.map(({ id, duration }) => ({ videoId: id, videoDuration: duration, courseId }))
 
     const lessons = await prisma.lesson.createManyAndReturn({
-      data: videosData,
+      data: videosData as any,
       skipDuplicates: true,
     })
 

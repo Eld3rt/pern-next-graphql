@@ -6,7 +6,7 @@
     "lib": ["esnext"],
     "esModuleInterop": true,
     "target": "es2020",
-    "module": "ESNext",
-    "moduleResolution": "Node"
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext"
+    }
   }
-}

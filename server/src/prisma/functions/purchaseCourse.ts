@@ -1,6 +1,6 @@
 import { User, Course } from '@prisma/client'
-import { MutationPurchaseCourseArgs, RequireFields } from '../../graphql/types/resolvers-types'
-import { prisma } from '../prisma'
+import { MutationPurchaseCourseArgs, RequireFields } from '../../graphql/types/resolvers-types.js'
+import { prisma } from '../prisma.js'
 
 export const purchaseCourse = async (
   args: RequireFields<MutationPurchaseCourseArgs, 'slug'>,

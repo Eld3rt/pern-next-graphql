@@ -1,7 +1,7 @@
 import { User, Prisma } from '@prisma/client'
-import { prisma } from '../prisma'
-import { QueryGetPurchasedCoursesArgs } from '../../graphql/types/resolvers-types'
-import { setPurchasedCoursesFilters } from '../../utils/setPurchasedCoursesFilters'
+import { prisma } from '../prisma.js'
+import { QueryGetPurchasedCoursesArgs } from '../../graphql/types/resolvers-types.js'
+import { setPurchasedCoursesFilters } from '../../utils/setPurchasedCoursesFilters.js'
 
 const CourseProgress = Prisma.validator()({
   include: {
