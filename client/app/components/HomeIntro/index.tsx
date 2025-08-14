@@ -5,7 +5,7 @@ type Props = {}
 const HomeIntro: React.FC<Props> = () => {
   return (
     <section className="home-intro pt-16">
-      <div className="home-intro__inner custom-container grid justify-items-center gap-y-8 lg:gap-y-14">
+      <div className="home-intro__inner grid justify-items-center gap-y-8 lg:gap-y-14">
         <div className="home-intro__text grid justify-items-center max-w-3xl">
           <h3 className="home-intro__subtitle text-center text-base mb-2 md:text-xl border-2 rounded-full py-1 px-3">
             Время познавать что-то новое!

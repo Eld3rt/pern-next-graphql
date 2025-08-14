@@ -1,5 +1,5 @@
 import { hash } from 'bcrypt'
-import { redis } from '../redis'
+import { redis } from '../redis.js'
 
 export const createCachedUser = async (
   args: { name?: string; email: string; password: string; path?: string },

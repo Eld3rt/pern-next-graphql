@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import { prisma } from '../prisma'
+import { prisma } from '../prisma.js'
 
 export const updateEmail = async (updateObj: { email: string; id: number }): Promise<User> => {
   const { email, id } = updateObj

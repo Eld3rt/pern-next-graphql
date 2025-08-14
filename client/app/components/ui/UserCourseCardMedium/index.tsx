@@ -13,27 +13,23 @@ const UserCourseCardMedium: React.FC<Props> = ({ course }) => {
   const progressPercent = totalLessons === 0 ? 0 : (completedLessons / totalLessons) * 100
 
   return (
-    <li className="user-course-card-medium bg-[#fbfaf8] border rounded-[16px]">
+    <li className="user-course-card-medium bg-[#fbfaf8] border rounded-[16px] max-w-[267px] lg:max-w-full">
       <Link
         href={`/user/courses/${course.slug}`}
-        className="user-course-card-medium__link block sm:flex sm:gap-x-[1rem] md:gap-x-[2rem] sm:flex-col sm:h-[100%]"
+        className="user-course-card-medium__link block flex items-center sm:gap-x-[1rem] md:gap-x-[2rem] flex-col h-[100%]"
       >
         <div className="user-course-card-medium__image flex justify-center sm:block sm:w-[100%] sm:mb-[0] lg:mb-[0.5rem]">
           <img
             src={course.imageURL}
             alt={course.name}
             loading="lazy"
-            className="user-course-card-medium__picture max-h-[200px] w-full object-contain rounded-t-[16px]"
+            className="user-course-card-medium__picture max-h-[200px] lg:max-h-full w-full object-contain rounded-t-[16px]"
           />
         </div>
-        <div className="user-course-card-medium__text flex flex-col max-w-[267px] p-3 md:py-[1.5rem] md:px-[1rem] lg:w-[100%] md:h-[100%]">
-          <h3 className="user-course-card-medium__title text-base text-center md:text-left md:text-xl">
-            {course.name}
-          </h3>
+        <div className="user-course-card-medium__text flex flex-col w-full h-full p-3 md:py-[1.5rem] md:px-[1rem] lg:w-[100%] md:h-[100%]">
+          <h3 className="user-course-card-medium__title text-base text-center md:text-xl">{course.name}</h3>
           {course.level && (
-            <span className="user-course-card-medium-level text-xs text-gray-500 mt-2 text-center md:text-left">
-              {course.level}
-            </span>
+            <span className="user-course-card-medium-level text-xs text-gray-500 mt-2 text-center">{course.level}</span>
           )}
           <div className="user-course-card-medium__progress mt-auto">
             <div className="flex justify-between items-center gap-x-2 mt-3 md:mt-[1.5rem] mb-[0.5rem]">

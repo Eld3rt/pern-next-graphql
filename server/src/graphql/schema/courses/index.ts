@@ -1,22 +1,22 @@
 import gql from 'graphql-tag'
-import { Resolvers } from '../../types/resolvers-types'
-import { getPurchasedCourseData } from '../../../prisma/functions/getPurchasedCourseData'
-import { purchaseCourse } from '../../../prisma/functions/purchaseCourse'
-import { getCourses } from '../../../prisma/functions/getCourses'
-import { getCourseData } from '../../../prisma/functions/getCourseData'
-import { getPurchasedCourses } from '../../../prisma/functions/getPurchasedCourses'
-import { hasCourse } from '../../../prisma/functions/hasCourse'
-import { getVideosByProjectId } from '../../../kinescope/getVideos'
-import { createLesson } from '../../../prisma/functions/createLesson'
-import { getProjects } from '../../../kinescope/getProjects'
-import { createLessons } from '../../../prisma/functions/createLessons'
-import { getTags } from '../../../prisma/functions/getTags'
+import { Resolvers } from '../../types/resolvers-types.js'
+import { getPurchasedCourseData } from '../../../prisma/functions/getPurchasedCourseData.js'
+import { purchaseCourse } from '../../../prisma/functions/purchaseCourse.js'
+import { getCourses } from '../../../prisma/functions/getCourses.js'
+import { getCourseData } from '../../../prisma/functions/getCourseData.js'
+import { getPurchasedCourses } from '../../../prisma/functions/getPurchasedCourses.js'
+import { hasCourse } from '../../../prisma/functions/hasCourse.js'
+import { getVideosByProjectId } from '../../../kinescope/getVideos.js'
+import { getProjects } from '../../../kinescope/getProjects.js'
+import { getTags } from '../../../prisma/functions/getTags.js'
 import { GraphQLScalarType, Kind } from 'graphql'
-import { getPurchasedCoursesWithProgress } from '../../../prisma/functions/getPurchasedCoursesWithProgress'
-import { getUserCoursesTags } from '../../../prisma/functions/getUserCoursesTags'
-import { getLessonData } from '../../../prisma/functions/getLessonData'
-import { updateLessons } from '../../../prisma/functions/updateLessons'
-import { getGetCourseLessons } from '../../../prisma/functions/getCourseLessons'
+import { getPurchasedCoursesWithProgress } from '../../../prisma/functions/getPurchasedCoursesWithProgress.js'
+import { getUserCoursesTags } from '../../../prisma/functions/getUserCoursesTags.js'
+import { getLessonData } from '../../../prisma/functions/getLessonData.js'
+import { updateLessons } from '../../../prisma/functions/updateLessons.js'
+import { getGetCourseLessons } from '../../../prisma/functions/getCourseLessons.js'
+import { markLessonComplete } from '../../../prisma/functions/markLessonComplete.js'
+import { checkCompletedLesson } from '../../../prisma/functions/checkCompletedLesson.js'
 
 export const typeDefs = gql`
   extend type Query {
@@ -42,6 +42,7 @@ export const typeDefs = gql`
 
   extend type Mutation {
     purchaseCourse(slug: String!): PurchaseCourseResponse!
+    markLessonComplete(lessonId: Int!, courseSlug: String!): MarkLessonCompleteResponse!
     addLesson(name: String!, videoId: String!, courseId: Int!): AddLessonResponse!
     addLessons(projectId: String!, courseId: Int!): AddLessonsResponse!
     updateLessons(projectId: String!, courseId: Int!): UpdateLessonsResponse!
@@ -52,6 +53,13 @@ export const typeDefs = gql`
     message: String!
     developerMessage: String
     course: Course
+  }
+
+  type MarkLessonCompleteResponse {
+    success: Boolean!
+    message: String!
+    developerMessage: String
+    lesson: Lesson
   }
 
   type AddLessonResponse {
@@ -256,17 +264,17 @@ export const resolvers: Resolvers = {
 
       if (!currentUser) return null
 
-      const purchasedCourses = await getPurchasedCourses(currentUser, args)
+      const courseProgresses = await getPurchasedCourses(currentUser, args)
 
-      const edges = purchasedCourses.map(course => ({
-        node: course,
+      const edges = courseProgresses.map(courseProgress => ({
+        node: courseProgress.course,
       }))
 
-      const hasNextPage = first ? purchasedCourses.length > first : false
+      const hasNextPage = first ? courseProgresses.length > first : false
 
       if (hasNextPage) edges.pop()
 
-      const endCursor = purchasedCourses.at(-1)?.id
+      const endCursor = courseProgresses.at(-1)?.id
 
       return {
         edges,
@@ -373,36 +381,37 @@ export const resolvers: Resolvers = {
         }
       }
     },
-    addLesson: async (_, args, __) => {
+    markLessonComplete: async (_, args, context) => {
+      const { lessonId } = args
+      const { currentUser } = context
+
+      if (!currentUser)
+        return {
+          success: false,
+          message: 'Необходимо войти в аккаунт',
+          developerMessage: 'Authentication error',
+        }
+
       try {
-        const { lesson, course } = await createLesson(args)
+        const isComplete = await checkCompletedLesson(lessonId, currentUser)
+
+        if (isComplete)
+          return {
+            success: false,
+            message: 'Урок уже отмечен пройденным',
+            developerMessage: 'The lesson has already been marked as completed.',
+          }
+
+        const completedLesson = await markLessonComplete(args, currentUser)
         return {
           success: true,
-          message: 'Урок успешно добавлен!',
-          lesson: lesson,
-          course: course,
+          message: 'Урок успешно отмечен пройденным',
+          course: completedLesson,
         }
       } catch (error: any) {
         return {
           success: false,
-          message: 'Ошибка при добавлении урока',
-          developerMessage: error.message,
-        }
-      }
-    },
-    addLessons: async (_, args, ___) => {
-      try {
-        const { lessons, course } = await createLessons(args)
-        return {
-          success: true,
-          message: 'Уроки успешно добавлены!',
-          lessons: lessons,
-          course: course,
-        }
-      } catch (error: any) {
-        return {
-          success: false,
-          message: 'Ошибка при добавлении уроков',
+          message: 'Ошибка при обновлении статуса урока',
           developerMessage: error.message,
         }
       }

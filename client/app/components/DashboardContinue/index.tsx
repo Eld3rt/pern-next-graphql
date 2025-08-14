@@ -1,5 +1,5 @@
 import { getPurchasedCoursesWithProgress } from '@/utils/getPurchasedCoursesWithProgress'
-import UserCourseCardMedium from '../ui/UserCourseCardMedium'
+import UserCourseCardSmall from '../ui/UserCourseCardSmall'
 
 type Props = {}
 
@@ -13,9 +13,9 @@ const DashboardContinue: React.FC<Props> = async () => {
           Продолжить обучение
         </h2>
       </div>
-      <ul className="dashboard-continue__course-list flex justify-center md:justify-start gap-4 flex-wrap md:gap-6 mt-4 sm:mt-6">
+      <ul className="dashboard-continue__course-list grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
         {courses.map(course => (
-          <UserCourseCardMedium key={course.id} course={course} />
+          <UserCourseCardSmall key={course.id} course={course} />
         ))}
       </ul>
     </section>

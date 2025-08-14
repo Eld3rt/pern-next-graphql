@@ -28,7 +28,9 @@ export const GET = async (req: NextRequest) => {
     }
 
     const path = data.confirmAccount.path
-    return NextResponse.redirect(path ? `http://localhost:4000/courses/${path}` : 'http://localhost:4000')
+    return NextResponse.redirect(
+      path ? `https://pern-next-graphql.vercel.app/courses/${path}` : 'https://pern-next-graphql.vercel.app'
+    )
   } catch (err: any) {
     return NextResponse.json(err.message)
   }

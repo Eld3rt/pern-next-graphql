@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { cookies } from 'next/headers'
 
 export const middleware = async (request: NextRequest) => {
-  const cookieStore = await cookies()
-  const authToken = cookieStore.get('sid')?.value
+  const authToken = request.cookies.get('sid')?.value
   const pathname = request.nextUrl.pathname
   const isOnUserPath = pathname.endsWith('/user')
   const isOnLoginPath = pathname.endsWith('/login')
@@ -14,15 +12,12 @@ export const middleware = async (request: NextRequest) => {
     return coursePagePattern.test(pathname)
   }
   const isOnResetPath = pathname.startsWith('/user/confirm/reset')
-
   if (!authToken && !isOnLoginPath && !isOnRegisterPath && !isOnResetPath) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
-
   if (isOnResetPath) {
     const key = request.nextUrl.searchParams.get('key')
-    console.log(key)
-    const res = await fetch('http://localhost:3000/graphql', {
+    const res = await fetch('https://pern-next-graphql-15u7.vercel.app/graphql', {
       method: 'POST',
       headers: {
         Cookie: `${`sid=${authToken}`}`,
@@ -33,21 +28,15 @@ export const middleware = async (request: NextRequest) => {
         variables: { key: key },
       }),
     })
-
     const {
       data: { hasCachedKey },
     } = await res.json()
-
-    console.log(hasCachedKey)
-
     if (hasCachedKey) {
       return NextResponse.next()
     }
-
     return NextResponse.redirect(new URL('/404', request.url))
   }
-
-  const res = await fetch('http://localhost:3000/graphql', {
+  const res = await fetch('https://pern-next-graphql-15u7.vercel.app/graphql', {
     method: 'POST',
     headers: {
       Cookie: `${`sid=${authToken}`}`,
@@ -57,22 +46,17 @@ export const middleware = async (request: NextRequest) => {
       query: 'query Me { me { id }}',
     }),
   })
-
   const {
     data: { me },
   } = await res.json()
-
   const isLoggedIn = !!me
-
   if (isLoggedIn) {
     if (isOnUserPath || isOnLoginPath || isOnRegisterPath) {
       return NextResponse.redirect(new URL('/user/dashboard', request.url))
     }
-
     if (isOnCoursePath(pathname)) {
       const courseSlug = pathname.split('/')[3]
-
-      const res = await fetch('http://localhost:3000/graphql', {
+      const res = await fetch('https://pern-next-graphql-15u7.vercel.app/graphql', {
         method: 'POST',
         headers: {
           Cookie: `${`sid=${authToken}`}`,
@@ -83,15 +67,12 @@ export const middleware = async (request: NextRequest) => {
           variables: { slug: courseSlug },
         }),
       })
-
       const {
         data: { hasCourseAccess },
       } = await res.json()
-
       if (hasCourseAccess) {
         return NextResponse.next()
       }
-
       return NextResponse.redirect(new URL(`/courses/${courseSlug}`, request.url))
     }
     return NextResponse.next()
@@ -99,7 +80,6 @@ export const middleware = async (request: NextRequest) => {
   if (isOnLoginPath || isOnRegisterPath) {
     return NextResponse.next()
   }
-
   return NextResponse.redirect(new URL('/login', request.url))
 }
 

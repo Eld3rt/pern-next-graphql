@@ -16,7 +16,7 @@ interface Props {
 
 function makeClient(authToken: string | undefined) {
   const httpLink = new HttpLink({
-    uri: 'http://localhost:3000/graphql',
+    uri: 'https://pern-next-graphql.vercel.app/api',
     fetchOptions: { cache: 'no-store' },
     credentials: 'include',
   })
@@ -27,6 +27,7 @@ function makeClient(authToken: string | undefined) {
         Query: {
           fields: {
             getCourses: relayStylePagination(['tags', 'query', 'sort']),
+            getPurchasedCourses: relayStylePagination(['tags', 'query', 'sort']),
             getTags: relayStylePagination(),
           },
         },
@@ -39,7 +40,7 @@ function makeClient(authToken: string | undefined) {
               stripDefer: true,
             }),
             new HttpLink({
-              uri: 'http://localhost:3000/graphql',
+              uri: 'https://pern-next-graphql.vercel.app/api',
               credentials: 'include',
               headers: { Cookie: `${authToken ? `sid=${authToken}` : ''}` },
             }),

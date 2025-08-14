@@ -104,7 +104,7 @@ const ResetPassword: React.FC<Props> = () => {
 
         <div className="reset-password__image hidden md:block">
           <img
-            src="https://ik.imagekit.io/x3xxjzs9x/reset-password/form-image.png"
+            src="https://lh3.googleusercontent.com/pw/AP1GczMGPdfwv1hmyd-5CowA0mwUUikc1oJlsTSG18HvpgwBtvnoGx8OYKLvrGqPAnXJRNyCaMd0iltnb66X7MlAMkklVr3W5ju-IkPE_TvnaUS-s49rJf_zr6PtYgSxm-sPzYXsK09LkRFScCv-JYiA_OUA=w945-h945-s-no-gm"
             alt="Reset password image"
             className="reset-password__picture w-full h-full object-contain"
           />

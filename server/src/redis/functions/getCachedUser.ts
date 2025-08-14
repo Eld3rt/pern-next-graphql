@@ -1,4 +1,4 @@
-import { redis } from '../redis'
+import { redis } from '../redis.js'
 import { QueryConfirmAccountArgs, RequireFields } from '../../graphql/types/resolvers-types'
 
 export const getCachedUser = async (args: RequireFields<QueryConfirmAccountArgs, 'key'>) => {

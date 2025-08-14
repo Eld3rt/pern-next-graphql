@@ -1,7 +1,7 @@
 import pkg from 'lodash'
-import * as baseModule from './base'
-import * as usersModule from './users'
-import * as coursesModule from './courses'
+import * as baseModule from './base/index.js'
+import * as usersModule from './users/index.js'
+import * as coursesModule from './courses/index.js'
 
 const { merge } = pkg
 

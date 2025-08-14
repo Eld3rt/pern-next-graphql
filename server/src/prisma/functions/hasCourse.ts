@@ -1,6 +1,6 @@
 import { User } from '@prisma/client'
-import { QueryHasCourseAccessArgs, RequireFields } from '../../graphql/types/resolvers-types'
-import { prisma } from '../prisma'
+import { QueryHasCourseAccessArgs, RequireFields } from '../../graphql/types/resolvers-types.js'
+import { prisma } from '../prisma.js'
 
 export const hasCourse = async (
   args: RequireFields<QueryHasCourseAccessArgs, 'slug'>,

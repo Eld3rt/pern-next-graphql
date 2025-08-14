@@ -1,4 +1,4 @@
-import { getVideosByProjectId } from './getVideos'
+import { getVideosByProjectId } from './getVideos.js'
 
 export const getEmbedLinks = async (projectId: string): Promise<string[]> => {
   const videoData = await getVideosByProjectId(projectId)

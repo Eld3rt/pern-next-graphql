@@ -144,11 +144,20 @@ export type LessonProgress = {
   lesson: Lesson;
 };
 
+export type MarkLessonCompleteResponse = {
+  __typename?: 'MarkLessonCompleteResponse';
+  developerMessage?: Maybe<Scalars['String']['output']>;
+  lesson?: Maybe<Lesson>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addLesson: AddLessonResponse;
   addLessons: AddLessonsResponse;
   confirmPassword: ConfirmPasswordResponse;
+  markLessonComplete: MarkLessonCompleteResponse;
   purchaseCourse: PurchaseCourseResponse;
   resetPassword: ResetPasswordResponse;
   signIn: SignInResponse;
@@ -177,6 +186,12 @@ export type MutationAddLessonsArgs = {
 export type MutationConfirmPasswordArgs = {
   key: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+
+export type MutationMarkLessonCompleteArgs = {
+  courseSlug: Scalars['String']['input'];
+  lessonId: Scalars['Int']['input'];
 };
 
 
@@ -422,11 +437,13 @@ export type User = {
 
 export type CourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, price: number, reducedPrice: number, level?: string | null, prerequisites?: string | null, offerMessage?: string | null, discountValue: number, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string }> }> };
 
+export type CourseMainColorFragment = { __typename?: 'Course', mainColor: string };
+
 export type LessonFragment = { __typename?: 'Lesson', id: number, position: number, name: string, content?: string | null, videoId: string, videoURL: string, videoDuration: number, slug: string, topic: { __typename?: 'Topic', id: number, name: string }, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> };
 
 export type LessonInfoFragment = { __typename?: 'Lesson', id: number, position: number, name: string, videoDuration: number, slug: string, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> };
 
-export type PurchasedCourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> };
+export type PurchasedCourseFragment = { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, position: number, slug: string, videoDuration: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> };
 
 export type TagFragment = { __typename?: 'Tag', id: number, name: string };
 
@@ -439,6 +456,14 @@ export type ConfirmPasswordMutationVariables = Exact<{
 
 
 export type ConfirmPasswordMutation = { __typename?: 'Mutation', confirmPassword: { __typename?: 'ConfirmPasswordResponse', success: boolean, message: string } };
+
+export type MarkLessonCompleteMutationVariables = Exact<{
+  lessonId: Scalars['Int']['input'];
+  courseSlug: Scalars['String']['input'];
+}>;
+
+
+export type MarkLessonCompleteMutation = { __typename?: 'Mutation', markLessonComplete: { __typename?: 'MarkLessonCompleteResponse', success: boolean, message: string } };
 
 export type PurchaseCourseMutationVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -527,6 +552,13 @@ export type GetCourseLessonsQueryVariables = Exact<{
 
 export type GetCourseLessonsQuery = { __typename?: 'Query', getCourseLessons: Array<{ __typename?: 'Lesson', id: number, position: number, name: string, videoDuration: number, slug: string, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> };
 
+export type GetCourseMainColorQueryVariables = Exact<{
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type GetCourseMainColorQuery = { __typename?: 'Query', getCourseData?: { __typename?: 'Course', mainColor: string } | null };
+
 export type GetCoursesQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
   query?: InputMaybe<Scalars['String']['input']>;
@@ -555,19 +587,19 @@ export type GetPurchasedCoursesQueryVariables = Exact<{
 }>;
 
 
-export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses?: { __typename?: 'GetPurchasedCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } | null };
+export type GetPurchasedCoursesQuery = { __typename?: 'Query', getPurchasedCourses?: { __typename?: 'GetPurchasedCoursesResponse', edges: Array<{ __typename?: 'CourseEdge', node: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, position: number, slug: string, videoDuration: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: number | null } } | null };
 
 export type GetPurchasedCourseDataQueryVariables = Exact<{
   slug: Scalars['String']['input'];
 }>;
 
 
-export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> } | null };
+export type GetPurchasedCourseDataQuery = { __typename?: 'Query', getPurchasedCourseData?: { __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, position: number, slug: string, videoDuration: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> } | null };
 
 export type GetPurchasedCoursesWithProgressQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPurchasedCoursesWithProgressQuery = { __typename?: 'Query', getPurchasedCoursesWithProgress: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, slug: string, videoDuration: number }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> }> };
+export type GetPurchasedCoursesWithProgressQuery = { __typename?: 'Query', getPurchasedCoursesWithProgress: Array<{ __typename?: 'Course', id: number, name: string, description: string, imageURL: string, smallImageURL: string, mainColor: string, duration: number, level?: string | null, slug: string, tags: Array<{ __typename?: 'Tag', id: number, name: string }>, topics: Array<{ __typename?: 'Topic', id: number, name: string, lessons: Array<{ __typename?: 'Lesson', id: number, name: string, position: number, slug: string, videoDuration: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number }> }> }>, courseProgress: Array<{ __typename?: 'CourseProgress', id: number, lessonProgress: Array<{ __typename?: 'LessonProgress', id: number, lesson: { __typename?: 'Lesson', id: number } }> }> }> };
 
 export type GetTagsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['PositiveInt']['input']>;
@@ -615,6 +647,11 @@ export const CourseFragmentDoc = gql`
       name
     }
   }
+}
+    `;
+export const CourseMainColorFragmentDoc = gql`
+    fragment CourseMainColor on Course {
+  mainColor
 }
     `;
 export const LessonFragmentDoc = gql`
@@ -669,8 +706,12 @@ export const PurchasedCourseFragmentDoc = gql`
     lessons {
       id
       name
+      position
       slug
       videoDuration
+      lessonProgress {
+        id
+      }
     }
   }
   courseProgress {
@@ -732,6 +773,41 @@ export function useConfirmPasswordMutation(baseOptions?: Apollo.MutationHookOpti
 export type ConfirmPasswordMutationHookResult = ReturnType<typeof useConfirmPasswordMutation>;
 export type ConfirmPasswordMutationResult = Apollo.MutationResult<ConfirmPasswordMutation>;
 export type ConfirmPasswordMutationOptions = Apollo.BaseMutationOptions<ConfirmPasswordMutation, ConfirmPasswordMutationVariables>;
+export const MarkLessonCompleteDocument = gql`
+    mutation MarkLessonComplete($lessonId: Int!, $courseSlug: String!) {
+  markLessonComplete(lessonId: $lessonId, courseSlug: $courseSlug) {
+    success
+    message
+  }
+}
+    `;
+export type MarkLessonCompleteMutationFn = Apollo.MutationFunction<MarkLessonCompleteMutation, MarkLessonCompleteMutationVariables>;
+
+/**
+ * __useMarkLessonCompleteMutation__
+ *
+ * To run a mutation, you first call `useMarkLessonCompleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkLessonCompleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markLessonCompleteMutation, { data, loading, error }] = useMarkLessonCompleteMutation({
+ *   variables: {
+ *      lessonId: // value for 'lessonId'
+ *      courseSlug: // value for 'courseSlug'
+ *   },
+ * });
+ */
+export function useMarkLessonCompleteMutation(baseOptions?: Apollo.MutationHookOptions<MarkLessonCompleteMutation, MarkLessonCompleteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MarkLessonCompleteMutation, MarkLessonCompleteMutationVariables>(MarkLessonCompleteDocument, options);
+      }
+export type MarkLessonCompleteMutationHookResult = ReturnType<typeof useMarkLessonCompleteMutation>;
+export type MarkLessonCompleteMutationResult = Apollo.MutationResult<MarkLessonCompleteMutation>;
+export type MarkLessonCompleteMutationOptions = Apollo.BaseMutationOptions<MarkLessonCompleteMutation, MarkLessonCompleteMutationVariables>;
 export const PurchaseCourseDocument = gql`
     mutation PurchaseCourse($slug: String!) {
   purchaseCourse(slug: $slug) {
@@ -1171,6 +1247,46 @@ export type GetCourseLessonsQueryHookResult = ReturnType<typeof useGetCourseLess
 export type GetCourseLessonsLazyQueryHookResult = ReturnType<typeof useGetCourseLessonsLazyQuery>;
 export type GetCourseLessonsSuspenseQueryHookResult = ReturnType<typeof useGetCourseLessonsSuspenseQuery>;
 export type GetCourseLessonsQueryResult = Apollo.QueryResult<GetCourseLessonsQuery, GetCourseLessonsQueryVariables>;
+export const GetCourseMainColorDocument = gql`
+    query GetCourseMainColor($slug: String!) {
+  getCourseData(slug: $slug) {
+    ...CourseMainColor
+  }
+}
+    ${CourseMainColorFragmentDoc}`;
+
+/**
+ * __useGetCourseMainColorQuery__
+ *
+ * To run a query within a React component, call `useGetCourseMainColorQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCourseMainColorQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCourseMainColorQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useGetCourseMainColorQuery(baseOptions: Apollo.QueryHookOptions<GetCourseMainColorQuery, GetCourseMainColorQueryVariables> & ({ variables: GetCourseMainColorQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCourseMainColorQuery, GetCourseMainColorQueryVariables>(GetCourseMainColorDocument, options);
+      }
+export function useGetCourseMainColorLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCourseMainColorQuery, GetCourseMainColorQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCourseMainColorQuery, GetCourseMainColorQueryVariables>(GetCourseMainColorDocument, options);
+        }
+export function useGetCourseMainColorSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetCourseMainColorQuery, GetCourseMainColorQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetCourseMainColorQuery, GetCourseMainColorQueryVariables>(GetCourseMainColorDocument, options);
+        }
+export type GetCourseMainColorQueryHookResult = ReturnType<typeof useGetCourseMainColorQuery>;
+export type GetCourseMainColorLazyQueryHookResult = ReturnType<typeof useGetCourseMainColorLazyQuery>;
+export type GetCourseMainColorSuspenseQueryHookResult = ReturnType<typeof useGetCourseMainColorSuspenseQuery>;
+export type GetCourseMainColorQueryResult = Apollo.QueryResult<GetCourseMainColorQuery, GetCourseMainColorQueryVariables>;
 export const GetCoursesDocument = gql`
     query GetCourses($tags: [String!], $query: String, $sort: SortInput, $first: PositiveInt, $cursor: Int) {
   getCourses(

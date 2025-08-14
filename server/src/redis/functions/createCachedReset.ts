@@ -1,4 +1,4 @@
-import { redis } from '../redis'
+import { redis } from '../redis.js'
 
 export const createCachedReset = async (key: string, userId: number) => {
   await redis

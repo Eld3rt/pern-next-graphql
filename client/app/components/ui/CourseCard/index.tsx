@@ -12,17 +12,17 @@ const CourseCard: React.FC<Props> = ({ course }) => {
     <li className="course-card__course bg-[#fbfaf8] border rounded-[16px]">
       <Link
         href={`/courses/${course.slug}`}
-        className="course-card__link sm:flex sm:items-center sm:gap-x-[2rem] sm:flex-col sm:h-[100%]"
+        className="course-card__link flex items-center sm:gap-x-[2rem] flex-col h-[100%]"
       >
         <div className="course-card__course-image flex justify-center sm:block sm:w-[100%] sm:mb-[0] lg:mb-[0.5rem]">
           <img
             src={course.imageURL}
             alt={course.name}
             loading="lazy"
-            className="course-card__course-picture object-contain rounded-t-[16px] sm:rounded-[16px] lg:rounded-b-[0]"
+            className="course-card__course-picture object-contain lg:max-h-full rounded-t-[16px] sm:rounded-[16px] lg:rounded-b-[0]"
           />
         </div>
-        <div className="course-card__course-text flex flex-col py-[1.5rem] px-[1rem] lg:w-[100%] lg:h-[100%]">
+        <div className="course-card__course-text flex flex-col lg:max-w-full py-[1.5rem] px-[1rem] lg:w-[100%] lg:h-[100%]">
           <h3 className="course-card__course-title text-xl md:text-2xl">{course.name}</h3>
           <p className="course-card__course-description text-sm mt-[0.8rem] mb-[1.5rem]">
             {course.description.slice(0, 100)}...

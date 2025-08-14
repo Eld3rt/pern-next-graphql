@@ -68,13 +68,13 @@ model CourseProgress {
   id             Int              @id @default(autoincrement())
   user           User             @relation(fields: [userId], references: [id])
   userId         Int
-  course         Course           @relation(fields: [courseId], references: [id])
-  courseId       Int
+  course         Course           @relation(fields: [courseSlug], references: [slug])
+	courseSlug     String
   lessonProgress LessonProgress[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
-  @@unique([userId, courseId])
+  @@unique([userId, courseSlug])
 }
 
 model LessonProgress {

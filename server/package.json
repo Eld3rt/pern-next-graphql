@@ -6,7 +6,8 @@
   "main": "index.ts",
   "scripts": {
     "dev": "tsx watch index.ts",
-    "codegen": "graphql-codegen-esm --config codegen.ts"
+    "codegen": "graphql-codegen-esm --config codegen.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",

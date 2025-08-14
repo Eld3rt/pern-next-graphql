@@ -16,7 +16,7 @@ export const GET = async (req: NextRequest) => {
     }
 
     if (data.confirmEmail.success) {
-      return NextResponse.redirect('http://localhost:4000/user/settings')
+      return NextResponse.redirect('https://pern-next-graphql.vercel.app/user/settings')
     } else {
       return NextResponse.json(data.confirmEmail.message)
     }

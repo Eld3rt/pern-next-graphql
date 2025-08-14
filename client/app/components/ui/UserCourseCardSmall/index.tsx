@@ -37,7 +37,7 @@ const UserCourseCardSmall: React.FC<Props> = ({ course }) => {
                 </li>
               ))}
           </ul>
-          <div className="user-course-card-small__info xl:flex text-xs text-gray-500">
+          <div className="user-course-card-small__info xl:flex sm:block text-xs text-gray-500">
             <span className="user-course-card-small__progress-lessons block mb-1">{`${totalLessons} уроков`}</span>
             {course.level && <span className="user-course-card-small__progress-level block">{course.level}</span>}
           </div>

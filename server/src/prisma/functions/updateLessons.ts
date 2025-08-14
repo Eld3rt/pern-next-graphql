@@ -1,6 +1,6 @@
 import { Course, Lesson } from '@prisma/client'
-import { prisma } from '../prisma'
-import { getVideosByProjectId } from '../../kinescope/getVideos'
+import { prisma } from '../prisma.js'
+import { getVideosByProjectId } from '../../kinescope/getVideos.js'
 
 export const updateLessons = async (args: {
   projectId: string

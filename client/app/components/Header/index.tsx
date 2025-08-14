@@ -1,10 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { GiHamburgerMenu } from 'react-icons/gi'
-import { SessionContext } from '@/app/providers/SessionProvider'
 import SignOutButton from '../buttons/SignOutButton'
 import { User } from '@/graphql/generated'
 
@@ -22,13 +21,15 @@ const Header: React.FC<Props> = ({ currentUser }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
     } else {
       document.body.style.overflow = 'auto'
+      document.body.style.position = 'static'
     }
   }, [isOpen])
 
   return (
-    <header className="relative pt-6">
+    <header className="relative pt-6 z-[100]">
       <div className="header__inner custom-container custom-container--wide flex justify-between items-center">
         <div className="logo">
           <Link href="/">Главная</Link>

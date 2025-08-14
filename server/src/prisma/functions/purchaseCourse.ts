@@ -1,6 +1,6 @@
 import { User, Course } from '@prisma/client'
-import { MutationPurchaseCourseArgs, RequireFields } from '../../graphql/types/resolvers-types'
-import { prisma } from '../prisma'
+import { MutationPurchaseCourseArgs, RequireFields } from '../../graphql/types/resolvers-types.js'
+import { prisma } from '../prisma.js'
 
 export const purchaseCourse = async (
   args: RequireFields<MutationPurchaseCourseArgs, 'slug'>,
@@ -8,18 +8,15 @@ export const purchaseCourse = async (
 ): Promise<Course> => {
   const { slug } = args
   const userId = currentUser.id
-  const purchasedCourse = await prisma.course.update({
-    where: {
-      slug: slug,
-    },
+  const courseProgress = await prisma.courseProgress.create({
     data: {
-      courseProgress: {
-        connect: {
-          id: userId,
-        },
-      },
+      courseSlug: slug,
+      userId: userId,
+    },
+    include: {
+      course: true,
     },
   })
 
-  return purchasedCourse
+  return courseProgress.course
 }

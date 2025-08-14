@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/user/confirm/route.ts",
-    "../index.tsx"
+    "../index.tsx",
+    "next.config.js"
   ],
   "exclude": ["node_modules"]
 }

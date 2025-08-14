@@ -12,7 +12,7 @@ export const verifyEmail = (credentials: EmailInput): Mail.Options => ({
   subject: `Добро пожаловать, ${credentials.name ?? 'user'}!`,
   html: `<h1> Подтвердите новый email</h1>\
 	<p>Для подтверждения нового email перейдите по ссылке внизу</p>\
-	<a href="${process.env.BASE_URL || 'http://localhost:4000'}/user/confirm/email?key=${
+	<a href="${process.env.BASE_URL || 'https://pern-next-graphql.vercel.app'}/user/confirm/email?key=${
     credentials.uuid
   }">Подтвердить email</a>`,
 })

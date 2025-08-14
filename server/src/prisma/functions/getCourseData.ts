@@ -1,6 +1,6 @@
 import { Course } from '@prisma/client'
-import { QueryGetCourseDataArgs, RequireFields } from '../../graphql/types/resolvers-types'
-import { prisma } from '../prisma'
+import { QueryGetCourseDataArgs, RequireFields } from '../../graphql/types/resolvers-types.js'
+import { prisma } from '../prisma.js'
 
 export const getCourseData = async (args: RequireFields<QueryGetCourseDataArgs, 'slug'>): Promise<Course | null> => {
   const { slug } = args

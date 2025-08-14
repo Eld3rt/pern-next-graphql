@@ -1,6 +1,6 @@
 import { User, Course } from '@prisma/client'
-import { QueryGetPurchasedCourseDataArgs, RequireFields } from '../../graphql/types/resolvers-types'
-import { prisma } from '../prisma'
+import { QueryGetPurchasedCourseDataArgs, RequireFields } from '../../graphql/types/resolvers-types.js'
+import { prisma } from '../prisma.js'
 
 export const getPurchasedCourseData = async (
   args: RequireFields<QueryGetPurchasedCourseDataArgs, 'slug'>,
@@ -24,6 +24,9 @@ export const getPurchasedCourseData = async (
           lessons: {
             orderBy: {
               position: 'asc',
+            },
+            include: {
+              lessonProgress: true,
             },
           },
         },

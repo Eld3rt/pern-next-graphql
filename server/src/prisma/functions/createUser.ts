@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import { prisma } from '../prisma'
+import { prisma } from '../prisma.js'
 
 export const createUser = async (cachedUser: { name?: string; email: string; passhash: string }): Promise<User> => {
   const { name, email, passhash } = cachedUser

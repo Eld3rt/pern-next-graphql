@@ -1,7 +1,7 @@
 import { Course } from '@prisma/client'
-import { prisma } from '../prisma'
-import { QueryGetCoursesArgs } from '../../graphql/types/resolvers-types'
-import { setCoursesFilters } from '../../utils/setCoursesFilters'
+import { prisma } from '../prisma.js'
+import { QueryGetCoursesArgs } from '../../graphql/types/resolvers-types.js'
+import { setCoursesFilters } from '../../utils/setCoursesFilters.js'
 
 export const getCourses = async (args: Partial<QueryGetCoursesArgs>): Promise<Course[]> => {
   const { tags, query, sort, first, after } = args
