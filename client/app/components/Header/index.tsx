@@ -41,7 +41,13 @@ const Header: React.FC<Props> = ({ currentUser }) => {
           <div className="flex">
             <ul className="header__list">
               <li className="flex">
-                <Link href="/courses" className="header__nav-link">
+                <Link
+                  href="/courses"
+                  className="header__nav-link"
+                  onClick={() => {
+                    if (isOpen) setIsOpen(false)
+                  }}
+                >
                   Курсы
                 </Link>
               </li>
