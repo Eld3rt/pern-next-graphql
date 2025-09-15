@@ -38,14 +38,14 @@ const UserCourses: React.FC<Props> = ({ searchQuery, searchTags, sortField, sort
   }
 
   return (
-    <div className="user-courses grid justify-center pt-[2rem] pb-[0.5rem] px-[1rem] lg:w-[65%] xl:w-[75%] xl:w-[80%] 2xl:pt-[5rem] 2xl:pb-[1rem] 2xl:px-[2rem]">
+    <div className="user-courses grid place-items-center pt-[2rem] pb-[0.5rem] px-[1rem] lg:w-[65%] xl:w-[75%] xl:w-[80%] 2xl:pt-[5rem] 2xl:pb-[1rem] 2xl:px-[2rem]">
       {!nodes?.length ? (
         <p className="user-courses-message py-3 px-10">Курсы не найдены.</p>
       ) : (
         <UserCourseList entries={nodes} />
       )}
       {isPending ? (
-        <CircularProgress size={24} sx={{ color: '#732a46' }} />
+        <CircularProgress size={24} sx={{ color: '#732a46', margin: '16px' }} />
       ) : (
         pageInfo?.hasNextPage && (
           <button onClick={handleLoadMore} className="mt-[2rem]">

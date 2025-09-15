@@ -16,7 +16,7 @@ interface Props {
 
 function makeClient(authToken: string | undefined) {
   const httpLink = new HttpLink({
-    uri: 'https://pern-next-graphql.vercel.app/api',
+    uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api`,
     fetchOptions: { cache: 'no-store' },
     credentials: 'include',
   })
@@ -40,7 +40,7 @@ function makeClient(authToken: string | undefined) {
               stripDefer: true,
             }),
             new HttpLink({
-              uri: 'https://pern-next-graphql.vercel.app/api',
+              uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api`,
               credentials: 'include',
               headers: { Cookie: `${authToken ? `sid=${authToken}` : ''}` },
             }),

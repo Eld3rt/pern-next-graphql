@@ -17,7 +17,7 @@ export const middleware = async (request: NextRequest) => {
   }
   if (isOnResetPath) {
     const key = request.nextUrl.searchParams.get('key')
-    const res = await fetch('https://pern-next-graphql-15u7.vercel.app/graphql', {
+    const res = await fetch(process.env.BACKEND_URL!, {
       method: 'POST',
       headers: {
         Cookie: `${`sid=${authToken}`}`,
@@ -36,7 +36,7 @@ export const middleware = async (request: NextRequest) => {
     }
     return NextResponse.redirect(new URL('/404', request.url))
   }
-  const res = await fetch('https://pern-next-graphql-15u7.vercel.app/graphql', {
+  const res = await fetch(process.env.BACKEND_URL!, {
     method: 'POST',
     headers: {
       Cookie: `${`sid=${authToken}`}`,
@@ -56,7 +56,7 @@ export const middleware = async (request: NextRequest) => {
     }
     if (isOnCoursePath(pathname)) {
       const courseSlug = pathname.split('/')[3]
-      const res = await fetch('https://pern-next-graphql-15u7.vercel.app/graphql', {
+      const res = await fetch(process.env.BACKEND_URL!, {
         method: 'POST',
         headers: {
           Cookie: `${`sid=${authToken}`}`,

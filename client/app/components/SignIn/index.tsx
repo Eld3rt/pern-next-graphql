@@ -52,13 +52,7 @@ const SignInCard: React.FC<SignInCardProps> = ({ startTransition }) => {
         },
       })
       if (data?.signIn.success) {
-        router.push(
-          `${
-            course_slug
-              ? `https://pern-next-graphql.vercel.app/courses/${course_slug}`
-              : 'https://pern-next-graphql.vercel.app/user/dashboard'
-          }`
-        )
+        router.push(`${course_slug ? `/courses/${course_slug}` : `/user/dashboard`}`)
       }
     })
   }

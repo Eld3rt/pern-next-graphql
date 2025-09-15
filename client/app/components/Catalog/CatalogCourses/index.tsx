@@ -45,7 +45,7 @@ const CatalogCourses: React.FC<Props> = ({ searchQuery, searchTags, sortField, s
         <CourseList entries={nodes} />
       )}
       {isPending ? (
-        <CircularProgress size={24} sx={{ color: '#732a46' }} />
+        <CircularProgress size={24} sx={{ color: '#732a46', margin: '16px' }} />
       ) : (
         pageInfo?.hasNextPage && (
           <button onClick={handleLoadMore} className="mt-[2rem]">

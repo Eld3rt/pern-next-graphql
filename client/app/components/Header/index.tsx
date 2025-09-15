@@ -6,6 +6,7 @@ import { IoClose } from 'react-icons/io5'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import SignOutButton from '../buttons/SignOutButton'
 import { User } from '@/graphql/generated'
+import { usePathname } from 'next/navigation'
 
 type Props = {
   currentUser: User | null | undefined
@@ -13,6 +14,7 @@ type Props = {
 
 const Header: React.FC<Props> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
 
   const toggleMobileMenu = () => {
     setIsOpen(prev => !prev)
@@ -28,6 +30,10 @@ const Header: React.FC<Props> = ({ currentUser }) => {
     }
   }, [isOpen])
 
+  useEffect(() => {
+    if (isOpen) setIsOpen(false)
+  }, [pathname])
+
   return (
     <header className="relative pt-6 z-[100]">
       <div className="header__inner custom-container custom-container--wide flex justify-between items-center">
@@ -41,13 +47,7 @@ const Header: React.FC<Props> = ({ currentUser }) => {
           <div className="flex">
             <ul className="header__list">
               <li className="flex">
-                <Link
-                  href="/courses"
-                  className="header__nav-link"
-                  onClick={() => {
-                    if (isOpen) setIsOpen(false)
-                  }}
-                >
+                <Link href="/courses" className="header__nav-link">
                   Курсы
                 </Link>
               </li>

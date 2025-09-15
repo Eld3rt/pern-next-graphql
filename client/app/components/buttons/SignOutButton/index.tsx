@@ -1,7 +1,6 @@
 'use client'
 
 import { useSignOutMutation } from '@/graphql/generated'
-import { useApolloClient } from '@apollo/client'
 import { clearCookie } from '@/utils/clearCookie'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
@@ -12,7 +11,6 @@ interface Props {
 }
 
 const SignOutButton: React.FC<Props> = ({ className }) => {
-  const client = useApolloClient()
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
@@ -24,7 +22,6 @@ const SignOutButton: React.FC<Props> = ({ className }) => {
     startTransition(async () => {
       await signOut()
         .then(() => clearCookie())
-        .then(() => client.resetStore())
         .then(() => router.refresh())
     })
   }

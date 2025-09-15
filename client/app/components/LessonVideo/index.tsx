@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as iframeApiLoader from '@kinescope/player-iframe-api-loader'
 import { useMarkLessonCompleteMutation } from '@/graphql/generated'
+import LessonVideoSkeleton from './LessonVideoSkeleton'
 
 interface Props {
   videoURL: string
@@ -13,6 +14,7 @@ interface Props {
 
 const LessonVideo: React.FC<Props> = ({ videoURL, lessonId, courseSlug, isComplete }) => {
   const playerRef = useRef<Kinescope.IframePlayer.Player | null>(null)
+  const [isPlayerReady, setIsPlayerReady] = useState(false)
 
   const [markComplete] = useMarkLessonCompleteMutation({
     variables: {
@@ -28,6 +30,7 @@ const LessonVideo: React.FC<Props> = ({ videoURL, lessonId, courseSlug, isComple
       factory
         .create('lesson-video-iframe', { url: videoURL })
         .then(player => {
+          setIsPlayerReady(true)
           if (!active) {
             player.destroy()
             return
@@ -53,6 +56,7 @@ const LessonVideo: React.FC<Props> = ({ videoURL, lessonId, courseSlug, isComple
 
   return (
     <div id="lesson-video-container">
+      {!isPlayerReady && <LessonVideoSkeleton />}
       <iframe
         id="lesson-video-iframe"
         allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write; screen-wake-lock;"

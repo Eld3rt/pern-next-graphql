@@ -6,11 +6,11 @@ import { prisma } from './src/prisma/prisma.js'
 import { expressMiddleware } from '@apollo/server/express4'
 import { getCachedSession } from './src/redis/functions/getCachedSession.js'
 
-const PORT = process.env.PORT || 5050
+const PORT = process.env.PORT
 const app = express()
 
 const corsOptions = {
-  origin: process.env.BASE_URL || 'https://pern-next-graphql.vercel.app',
+  origin: process.env.BASE_URL,
   credentials: true,
 }
 

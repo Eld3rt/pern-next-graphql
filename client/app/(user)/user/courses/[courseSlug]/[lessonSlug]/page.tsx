@@ -1,19 +1,13 @@
 import LessonsFlips from '@/app/components/LessonFlips'
 import LessonNavigation from '@/app/components/LessonNavigation'
 import LessonText from '@/app/components/LessonText'
-import LessonVideoSkeleton from '@/app/components/LessonVideo/LessonVideoSkeleton'
+import LessonVideo from '@/app/components/LessonVideo'
 import { getLessonData } from '@/utils/getLessonData'
 import { getLessonsInfoData } from '@/utils/getLessonsInfoData'
-import dynamic from 'next/dynamic'
 
 interface Props {
   params: Promise<{ courseSlug: string; lessonSlug: string }>
 }
-
-const LessonVideo = dynamic(() => import('@/app/components/LessonVideo'), {
-  ssr: false,
-  loading: () => <LessonVideoSkeleton />,
-})
 
 const Page: React.FC<Props> = async ({ params }) => {
   const { courseSlug, lessonSlug } = await params

@@ -21,7 +21,7 @@ export const { getClient, query } = registerApolloClient(async () => {
       },
     }),
     link: new HttpLink({
-      uri: 'https://pern-next-graphql.vercel.app/api',
+      uri: `${process.env.BASE_URL}/api`,
       credentials: 'include',
       headers: { Cookie: `${authToken ? `sid=${authToken}` : ''}` },
     }),

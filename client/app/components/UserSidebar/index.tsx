@@ -32,7 +32,7 @@ const UserSidebar: React.FC<Props> = () => {
             >
               <Link
                 href={'/user/dashboard'}
-                className={`user-sidebar__link flex flex-col items-center justify-center h-full lg:px-10 dashboard-icon-desktop ${
+                className={`user-sidebar__link flex flex-col items-center justify-center h-full lg:px-10 dashboard-icon-desktop z-[99] ${
                   isActive('/user/dashboard') ? 'lg:mx-[calc(2.5rem-4px)]' : 'lg:mx-10 hover:text-[gold]'
                 }`}
               >
@@ -48,7 +48,7 @@ const UserSidebar: React.FC<Props> = () => {
             >
               <Link
                 href={'/user/courses'}
-                className={`user-sidebar__link flex flex-col items-center justify-center h-full lg:px-10 courses-icon-desktop ${
+                className={`user-sidebar__link flex flex-col items-center justify-center h-full lg:px-10 courses-icon-desktop z-[99] ${
                   isActive('/user/courses') ? 'lg:mx-[calc(2.5rem-4px)]' : 'lg:mx-10 hover:text-[gold]'
                 }`}
               >
@@ -57,15 +57,17 @@ const UserSidebar: React.FC<Props> = () => {
             </li>
             <li
               className={`user-sidebar__nav-list__item flex-1 lg:flex lg:py-2${
-                isActive('/user/settings')
+                isActive('/user/settings') || isActive('/user/settings/password')
                   ? ' lg:relative lg:before:content-[ ] lg:before:border-l-4 lg:before:border-[gold] lg:before:my-[-0.5rem] lg:after:content-[ ] lg:after:absolute lg:after:inset-0 lg:after:bg-gradient-to-r lg:after:from-[gold]/30 lg:after:to-transparent text-[gold]'
                   : ''
               }`}
             >
               <Link
                 href={'/user/settings'}
-                className={`user-sidebar__link flex flex-col items-center justify-center h-full lg:px-10 settings-icon-desktop ${
-                  isActive('/user/settings') ? 'lg:mx-[calc(2.5rem-4px)]' : 'lg:mx-10 hover:text-[gold]'
+                className={`user-sidebar__link flex flex-col items-center justify-center h-full lg:px-10 settings-icon-desktop z-[99] ${
+                  isActive('/user/settings') || isActive('/user/settings/password')
+                    ? 'lg:mx-[calc(2.5rem-4px)]'
+                    : 'lg:mx-10 hover:text-[gold]'
                 }`}
               >
                 Настройки

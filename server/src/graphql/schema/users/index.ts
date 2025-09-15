@@ -305,7 +305,7 @@ export const resolvers: Resolvers = {
       const { id } = currentUser
 
       try {
-        await deleteCachedSession(id, authToken)
+        await deleteCachedSession(authToken)
 
         return {
           success: true,

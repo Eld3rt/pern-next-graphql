@@ -28,9 +28,7 @@ export const GET = async (req: NextRequest) => {
     }
 
     const path = data.confirmAccount.path
-    return NextResponse.redirect(
-      path ? `https://pern-next-graphql.vercel.app/courses/${path}` : 'https://pern-next-graphql.vercel.app'
-    )
+    return NextResponse.redirect(path ? `${process.env.BASE_URL}/courses/${path}` : process.env.BASE_URL!)
   } catch (err: any) {
     return NextResponse.json(err.message)
   }

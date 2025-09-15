@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const sid = req.cookies.get('sid')?.value
   if (sid) headers.set('cookie', `sid=${sid}`)
 
-  const upstream = await fetch('https://pern-next-graphql-15u7.vercel.app/graphql', {
+  const upstream = await fetch(process.env.BACKEND_URL!, {
     method: 'POST',
     headers,
     body: await req.text(),
@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
         secure: true,
         sameSite: 'lax',
         path: '/',
+        maxAge: 60 * 60 * 24 * 7 * 1000, // One week
       })
     }
   }
