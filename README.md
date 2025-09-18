@@ -12,3 +12,7 @@ Full-Stack PERN-Next-GraphQL Example
 - Node.js
 - GraphQL API
 - Apollo
+
+## Test User Account
+
+testo@mail.ru:123456
