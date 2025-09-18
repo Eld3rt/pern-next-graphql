@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { Viewport } from 'next'
 import { ApolloWrapper } from '../../../apollo/ApolloWrapper'
 import '../../globals.css'
 import localFont from 'next/font/local'
@@ -10,6 +11,13 @@ import { getCurrentUser } from '@/utils/getCurrentUser'
 
 export const metadata: Metadata = {
   title: 'PERN | Next | GraphQL',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 const inter = localFont({
