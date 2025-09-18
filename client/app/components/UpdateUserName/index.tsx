@@ -2,6 +2,7 @@
 
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
+import { useRouter } from 'next/navigation'
 import { useUpdateUserNameMutation } from '@/graphql/generated'
 import FormInput from '../forms/FormInput'
 
@@ -13,6 +14,7 @@ interface FormikValues {
 }
 
 const UpdateUserName: React.FC<Props> = ({ currentName }) => {
+  const router = useRouter()
   const [updateUserName, { data, error }] = useUpdateUserNameMutation({
     notifyOnNetworkStatusChange: true,
   })
@@ -30,6 +32,7 @@ const UpdateUserName: React.FC<Props> = ({ currentName }) => {
         newName: name,
       },
     })
+    router.refresh()
   }
 
   return (

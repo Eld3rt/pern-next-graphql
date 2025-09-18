@@ -2,6 +2,7 @@
 
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
+import { useRouter } from 'next/navigation'
 import { useUpdateEmailMutation } from '@/graphql/generated'
 import FormInput from '../forms/FormInput'
 
@@ -13,6 +14,7 @@ interface FormikValues {
 }
 
 const UpdateEmail: React.FC<Props> = ({ currentEmail }) => {
+  const router = useRouter()
   const [updateEmail, { data, error }] = useUpdateEmailMutation({
     notifyOnNetworkStatusChange: true,
   })
@@ -33,6 +35,7 @@ const UpdateEmail: React.FC<Props> = ({ currentEmail }) => {
         email: email,
       },
     })
+    router.refresh()
   }
 
   return (

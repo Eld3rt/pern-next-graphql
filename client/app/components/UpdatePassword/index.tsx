@@ -125,10 +125,14 @@ const UpdatePassword: React.FC<Props> = () => {
                 }}
               />
               {errors.newPassword && <p className="validation-message text-sm text-red-500">{errors.newPassword}</p>}
-              <button className="btn mt-[1rem]" type="submit">
+              <button className="btn mt-[1rem] mb-4" type="submit">
                 Сохранить
               </button>
-              {data?.updatePassword.success && <p className="text-success">{data.updatePassword.message}</p>}
+              {data?.updatePassword.success && (
+                <p className="validation-message text-center md:text-left text-sm text-green-500">
+                  {data.updatePassword.message}
+                </p>
+              )}
               {(error || errors.oldPassword || (data?.updatePassword && !data.updatePassword.success)) &&
                 !(data?.updatePassword.message == 'Неверно указан старый пароль') &&
                 !(errors.oldPassword == yupMessages.oldPassword.required) &&

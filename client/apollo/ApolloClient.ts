@@ -22,6 +22,7 @@ export const { getClient, query } = registerApolloClient(async () => {
     }),
     link: new HttpLink({
       uri: `${process.env.BASE_URL}/api`,
+      fetchOptions: { cache: 'no-store' },
       credentials: 'include',
       headers: { Cookie: `${authToken ? `sid=${authToken}` : ''}` },
     }),
