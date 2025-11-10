@@ -7,13 +7,6 @@
   --foreground: #701437;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #732a46;
-    --foreground: #ededed;
-  }
-}
-
 body {
   color: var(--foreground);
   background: var(--background);
@@ -266,7 +259,7 @@ h4 + p {
   position: fixed;
   inset: 0;
   background-color: white;
-  z-index: 1;
+  z-index: 200;
 }
 
 .course-tag-list__tag-menu--active {

@@ -116,7 +116,7 @@ const CatalogTags: React.FC<Props> = ({ setSearchTags }) => {
             </button>
           </div>
           {isOpen && (
-            <button className="modal-close z-[1] fixed top-0 right-0 p-[1rem]" onClick={() => setIsOpen(false)}>
+            <button className="modal-close fixed top-0 right-0 p-[1rem]" onClick={() => setIsOpen(false)}>
               <IoClose className="w-8 h-8" />
             </button>
           )}
